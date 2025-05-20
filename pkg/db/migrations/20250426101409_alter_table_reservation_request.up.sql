@@ -1,0 +1,1 @@
+ALTER TABLE "reservation_requests" ADD COLUMN "ref_no" varchar NOT NULL;

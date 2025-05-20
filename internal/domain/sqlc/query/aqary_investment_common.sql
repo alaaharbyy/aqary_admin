@@ -1,0 +1,953 @@
+-- -- name: GetSearchCityCommunitySubCommunity :many
+-- WITH X AS (
+-- SELECT
+--     c.id,
+--     c.city AS place_name,
+--     'City' AS place_type,
+--     0 AS parent_id
+-- FROM cities c
+-- WHERE c.city ILIKE CONCAT('%', sqlc.arg(search_string)::varchar, '%')
+
+-- UNION ALL
+
+-- SELECT
+--     co.id,
+--     co.community AS place_name,
+--     'Community' AS place_type,
+--     co.cities_id AS parent_id
+-- FROM communities co
+-- INNER JOIN cities ci ON co.cities_id = ci.id
+-- WHERE co.community ILIKE CONCAT('%', sqlc.arg(search_string)::varchar, '%')
+
+-- UNION ALL
+
+-- SELECT
+--     sc.id,
+--     sc.sub_community AS place_name,
+--     'SubCommunity' AS place_type,
+--     sc.communities_id AS parent_id
+-- FROM sub_communities sc
+-- INNER JOIN communities co ON sc.communities_id = co.id
+-- WHERE sc.sub_community ILIKE CONCAT('%', sqlc.arg(search_string)::varchar, '%')
+-- ) SELECT * FROM x LIMIT 10;
+
+-- -- name: GetAllAqaryInvestmentRentByByCountryAndCity :many
+ 
+-- SELECT u.id, pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,um.file_urls,cast(cardinality(um.file_urls) as bigint) as "counter" 
+-- FROM units u
+-- INNER JOIN rent_unit ru
+-- ON ru.unit_id = u.id AND ru.status = 2 
+-- INNER JOIN addresses
+-- ON u.addresses_id = addresses.id 
+-- INNER JOIN cities 
+-- ON cities.id=addresses.cities_id 
+-- INNER JOIN countries
+-- ON countries.id = addresses.countries_id
+-- INNER JOIN unit_facts uf 
+-- ON ru.unit_facts_id = uf.id
+-- INNER JOIN property_types pt 
+-- ON u.property_types_id = pt.id 
+-- LEFT JOIN unit_media um
+-- ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- INNER JOIN communities 
+-- ON communities.id=addresses.communities_id
+-- INNER JOIN sub_communities 
+-- ON sub_communities.id =addresses.sub_communities_id
+-- WHERE countries.id=$1 AND cities.id=$2
+-- LIMIT $3 OFFSET $4;
+ 
+ 
+-- -- name: GetAllAqaryInvestmentRentByPropertyType :many
+-- SELECT u.id, pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,um.file_urls,cast(cardinality(um.file_urls) as bigint) as "counter" 
+-- FROM units u
+-- INNER JOIN rent_unit ru
+-- ON ru.unit_id = u.id AND ru.status = 2 
+-- INNER JOIN addresses
+-- ON u.addresses_id = addresses.id 
+-- INNER JOIN cities 
+-- ON cities.id=addresses.cities_id 
+-- INNER JOIN countries
+-- ON countries.id = addresses.countries_id
+-- INNER JOIN unit_facts uf 
+-- ON ru.unit_facts_id = uf.id
+-- INNER JOIN property_types pt 
+-- ON u.property_types_id = pt.id 
+-- LEFT JOIN unit_media um
+-- ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- INNER JOIN communities 
+-- ON communities.id=addresses.communities_id
+-- INNER JOIN sub_communities 
+-- ON sub_communities.id =addresses.sub_communities_id
+-- WHERE pt.id = $1
+-- LIMIT $2 OFFSET $3;
+ 
+ 
+-- -- name: GetAllAqaryInvestmentRentByNoOfBedroom :many
+ 
+-- SELECT u.id, pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,um.file_urls,cast(cardinality(um.file_urls) as bigint) as "counter" 
+-- FROM units u
+-- INNER JOIN rent_unit ru
+-- ON ru.unit_id = u.id AND ru.status = 2 
+-- INNER JOIN addresses
+-- ON u.addresses_id = addresses.id 
+-- INNER JOIN cities 
+-- ON cities.id=addresses.cities_id 
+-- INNER JOIN countries
+-- ON countries.id = addresses.countries_id
+-- INNER JOIN unit_facts uf  
+-- ON ru.unit_facts_id = uf.id
+-- INNER JOIN property_types pt 
+-- ON u.property_types_id = pt.id 
+-- LEFT JOIN unit_media um
+-- ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- INNER JOIN communities 
+-- ON communities.id=addresses.communities_id
+-- INNER JOIN sub_communities 
+-- ON sub_communities.id =addresses.sub_communities_id
+-- WHERE uf.bedroom = $1
+-- LIMIT $2 OFFSET $3;
+ 
+ 
+-- -- name: GetAllAqaryInvestmentRentByNoOfBathrooms :many
+ 
+-- SELECT u.id, pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,um.file_urls,cast(cardinality(um.file_urls) as bigint) as "counter" 
+-- FROM units u
+-- INNER JOIN rent_unit ru
+-- ON ru.unit_id = u.id AND ru.status = 2 
+-- INNER JOIN addresses
+-- ON u.addresses_id = addresses.id 
+-- INNER JOIN cities 
+-- ON cities.id=addresses.cities_id 
+-- INNER JOIN countries
+-- ON countries.id = addresses.countries_id
+-- INNER JOIN unit_facts uf  
+-- ON ru.unit_facts_id = uf.id
+-- INNER JOIN property_types pt 
+-- ON u.property_types_id = pt.id 
+-- LEFT JOIN unit_media um
+-- ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- INNER JOIN communities 
+-- ON communities.id=addresses.communities_id
+-- INNER JOIN sub_communities 
+-- ON sub_communities.id =addresses.sub_communities_id
+-- WHERE uf.bathroom = $1
+-- LIMIT $2 OFFSET $3;
+
+-- -- name: GetAllAqaryInvestmentRentFilter :many
+-- SELECT u.id, pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,COALESCE(um.file_urls,ARRAY[]::varchar[]) as "file_urls",COALESCE(cast(cardinality(um.file_urls) as bigint),0) as "counter"
+-- FROM units u
+-- INNER JOIN rent_unit ru
+-- ON ru.unit_id = u.id AND ru.status = 2 
+-- INNER JOIN addresses
+-- ON u.addresses_id = addresses.id 
+-- INNER JOIN cities 
+-- ON cities.id=addresses.cities_id 
+-- INNER JOIN countries
+-- ON countries.id = addresses.countries_id
+-- INNER JOIN unit_facts uf 
+-- ON ru.unit_facts_id = uf.id
+-- INNER JOIN property_types pt 
+-- ON u.property_types_id = pt.id 
+-- LEFT JOIN unit_media um
+-- ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- INNER JOIN communities 
+-- ON communities.id=addresses.communities_id
+-- INNER JOIN sub_communities 
+-- ON sub_communities.id =addresses.sub_communities_id
+-- WHERE
+--    (@countries_id::bigint = 0 OR countries.id = @countries_id::bigint) AND
+--    (@cities_id::bigint = 0  OR cities.id = @cities_id::bigint ) AND
+--    (@propert_id::bigint = 0 OR pt.id = @propert_id::bigint) AND
+--    (@bedroom::varchar = '' OR uf.bedroom =  @bedroom::varchar) AND
+--    (@bathroom::bigint = 0 OR uf.bathroom =  @bathroom::bigint)   
+-- LIMIT $1 OFFSET $2;
+
+-- -- name: GetAllAqaryInvestmentSaleFilter :many
+--     SELECT u.id AS "unit_id",su.id "sale_unit_id", pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community,states.state, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,COALESCE(um.file_urls,ARRAY[]::varchar[]) as "file_urls",COALESCE(cast(cardinality(um.file_urls) as bigint),0)::bigint as "counter",uf.ask_price,currency.code,currency.currency
+--     FROM units u
+--     INNER JOIN sale_unit su
+--     ON su.unit_id = u.id AND su.status = 2
+--     INNER JOIN addresses
+--     ON u.addresses_id = addresses.id
+--     LEFT JOIN cities
+--     ON cities.id=addresses.cities_id
+--     INNER JOIN countries
+--     ON countries.id = addresses.countries_id
+--     LEFT JOIN states
+--     ON states.id = addresses.states_id
+--     LEFT JOIN unit_facts uf
+--     ON su.unit_facts_id = uf.id
+--     INNER JOIN property_types pt
+--     ON u.property_types_id = pt.id
+--     LEFT JOIN unit_media um
+--     ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+--     LEFT JOIN communities
+--     ON communities.id=addresses.communities_id
+--     LEFT JOIN sub_communities
+--     ON sub_communities.id =addresses.sub_communities_id
+--     LEFT JOIN currency
+--         ON currency.id = uf.sc_currency_id
+--     WHERE
+--            (CASE WHEN ARRAY_LENGTH(@state_id::BIGINT[], 1) IS NULL THEN TRUE ELSE states.id = ANY(@state_id::BIGINT[]) END) AND
+--    (CASE WHEN ARRAY_LENGTH(@country_id::BIGINT[], 1) IS NULL THEN TRUE ELSE countries.id = ANY(@country_id::BIGINT[]) END) AND
+--    (CASE WHEN ARRAY_LENGTH(@community_id::BIGINT[], 1) IS NULL THEN TRUE ELSE communities.id = ANY(@community_id::BIGINT[]) END) AND 
+--    (CASE WHEN ARRAY_LENGTH(@sub_community::BIGINT[], 1) IS NULL THEN TRUE ELSE sub_communities.id = ANY(@sub_community::BIGINT[]) END) AND 
+--       (CASE WHEN ARRAY_LENGTH(@city_id::BIGINT[], 1) IS NULL THEN TRUE ELSE cities.id = ANY(@city_id::BIGINT[]) END) AND 
+--        (@property_type::bigint=0 OR pt.id = @property_type::bigint) AND
+--        (CASE WHEN ARRAY_LENGTH(@bedroom::varchar[], 1) IS NULL THEN TRUE ELSE uf.bedroom = ANY(@bedroom::varchar[]) END) AND
+--        (CASE WHEN ARRAY_LENGTH(@bathroom::bigint[], 1) IS NULL THEN TRUE ELSE uf.bathroom = ANY(@bathroom::bigint[]) END) AND
+--       (ARRAY_LENGTH(@subscription::bigint[], 1) IS NULL OR u.property_unit_rank = ANY (@subscription::bigint[])) AND
+--       (CASE WHEN @is_verified::BOOLEAN =false THEN true ELSE u.is_verified=true END) AND 
+--       (CASE WHEN @min_price::FLOAT=-1.0 AND @max_price::FLOAT=-1.0 THEN true ELSE uf.price BETWEEN @min_price::FLOAT AND @max_price::FLOAT END) AND
+--       (CASE WHEN @is_commercial::BIGINT =0 THEN true WHEN @is_commercial::BIGINT=1  THEN pt.is_commercial =true WHEN @is_commercial=2 THEN pt.is_residential=true END) AND
+--       (CASE WHEN @dates::BIGINT =1 THEN true WHEN @dates::BIGINT= 2 THEN u.created_at >= DATE_TRUNC('day', CURRENT_DATE) WHEN @dates::BIGINT = 3 THEN u.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')
+--       AND u.created_at < DATE_TRUNC('week', CURRENT_DATE) WHEN @dates::BIGINT = 4 THEN u.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+--       AND u.created_at < DATE_TRUNC('month', CURRENT_DATE) END) AND
+--       (CASE WHEN @min_plot_area::FLOAT =-1 AND @max_plot_area::FLOAT =-1 THEN true ELSE  uf.plot_area BETWEEN @min_plot_area ::FLOAT AND @max_plot_area::FLOAT END) AND
+--       (CASE WHEN @min_built_up_area::FLOAT =-1 AND  @max_built_up_area::FLOAT =-1 THEN true ELSE uf.built_up_area BETWEEN @min_built_up_area::FLOAT AND @max_built_up_area::FLOAT END) AND
+--       (CASE WHEN @completion_status::BIGINT=0 THEN true ELSE uf.completion_status = @completion_status END) AND
+--       (CASE WHEN @no_of_payment::BIGINT =0 THEN true ELSE uf.no_of_payment = @no_of_payment::BIGINT END) AND
+--       (CASE WHEN ARRAY_LENGTH(@ownership::BIGINT[], 1) IS NULL THEN TRUE ELSE uf.ownership = ANY(@ownership::BIGINT[]) END) AND
+--       (CASE WHEN @min_service_charge::BIGINT = -1 AND @max_service_charge::BIGINT =-1 THEN true ELSE uf.service_charge BETWEEN @min_service_charge::BIGINT AND @max_service_charge::BIGINT END) AND
+--       (CASE WHEN ARRAY_LENGTH(@amenities::bigint[], 1) IS NULL THEN TRUE ELSE u.amenities_id && @amenities::bigint[] END) AND
+--       (CASE WHEN ARRAY_LENGTH(@furnished::bigint[], 1) IS NULL THEN TRUE ELSE uf.furnished = ANY(@furnished::bigint[]) END) AND
+--       (CASE WHEN ARRAY_LENGTH(@parking::bigint[], 1) IS NULL THEN TRUE ELSE uf.parking = ANY(@parking::bigint[]) END) AND
+--       (CASE WHEN ARRAY_LENGTH(@view::bigint[], 1) IS NULL THEN TRUE ELSE uf.view && @view::bigint[] END) AND
+--       (CASE WHEN ARRAY_LENGTH(@keywords::VARCHAR[], 1) IS NULL THEN TRUE ELSE u.ref_no  LIKE ANY(@keywords::VARCHAR[]) OR su.title LIKE ANY(@keywords::VARCHAR[]) OR su.title_arabic LIKE ANY(@keywords::VARCHAR[]) OR  pt.type LIKE ANY(@keywords::VARCHAR[]) END) AND
+--       (CASE WHEN ARRAY_LENGTH(@media::bigint[], 1) IS NULL THEN true ELSE @media::bigint[] && (SELECT array_agg(media_type) FROM unit_media WHERE units_id = u.id) END) AND
+--       (CASE WHEN ARRAY_LENGTH(@facilities::bigint[], 1) IS NULL THEN true WHEN u.property::bigint IS NULL THEN true WHEN u.property IS NOT NULL AND u.properties_id IS NOT NULL THEN CASE
+--       WHEN u.property = 1 THEN @facilities::BIGINT[] &&(SELECT array_agg(facilities_id) FROM projects WHERE id=u.properties_id)
+--       WHEN u.property= 2 THEN  @facilities::BIGINT[] && (SELECT array_agg(facilities_id) FROM freelancers_properties WHERE id=u.properties_id )
+--       WHEN u.property= 3 AND u.is_branch=false THEN  @facilities::BIGINT[] && (SELECT array_agg(facilities_id) FROM broker_company_agent_properties WHERE id=u.properties_id )
+--       WHEN u.property= 3 AND u.is_branch=true THEN  @facilities::BIGINT[] && (SELECT array_agg(facilities_id) FROM broker_company_agent_properties_branch WHERE id=u.properties_id )
+--       WHEN u.property= 4 AND u.is_branch=false THEN  @facilities::BIGINT[] && (SELECT array_agg(facilities_id) FROM owner_properties WHERE id=u.properties_id )
+--       END END )
+--       ORDER BY u.property_unit_rank DESC , CASE WHEN @sort_by = 'ASC' THEN uf.price END ASC , CASE WHEN @sort_by ='DESC' THEN uf.price END DESC , CASE WHEN @sort_by='newest' THEN u.created_at END DESC
+--     LIMIT $1 OFFSET $2;
+
+-- -- name: GetAllAqaryInvestmentaleSaleFilter :many
+-- SELECT u.id AS "unit_id",su.id AS "sale_unit_id", pt.type,countries.country,cities.city,communities.community,sub_communities.sub_community, u.ref_no,u.is_verified, u.property_unit_rank,uf.price,uf.bedroom,uf.bathroom,uf.built_up_area,COALESCE(um.file_urls,ARRAY[]::varchar[]) as "file_urls",COALESCE(cast(cardinality(um.file_urls) as bigint),0) as "counter",currency.currency,currency.code,uf.ask_price,pt.is_commercial,pt.is_residential,uf.plot_area,uf.built_up_area,uf.completion_status,uf.no_of_payment,uf.ownership,uf.service_charge
+-- FROM units u
+-- INNER JOIN sale_unit su
+-- ON su.unit_id = u.id AND su.status = 2 
+-- INNER JOIN addresses
+-- ON u.addresses_id = addresses.id 
+-- LEFT JOIN cities 
+-- ON cities.id=addresses.cities_id 
+-- INNER JOIN countries
+-- ON countries.id = addresses.countries_id
+-- LEFT JOIN unit_facts uf 
+-- ON su.unit_facts_id = uf.id
+-- INNER JOIN property_types pt 
+-- ON u.property_types_id = pt.id 
+-- LEFT JOIN unit_media um
+-- ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- LEFT JOIN communities 
+-- ON communities.id=addresses.communities_id
+-- LEFT JOIN sub_communities 
+-- ON sub_communities.id =addresses.sub_communities_id
+-- LEFT JOIN currency 
+-- 	ON currency.id = uf.sc_currency_id
+-- WHERE
+--            --(CASE WHEN ARRAY_LENGTH(@state_id::BIGINT[], 1) IS NULL THEN TRUE ELSE states.id = ANY(@state_id::BIGINT[]) END) AND
+--    (CASE WHEN ARRAY_LENGTH(@country_id::BIGINT[], 1) IS NULL THEN TRUE ELSE countries.id = ANY(@country_id::BIGINT[]) END) AND
+--    (CASE WHEN ARRAY_LENGTH(@community_id::BIGINT[], 1) IS NULL THEN TRUE ELSE communities.id = ANY(@community_id::BIGINT[]) END) AND 
+--    (CASE WHEN ARRAY_LENGTH(@sub_community::BIGINT[], 1) IS NULL THEN TRUE ELSE sub_communities.id = ANY(@sub_community::BIGINT[]) END) AND 
+--       (CASE WHEN ARRAY_LENGTH(@city_id::BIGINT[], 1) IS NULL THEN TRUE ELSE cities.id = ANY(@city_id::BIGINT[]) END) AND 
+--    (@property_type::bigint = 0 OR pt.id = @property_type::bigint) AND
+--    (@bedroom::varchar = '' OR uf.bedroom =  @bedroom::varchar) AND
+--    (@bathroo::bigint = 0 OR uf.bathroom =  @bathroo::bigint)  AND 
+--   (ARRAY_LENGTH(@subscription::bigint[], 1) IS NULL OR u.property_unit_rank = ANY (@subscription::bigint[])) AND 
+--   (CASE WHEN @is_verified::BOOLEAN = false THEN u.is_verified = false ELSE u.is_verified=true END) AND
+--   (CASE WHEN @min_price::FLOAT=-1 AND @max_price::FLOAT=-1 THEN true ELSE uf.price BETWEEN @min_price::FLOAT AND @max_price::FLOAT END) AND 
+--   (CASE WHEN @is_commercial::BOOLEAN = true  THEN pt.is_commercial =true WHEN @is_commercial::BOOLEAN = FALSE THEN pt.is_residential=true END) AND 
+--   (CASE WHEN @dates::BIGINT =1 THEN true WHEN @dates::BIGINT= 2 THEN u.created_at >= DATE_TRUNC('day', CURRENT_DATE) WHEN @dates::BIGINT = 3 THEN u.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')
+--   AND u.created_at < DATE_TRUNC('week', CURRENT_DATE) WHEN @dates::BIGINT = 4 THEN u.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+--   AND u.created_at < DATE_TRUNC('month', CURRENT_DATE) END) AND 
+--   (CASE WHEN @min_plot_area::FLOAT=-1 AND @max_plot_area::FLOAT=-1 THEN true ELSE  uf.plot_area BETWEEN @min_plot_area::FLOAT AND @max_plot_area::FLOAT END) AND 
+--   (CASE WHEN @min_built_up_area::FLOAT=-1 AND @max_built_up_area::FLOAT=-1 THEN true ELSE uf.built_up_area BETWEEN @min_built_up_area::FLOAT AND @max_built_up_area::FLOAT END) AND 
+--   (CASE WHEN @completion_status::BIGINT = 0 THEN true WHEN @completion_status::BIGINT =4 THEN uf.completion_status=4 WHEN @completion_status::BIGINT =5 THEN uf.completion_status=5 END) AND 
+--   (CASE WHEN @no_of_payment::BIGINT =0 THEN true ELSE uf.no_of_payment = @no_of_payment::BIGINT END) AND 
+--   (CASE WHEN @ownership::BIGINT =0 THEN true ELSE uf.ownership= @ownership::BIGINT END) AND 
+--   (CASE WHEN @min_service_charge::BIGINT=-1 AND @max_service_charge=-1 THEN true ELSE uf.service_charge BETWEEN @min_service_charge::BIGINT AND @max_service_charge::BIGINT END)
+-- LIMIT $1 OFFSET $2;
+
+-- -- name: GetSingleProjectDetails :one
+-- with ProjectPlans AS (
+-- SELECT
+--         p.id AS project_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', pl.id
+--             )
+--         ) AS plans
+--     FROM
+--         projects p
+--     JOIN project_plans pl ON pl.projects_id=p.id 
+--     WHERE
+--         p.status != 6
+--     GROUP BY
+--         p.id
+-- ),
+-- ProjectProperties AS (
+-- SELECT
+--         p.id AS project_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', pp.id
+--             )
+--         ) AS properties
+--     FROM
+--         projects p
+--     JOIN project_properties pp ON pp.projects_id=p.id 
+--     WHERE
+--         pp.status != 6
+--     GROUP BY
+--         p.id
+-- ),
+-- ProjectUnits AS (
+-- SELECT
+--         p.id AS project_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', u.id
+--             )
+--         ) AS units
+--     FROM
+--         projects p
+--     JOIN project_properties pp ON pp.projects_id=p.id 
+--     JOIN units u ON u.properties_id=pp.id AND u.property=1
+--     WHERE
+--         pp.status != 6
+--     GROUP BY
+--         p.id
+-- ),
+-- PropertyTypes AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', pt.id,
+--                 'title', pt."type"
+--             )
+--         ) AS property_types
+--     FROM
+--         projects p
+--     JOIN project_properties pp ON pp.projects_id = p.id 
+--     JOIN LATERAL unnest(pp.property_types_id) AS property_type ON true
+--     JOIN property_types pt ON pt.id=property_type
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- ),
+-- FacilityCategories AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id,
+--                 'title', catg.category
+--             )
+--         ) AS facility_categories
+--     FROM
+--         projects p
+--     JOIN LATERAL unnest(p.facilities_id) AS facility_id ON true
+--     JOIN facilities f ON f.id = facility_id
+--     JOIN facilities_amenities_categories catg ON catg.id = f.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- ),
+-- AmenitiesCategories AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id,
+--                 'title', catg.category
+--             )
+--         ) AS amenities_categories
+--     FROM
+--         projects p
+--     JOIN LATERAL unnest(p.amenities_id) AS amenity_id ON true
+--     JOIN amenities a ON a.id = amenity_id
+--     JOIN facilities_amenities_categories catg ON catg.id = a.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- )
+-- SELECT
+-- 	sqlc.embed(p),
+-- 	sqlc.embed(pf),
+-- 	sqlc.embed(c),
+-- 	sqlc.embed(co),
+-- 	sqlc.embed(s),
+-- 	sqlc.embed(com),
+-- 	sqlc.embed(scom),
+-- 	sqlc.embed(contact),
+-- 	sqlc.embed(users_details),
+--     COALESCE(pl.plans, '[]'::json) AS plans,
+--     COALESCE(pp.properties, '[]'::json) AS properties,
+--     COALESCE(pu.units, '[]'::json) AS units,
+--     COALESCE(ut.property_types, '[]'::json) AS property_types,
+--     COALESCE(fc.facility_categories, '[]'::json) AS facility_categories,
+--     COALESCE(ac.amenities_categories, '[]'::json) AS amenities_categories,
+--   	COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama
+-- FROM
+--     projects p
+-- JOIN addresses a ON a.id = p.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- JOIN properties_facts pf ON pf.project_id = p.id AND pf.is_project_fact = TRUE
+-- JOIN users users_details ON users_details.id=p.users_id
+-- JOIN profiles contact ON contact.id=users_details.profiles_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN project_media images ON images.projects_id=p.id AND images.media_type = 1 AND images.gallery_type = 'Main'
+-- LEFT JOIN project_media img360 ON img360.projects_id=p.id AND img360.media_type = 2 AND img360.gallery_type = 'Main'
+-- LEFT JOIN project_media video ON video.projects_id=p.id AND video.media_type = 3 AND video.gallery_type = 'Main'
+-- LEFT JOIN project_media panorama ON panorama.projects_id=p.id AND panorama.media_type = 4 AND panorama.gallery_type = 'Main'
+-- LEFT JOIN ProjectPlans pl ON pl.project_id = p.id
+-- LEFT JOIN ProjectProperties pp ON pp.project_id = p.id
+-- LEFT JOIN ProjectUnits pu ON pu.project_id = p.id
+-- LEFT JOIN PropertyTypes ut ON ut.project_id = p.id
+-- LEFT JOIN AmenitiesCategories ac ON ac.project_id = p.id
+-- LEFT JOIN FacilityCategories fc ON fc.project_id = p.id
+-- WHERE p.id=$1 AND p.status != 6;
+
+-- -- name: GetAllProjectDetails :many
+-- select p.id, p.project_name, pm.id as "image_id", pm.file_urls, pf.starting_price, p.is_verified, p.project_rank, p.rating, p.ref_number, pf.completion_percentage, c.id as "city_id", c.city, com.id as "community_id", com.community, scom.id as "subcommunity_id", scom.sub_community, p.created_at, pf.built_up_area from projects p join properties_facts pf on pf.project_id = p.id and pf.is_project_fact is true
+-- left join addresses a on p.addresses_id = a.id
+-- left join cities c on a.cities_id = c.id
+-- left join communities com on a.communities_id = com.id
+-- left join sub_communities scom on a.sub_communities_id = scom.id
+-- left join project_media pm on p.id = pm.projects_id and pm.gallery_type = 'Main' and pm.media_type = 1
+-- ORDER BY p.project_rank ASC LIMIT $1 OFFSET $2;
+
+-- -- name: GetCountAllProjectDetails :one
+-- select count(p.id) from projects p join properties_facts pf on pf.project_id = p.id and pf.is_project_fact is true
+-- left join addresses a on p.addresses_id = a.id
+-- left join cities c on a.cities_id = c.id
+-- left join communities com on a.communities_id = com.id
+-- left join sub_communities scom on a.sub_communities_id = scom.id
+-- left join project_media pm on p.id = pm.projects_id and pm.gallery_type = 'Main' and pm.media_type = 1;
+
+
+-- -- name: GetAllProjectDetailsWithFilter :many
+-- select p.id, p.project_name, pm.id as "image_id", pm.file_urls, pf.starting_price, p.is_verified, p.project_rank, p.rating, p.ref_number, pf.completion_percentage, c.id as "city_id", c.city, com.id as "community_id", com.community, scom.id as "subcommunity_id", scom.sub_community, p.created_at, pf.built_up_area from projects p join properties_facts pf on pf.project_id = p.id and pf.is_project_fact is true
+-- left join addresses a on p.addresses_id = a.id
+-- left join cities c on a.cities_id = c.id
+-- left join communities com on a.communities_id = com.id
+-- left join sub_communities scom on a.sub_communities_id = scom.id
+-- left join project_media pm on p.id = pm.projects_id and pm.gallery_type = 'Main' and pm.media_type = 1
+-- where pf.starting_price >= @min_price AND pf.starting_price <= @max_price and p.is_verified = @is_verified and p.project_rank = ANY(@project_ranks::bigint[]) and p.status!= 6
+-- AND (c.id = ANY(@cities_id::bigint[]) OR @disable_city::boolean)  AND (com.id = ANY(@communities_id::bigint[]) OR @disable_community::boolean) AND (scom.id = ANY(@subcommunities_id::bigint[]) OR @disable_sub_community::boolean)
+-- AND ((select count(*) from units where units.property_types_id = ANY(@type_names::bigint[]) AND units.property = 1 and status != 0 and units.properties_id IN (select pp.id from project_properties pp where pp.projects_id = p.id)) > 0 OR @disable_type::boolean) 
+-- ORDER BY 
+--     CASE 
+--         WHEN @sort::bigint = 1 THEN p.project_rank END ASC,
+--     CASE
+--         WHEN @sort::bigint = 2 THEN p.created_at END DESC,
+--     CASE 
+--         WHEN @sort::bigint = 3 THEN pf.starting_price END DESC,
+--     CASE
+--         WHEN @sort::bigint = 4 THEN pf.starting_price END ASC LIMIT $1 OFFSET $2;
+
+-- -- name: GetCountAllProjectDetailsWithFilter :one
+-- select count(p.id) from projects p join properties_facts pf on pf.project_id = p.id and pf.is_project_fact is true
+-- left join addresses a on p.addresses_id = a.id
+-- left join cities c on a.cities_id = c.id
+-- left join communities com on a.communities_id = com.id
+-- left join sub_communities scom on a.sub_communities_id = scom.id
+-- left join project_media pm on p.id = pm.projects_id and pm.gallery_type = 'Main' and pm.media_type = 1
+-- where pf.starting_price >= @min_price AND pf.starting_price <= @max_price and p.is_verified = @is_verified and p.project_rank = ANY(@project_ranks::bigint[]) and p.status!= 6
+-- AND (c.id = ANY(@cities_id::bigint[]) OR @disable_city::boolean)  AND (com.id = ANY(@communities_id::bigint[]) OR @disable_community) AND (scom.id = ANY(@subcommunities_id::bigint[]) OR @disable_sub_community)
+-- AND ((select count(*) from units where units.property_types_id = ANY(@type_names::bigint[]) AND units.property = 1 and status != 0 and units.properties_id IN (select pp.id from project_properties pp where pp.projects_id = p.id)) > 0 OR @disable_type) ;
+
+-- -- name: GetAllCitiesProjectsCount :many
+-- select c.id, c.city, count(p.id) from projects p join properties_facts pf on pf.project_id = p.id and pf.is_project_fact is true
+-- left join addresses a on p.addresses_id = a.id
+-- left join cities c on a.cities_id = c.id
+-- left join communities com on a.communities_id = com.id
+-- left join sub_communities scom on a.sub_communities_id = scom.id
+-- left join project_media pm on p.id = pm.projects_id and pm.gallery_type = 'Main' and pm.media_type = 1
+-- where pf.starting_price >= @min_price AND pf.starting_price <= @max_price and p.is_verified = @is_verified and p.project_rank = ANY(@project_ranks::bigint[]) and p.status!= 6
+-- AND (c.id = ANY(@cities_id::bigint[]) OR @disable_city::boolean)  AND (com.id = ANY(@communities_id::bigint[]) OR @disable_community) AND (scom.id = ANY(@subcommunities_id::bigint[]) OR @disable_sub_community)
+-- AND ((select count(*) from units where units.property_types_id = ANY(@type_names::bigint[]) AND units.property = 1 and status != 0 and units.properties_id IN (select pp.id from project_properties pp where pp.projects_id = p.id)) > 0 OR @disable_type) 
+-- group by c.id,c.city;
+
+
+-- -- name: GetPhasesForProject :many
+-- SELECT 
+-- 	sqlc.embed(ph),
+-- 	sqlc.embed(c),
+-- 	sqlc.embed(co),
+-- 	sqlc.embed(s),
+-- 	sqlc.embed(com),
+-- 	sqlc.embed(scom),
+-- 	sqlc.embed(pf),
+-- 	COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama
+-- FROM phases ph
+-- JOIN phases_facts pf ON pf.phases_id=ph.id
+-- JOIN addresses a ON a.id=ph.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN project_properties pp ON pp.phases_id=ph.id AND ph.projects_id=pp.projects_id AND pp.is_multiphase=TRUE
+-- LEFT JOIN properties_media images ON images.properties_id=pp.id AND images.property=1 AND images.media_type = 1 
+-- LEFT JOIN properties_media img360 ON img360.properties_id=pp.id AND img360.property=1 AND img360.media_type = 2
+-- LEFT JOIN properties_media video ON video.properties_id=pp.id AND video.property=1 AND video.media_type = 3 
+-- LEFT JOIN properties_media panorama ON panorama.properties_id=pp.id AND panorama.property=1 AND panorama.media_type = 4
+-- WHERE ph.id= ANY($1::bigint[]) AND ph.status!=6
+-- LIMIT $2 OFFSET $3;
+ 
+-- -- name: GetPhasesPlansForProject :many
+-- SELECT pl.* FROM phases_plans pl
+-- JOIN phases ph ON ph.id=pl.phases_id
+-- WHERE pl.id = ($1::bigint[]) AND ph.status!=6;
+ 
+-- -- name: GetPropertiesForProject :many
+-- SELECT 
+-- 	sqlc.embed(pp),
+-- 	sqlc.embed(c),
+-- 	sqlc.embed(co),
+-- 	sqlc.embed(s),
+-- 	sqlc.embed(com),
+-- 	sqlc.embed(scom),
+-- 	sqlc.embed(pf),
+-- 	COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama
+-- FROM project_properties pp 
+-- JOIN properties_facts pf ON pf.properties_id=pp.id AND pf.property=1
+-- JOIN addresses a ON a.id=pp.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN properties_media images ON images.properties_id=pp.id AND images.property=1 AND images.media_type = 1 
+-- LEFT JOIN properties_media img360 ON img360.properties_id=pp.id AND img360.property=1 AND img360.media_type = 2
+-- LEFT JOIN properties_media video ON video.properties_id=pp.id AND video.property=1 AND video.media_type = 3 
+-- LEFT JOIN properties_media panorama ON panorama.properties_id=pp.id AND panorama.property=1 AND panorama.media_type = 4
+-- WHERE pp.id = ANY($1::bigint[]) AND pp.status!=6
+-- LIMIT $2 OFFSET $3;
+ 
+-- -- name: GetPropertiesPlansForProject :many
+-- SELECT pl.* FROM properties_plans pl
+-- JOIN project_properties pp ON pp.id=pl.properties_id AND pp.property=1
+-- WHERE pl.id = ($1::bigint[]) AND pp.status!=6;
+ 
+-- -- name: GetUnitsForProject :many
+-- SELECT 
+-- 	sqlc.embed(ut),
+-- 	sqlc.embed(c),
+-- 	sqlc.embed(co),
+-- 	sqlc.embed(s),
+-- 	sqlc.embed(com),
+-- 	sqlc.embed(scom),
+-- 	sqlc.embed(uf),
+-- 	COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama
+-- FROM units ut
+-- JOIN project_properties pp ON pp.id=ut.properties_id AND pp.property=1
+-- JOIN unit_facts uf ON uf.unit_id=ut.id
+ 
+-- JOIN addresses a ON a.id=pp.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN unit_media images ON images.units_id=ut.id  AND images.media_type = 1 
+-- LEFT JOIN unit_media img360 ON img360.units_id=ut.id  AND img360.media_type = 2
+-- LEFT JOIN unit_media video ON video.units_id=ut.id  AND video.media_type = 3 
+-- LEFT JOIN unit_media panorama ON panorama.units_id=ut.id  AND panorama.media_type = 4
+-- WHERE 
+-- ut.id = ANY($1::bigint[]) AND pp.status!=6
+-- LIMIT $2 OFFSET $3;
+ 
+-- -- name: GetUnitTypesForProject :many
+-- SELECT ut.* 
+-- FROM unit_type_detail ut
+-- JOIN project_properties pp ON pp.id=ut.properties_id AND pp.property=1
+-- WHERE ut.id = ANY($1::bigint[]) AND pp.status!=6;
+
+-- -- name: GetMultiphaseProjectDetails :one
+-- WITH PhasesDetails AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', ph.id
+--             )
+--         ) AS phases
+--     FROM
+--         projects p
+--     JOIN phases ph ON ph.projects_id = p.id
+--     WHERE
+--         p.is_multiphase = TRUE AND ph.status != 6
+--     GROUP BY
+--         p.id
+-- ),
+-- FacilityCategories AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id,
+--                 'title', catg.category
+--             )
+--         ) AS facility_categories
+--     FROM
+--         projects p
+--     JOIN LATERAL unnest(p.facilities_id) AS facility_id ON true
+--     JOIN facilities f ON f.id = facility_id
+--     JOIN facilities_amenities_categories catg ON catg.id = f.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- ),
+-- AmenitiesCategories AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id,
+--                 'title', catg.category
+--             )
+--         ) AS amenities_categories
+--     FROM
+--         projects p
+--     JOIN LATERAL unnest(p.amenities_id) AS amenity_id ON true
+--     JOIN amenities a ON a.id = amenity_id
+--     JOIN facilities_amenities_categories catg ON catg.id = a.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- ),
+-- PropertyTypes AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', pt.id,
+--                 'title', pt."type"
+--             )
+--         ) AS property_types
+--     FROM
+--         projects p
+--     JOIN project_properties pp ON pp.projects_id = p.id 
+--     JOIN LATERAL unnest(pp.property_types_id) AS property_type ON true
+--     JOIN property_types pt ON pt.id=property_type
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- )
+-- SELECT
+-- 	sqlc.embed(p),
+--     sqlc.embed(pf),
+--     sqlc.embed(c),
+--     sqlc.embed(co),
+--     sqlc.embed(s),
+--     sqlc.embed(com),
+--     sqlc.embed(scom),
+--     sqlc.embed(contact),
+--     sqlc.embed(users_details),
+--     COALESCE(pd.phases, '[]'::json) AS phases,
+--     COALESCE(ut.property_types, '[]'::json) AS property_types,
+--     COALESCE(fc.facility_categories, '[]'::json) AS facility_categories,
+--     COALESCE(ac.amenities_categories, '[]'::json) AS amenities_categories,
+--     COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama
+-- FROM
+--     projects p
+-- JOIN addresses a ON a.id = p.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- JOIN properties_facts pf ON pf.project_id = p.id AND pf.is_project_fact = TRUE
+-- JOIN users users_details ON users_details.id = p.users_id
+-- JOIN profiles contact ON contact.id = users_details.profiles_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN project_media images ON images.projects_id = p.id AND images.media_type = 1 AND images.gallery_type = 'Main'
+-- LEFT JOIN project_media img360 ON img360.projects_id = p.id AND img360.media_type = 2 AND img360.gallery_type = 'Main'
+-- LEFT JOIN project_media video ON video.projects_id = p.id AND video.media_type = 3 AND video.gallery_type = 'Main'
+-- LEFT JOIN project_media panorama ON panorama.projects_id = p.id AND panorama.media_type = 4 AND panorama.gallery_type = 'Main'
+-- LEFT JOIN PhasesDetails pd ON pd.project_id = p.id
+-- LEFT JOIN PropertyTypes ut ON ut.project_id = p.id
+-- LEFT JOIN FacilityCategories fc ON fc.project_id = p.id
+-- LEFT JOIN AmenitiesCategories ac ON ac.project_id = p.id
+-- WHERE p.id = $1 AND p.status != 6;
+
+-- -- name: GetFacilitiesForProjectByCatg :many
+-- SELECT
+-- 		f.*,
+-- 		fmc.category
+-- FROM
+--         projects p        
+-- JOIN LATERAL unnest(p.facilities_id) AS facility_id ON true
+-- JOIN facilities f ON f.id = facility_id
+-- JOIN facilities_amenities_categories fmc ON f.category_id=fmc.id
+-- WHERE p.id=$1 AND f.category_id=$2;
+
+-- -- name: GetPhasesCountForProject :one
+-- select count(*) from phases where projects_id=$1 AND status!=6 ;
+
+-- -- name: GetSinglePhaseDetails :one
+-- WITH PhaseProperties AS (
+-- --get project properties
+-- SELECT
+--         ph.id as phases_id,
+--         json_agg(
+--              pp.id
+--         ) AS properties
+--     FROM
+--         phases ph
+--     JOIN project_properties pp ON pp.phases_id=ph.id AND pp.projects_id=ph.projects_id 
+--     WHERE
+--         pp.status != 6
+--     GROUP BY
+--         ph.id
+-- ),
+-- FacilityCategories AS (
+--     SELECT
+--         p.id as phases_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id ,
+--                 'title', catg.category 
+--             )
+--         ) AS facility_categories
+--     FROM
+--         phases p
+--     JOIN LATERAL unnest(p.facilities) AS facility_id ON true
+--     JOIN facilities f ON f.id = facility_id
+--     JOIN facilities_amenities_categories catg ON catg.id = f.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- ),
+-- AmenitiesCategories AS (
+--     SELECT
+--         p.id as phases_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id ,
+--                 'title', catg.category 
+--             )
+--         ) AS amenities_categories
+--     FROM
+--         phases p
+--     JOIN LATERAL unnest(p.amenities) AS amenity_id ON true
+--     JOIN amenities a ON a.id = amenity_id
+--     JOIN facilities_amenities_categories catg ON catg.id = a.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- )
+-- select 
+-- 	sqlc.embed(ph),
+-- 	sqlc.embed(c),
+-- 	sqlc.embed(co),
+-- 	sqlc.embed(s),
+-- 	sqlc.embed(com),
+-- 	sqlc.embed(scom),
+-- 	sqlc.embed(phf),
+-- 	COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama,
+--     COALESCE(fc.facility_categories, '[]'::json) AS facility_categories,
+--     COALESCE(ac.amenities_categories, '[]'::json) AS amenities_categories,
+--     php.properties AS properties
+-- FROM phases ph
+-- JOIN addresses a ON a.id=ph.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN project_properties pp ON pp.phases_id=ph.id AND ph.projects_id=pp.projects_id AND pp.is_multiphase=TRUE
+-- LEFT JOIN properties_media images ON images.properties_id=pp.id AND images.property=1 AND images.media_type = 1 
+-- LEFT JOIN properties_media img360 ON img360.properties_id=pp.id AND img360.property=1 AND img360.media_type = 2
+-- LEFT JOIN properties_media video ON video.properties_id=pp.id AND video.property=1 AND video.media_type = 3 
+-- LEFT JOIN properties_media panorama ON panorama.properties_id=pp.id AND panorama.property=1 AND panorama.media_type = 4
+-- LEFT JOIN phases_facts phf ON phf.phases_id=ph.id
+-- LEFT JOIN PhaseProperties php ON php.phases_id=ph.id
+-- LEFT JOIN FacilityCategories fc ON fc.phases_id=ph.id
+-- LEFT JOIN AmenitiesCategories ac ON ac.phases_id=ph.id
+-- WHERE ph.id=$1;
+
+
+-- -- name: GetRemainingPhasesCountForProject :one
+-- SELECT 
+-- COUNT(*)
+-- FROM phases 
+-- WHERE projects_id=$1 AND id!=$2 AND status!=6;
+
+-- -- name: GetPhasePropertyDetails :one
+-- WITH AmenitiesCategories AS (
+--     SELECT
+--         p.id as property_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id ,
+--                 'title', catg.category 
+--             )
+--         ) AS amenities_categories
+--     FROM
+--         project_properties p
+--     JOIN LATERAL unnest(p.amenities_id) AS amenity_id ON true
+--     JOIN amenities a ON a.id = amenity_id
+--     JOIN facilities_amenities_categories catg ON catg.id = a.category_id
+--     WHERE p.id = $1
+--     GROUP BY
+--         p.id
+-- ),
+-- FacilityCategories AS (
+--     SELECT
+--         p.id AS project_id,
+--         json_agg(
+--            distinct jsonb_build_object(
+--                 'id', catg.id,
+--                 'title', catg.category
+--             )
+--         ) AS facility_categories
+--     FROM
+--         projects p
+--     JOIN LATERAL unnest(p.facilities_id) AS facility_id ON true
+--     JOIN facilities f ON f.id = facility_id
+--     JOIN facilities_amenities_categories catg ON catg.id = f.category_id 
+--     GROUP BY
+--         p.id
+-- ),
+-- Units AS (
+-- SELECT
+--         pp.id AS property_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', u.id
+--             )
+--         ) AS units
+--     FROM
+--         project_properties pp
+--     JOIN units u ON u.properties_id=pp.id AND u.property=1
+--     WHERE
+--         pp.status != 6
+--     GROUP BY
+--         pp.id
+-- ),
+-- PropertyPlans AS (
+-- SELECT
+--         pp.id AS property_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', u.id,
+--                 'title',u.title,
+--                 'img_url',u.img_url
+--             )
+--         ) AS plans
+--     FROM
+--         project_properties pp
+--     JOIN properties_plans u ON u.properties_id=pp.id AND u.property=1
+--     WHERE
+--         pp.status != 6
+--     GROUP BY
+--         pp.id
+-- ),
+-- UnitTypes AS (
+--     SELECT
+--         pp.id AS property_id,
+--         json_agg(
+--             json_build_object(
+--                 'id', ut.id,
+--                 'title', ut.title
+--             )
+--         ) AS unitypes
+--     FROM
+--         project_properties pp 
+--     JOIN unit_type_detail ut ON ut.properties_id = pp.id AND ut.property = 1
+--     WHERE
+--         pp.status != 6
+--     GROUP BY
+--         pp.id
+-- )
+-- SELECT
+--     sqlc.embed(pp),
+--     sqlc.embed(c),
+--     sqlc.embed(co),
+--     sqlc.embed(s),
+--     sqlc.embed(com),
+--     sqlc.embed(scom),
+--     sqlc.embed(pf),
+-- 	COALESCE(ac.amenities_categories, '[]'::json) AS amenities_categories,
+-- 	COALESCE(fc.facility_categories, '[]'::json) AS facility_categories,
+-- 	COALESCE(ut.unitypes, '[]'::json) AS unit_types,
+--   	COALESCE(pu.units, '[]'::json) AS units,
+-- 	COALESCE(pl.plans, '[]'::json) AS plans,
+-- 	COALESCE(images.id, 0) AS images_media_id,
+--     COALESCE(images.file_urls, ARRAY[]::text[]) AS images,
+--     COALESCE(img360.id, 0) AS img360_media_id,
+--     COALESCE(img360.file_urls, ARRAY[]::text[]) AS img360,
+--     COALESCE(video.id, 0) AS video_media_id,
+--     COALESCE(video.file_urls, ARRAY[]::text[]) AS video,
+--     COALESCE(panorama.id, 0) AS panorama_media_id,
+--     COALESCE(panorama.file_urls, ARRAY[]::text[]) AS panorama
+-- FROM project_properties pp 
+-- JOIN properties_facts pf ON pf.properties_id=pp.id AND pf.property=1
+-- JOIN addresses a ON a.id=pp.addresses_id
+-- JOIN cities c ON a.cities_id = c.id
+-- JOIN countries co ON a.countries_id = co.id
+-- JOIN states s ON s.id = a.states_id
+-- LEFT JOIN communities com ON com.id = a.communities_id
+-- LEFT JOIN sub_communities scom ON scom.id = a.sub_communities_id
+-- LEFT JOIN properties_media images ON images.properties_id=pp.id AND images.property=1 AND images.media_type = 1 AND images.gallery_type='Main'
+-- LEFT JOIN properties_media img360 ON img360.properties_id=pp.id AND img360.property=1 AND img360.media_type = 2 AND img360.gallery_type='Main'
+-- LEFT JOIN properties_media video ON video.properties_id=pp.id AND video.property=1 AND video.media_type = 3 AND video.gallery_type='Main'
+-- LEFT JOIN properties_media panorama ON panorama.properties_id=pp.id AND panorama.property=1 AND panorama.media_type = 4 AND panorama.gallery_type='Main'
+-- LEFT JOIN AmenitiesCategories ac ON pp.id=ac.property_id
+-- LEFT JOIN FacilityCategories fc ON pp.projects_id=fc.project_id
+-- LEFT JOIN Units pu ON pu.property_id = pp.id
+-- LEFT JOIN PropertyPlans pl ON pl.property_id = pp.id
+-- LEFT JOIN UnitTypes ut ON ut.property_id=pp.id
+-- WHERE pp.id =$1 AND pp.status!=6;

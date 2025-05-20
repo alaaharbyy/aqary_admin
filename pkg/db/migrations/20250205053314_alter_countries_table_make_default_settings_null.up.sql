@@ -1,0 +1,1 @@
+ALTER TABLE countries ALTER COLUMN default_settings DROP NOT NULL;

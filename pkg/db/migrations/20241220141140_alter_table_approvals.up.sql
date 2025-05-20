@@ -1,0 +1,2 @@
+ALTER TABLE "approvals"
+ALTER COLUMN "files" DROP NOT NULL;

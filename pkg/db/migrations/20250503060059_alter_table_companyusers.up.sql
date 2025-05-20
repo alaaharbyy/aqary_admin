@@ -1,0 +1,1 @@
+ALTER TABLE company_users ADD COLUMN active_listings BIGINT DEFAULT 0;

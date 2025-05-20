@@ -1,0 +1,1 @@
+ALTER TABLE banner_order ADD COLUMN note VARCHAR;

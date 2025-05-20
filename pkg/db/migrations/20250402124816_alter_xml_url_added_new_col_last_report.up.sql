@@ -1,0 +1,1 @@
+ALTER TABLE xml_url ADD COLUMN last_report VARCHAR NULL;

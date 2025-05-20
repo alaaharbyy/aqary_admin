@@ -1,0 +1,1 @@
+ALTER TABLE entity_review ADD COLUMN overall_avg float NOT NULL DEFAULT 0.0;

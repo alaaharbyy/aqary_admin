@@ -1,0 +1,14 @@
+{
+  "greeting": "Hello, {{.Name}}!",
+  "farewell": "Goodbye, {{.Name}}!",
+  "Male": "Male",
+  "Female": "Female",
+  "emails": {
+    "otp-subject": "OTP Verification",
+    "xml-report": "XML Report for {{.purpose}}"
+  },
+  "Residential":"Residential",
+  "Commercial":   "Commercial",
+	"Agricultural": "Agricultural",
+	"Industrial":   "Industrial"
+}

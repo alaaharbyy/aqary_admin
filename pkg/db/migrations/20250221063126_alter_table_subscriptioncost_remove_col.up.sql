@@ -1,0 +1,1 @@
+AlTER TABLE subscription_cost DROP COLUMN no_of_units_per_months;

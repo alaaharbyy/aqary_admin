@@ -1,0 +1,2 @@
+ALTER TABLE "appointment"
+    ADD COLUMN "valid_id" BIGINT  NOT NULL DEFAULT 0;

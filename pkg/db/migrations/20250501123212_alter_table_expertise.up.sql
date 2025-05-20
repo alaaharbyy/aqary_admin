@@ -1,0 +1,1 @@
+ALTER TABLE expertise DROP CONSTRAINT unique_expertise_title

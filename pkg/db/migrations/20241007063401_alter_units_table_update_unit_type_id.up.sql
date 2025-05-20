@@ -1,0 +1,2 @@
+ALTER TABLE units
+ALTER COLUMN unit_type_id SET NOT NULL;

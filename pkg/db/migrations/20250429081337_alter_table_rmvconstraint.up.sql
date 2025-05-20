@@ -1,0 +1,3 @@
+ALTER TABLE country_guide DROP CONSTRAINT country_guide_country_id_status_key;
+ALTER TABLE state_guide DROP CONSTRAINT state_guide_state_id_status_key;
+ALTER TABLE city_guide DROP CONSTRAINT city_guide_city_id_status_key;

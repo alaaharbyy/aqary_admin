@@ -1,0 +1,1 @@
+ALTER TABLE company_verification ADD COLUMN draft_contract VARCHAR NULL;

@@ -1,0 +1,53 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Docker files
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Logs
+logs
+*.log
+
+# Runtime data
+.DS_Store
+.env
+.env.*
+
+# Dependency directories
+vendor/
+node_modules/
+
+# Testing and documentation 
+docs/
+tests/
+test/
+*.test.go
+*_test.go
+
+# Build artifacts
+dist/
+build/
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Any other large artifacts that aren't needed for the build
+prometheus/
+grafana/
+loki/
+promtail/
+*.md
+LICENSE

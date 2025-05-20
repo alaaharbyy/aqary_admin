@@ -1,0 +1,230 @@
+-- -- name: GetAllServicesReviews :many
+-- SELECT
+--     sr.id AS service_review_id,
+--     ms.title AS main_service_title,
+--     s.title AS service_name,
+--     u.email AS reviewer_email,
+--     u.username AS reviewer_username,
+--     sr.service_quality,
+--     sr.service_expertise,
+--     sr.service_facilities,
+--     sr.service_responsiveness,
+--     sr.review
+-- FROM
+--     service_reviews AS sr
+-- JOIN (
+--     SELECT
+--         unnest(sc.services_id) AS service_id,
+--         sc.services_companies_id AS services_company
+--     FROM
+--         services_companies_services sc
+--     WHERE
+--         sc.services_companies_id IN (
+--             SELECT id FROM services_companies WHERE users_id = $1
+--         )
+-- ) AS ab ON ab.service_id = sr.company_service_id
+-- INNER JOIN services s ON s.id = ab.service_id
+-- INNER JOIN users u ON u.id = sr.reviewer
+-- INNER JOIN main_services ms ON s.main_services_id = ms.id
+-- LIMIT $2
+-- OFFSET $3;
+
+-- -- name: GetCountServicesReviews :one
+-- SELECT
+-- COUNT(*)
+-- FROM
+--     service_reviews AS sr
+-- JOIN (
+--     SELECT
+--         unnest(sc.services_id) AS service_id,
+--         sc.services_companies_id AS services_company
+--     FROM
+--         services_companies_services sc
+--     WHERE
+--         sc.services_companies_id IN (
+--             SELECT id FROM services_companies WHERE users_id = $1
+--         )
+-- ) AS ab ON ab.service_id = sr.company_service_id;
+
+-- -- name: GetServiceReviewsByServiceID :many
+-- select * from service_reviews where company_service_id=$1;
+
+-- -- name: GetAllServicesReviewsForAdmin :many
+-- WITH x AS (
+--     SELECT
+--            sr.id AS service_review_id,
+-- 		    ms.id as main_service_id,
+-- 		    ms.title AS main_service_title,
+-- 		    s.id as service_id,
+-- 		    s.title AS service_name,
+-- 		    u.email AS reviewer_email,
+-- 		    u.username AS reviewer_username,
+-- 		    sr.service_quality,
+-- 		    sr.service_expertise,
+-- 		    sr.service_facilities,
+-- 		    sr.service_responsiveness,
+-- 		    sr.review,
+--                             sr.review_date, 
+--                             sr.proof_images,
+--                             sr.title
+--     FROM
+--         service_reviews AS sr
+--     JOIN (
+--         SELECT
+--             unnest(sc.services_id) AS service_id,
+--             sc.services_companies_id AS services_company
+--         FROM
+--             services_companies_services sc
+--         WHERE
+--             sc.services_companies_id IN (
+--                 SELECT id FROM services_companies
+--                 WHERE services_companies.users_id = $1
+--             )
+--     ) AS ab ON ab.service_id = sr.company_service_id
+-- 	INNER JOIN services s ON s.id = ab.service_id
+-- 	INNER JOIN users u ON u.id = sr.reviewer
+-- 	INNER JOIN main_services ms ON s.main_services_id = ms.id
+--     UNION ALL
+--     SELECT
+--           sr.id AS service_review_id,
+-- 		    ms.id as main_service_id,
+-- 		    ms.title AS main_service_title,
+-- 		    s.id as service_id,
+-- 		    s.title AS service_name,
+-- 		    u.email AS reviewer_email,
+-- 		    u.username AS reviewer_username,
+-- 		    sr.service_quality,
+-- 		    sr.service_expertise,
+-- 		    sr.service_facilities,
+-- 		    sr.service_responsiveness,
+-- 		    sr.review,
+--                              sr.review_date, 
+--                             sr.proof_images,
+--                             sr.title
+ 
+--     FROM
+--         service_reviews AS sr
+--     JOIN (
+--         SELECT
+--             unnest(scb.services_id) AS branch_service_id,
+--             scb.service_company_branches_id AS services_company
+--         FROM
+--             services_branch_companies_services scb
+--         WHERE
+--             scb.service_company_branches_id IN (
+--                 SELECT id FROM service_company_branches
+--                 WHERE users_id = $1
+--             )
+--     ) AS abc ON abc.branch_service_id = sr.company_service_id
+-- 	INNER JOIN services s ON s.id = abc.branch_service_id
+-- 	INNER JOIN users u ON u.id = sr.reviewer
+-- 	INNER JOIN main_services ms ON s.main_services_id = ms.id
+-- )
+-- SELECT * FROM x
+-- ORDER BY x.service_review_id DESC
+-- LIMIT $2
+-- OFFSET $3;
+
+-- -- name: GetServicesReviewsCountForAdmin :one
+-- WITH x AS (
+--     SELECT
+--            sr.id AS service_review_id
+--     FROM
+--         service_reviews AS sr
+--     JOIN (
+--         SELECT
+--             unnest(sc.services_id) AS service_id,
+--             sc.services_companies_id AS services_company
+--         FROM
+--             services_companies_services sc
+--         WHERE
+--             sc.services_companies_id IN (
+--                 SELECT id FROM services_companies
+--                 WHERE services_companies.users_id = $1
+--             )
+--     ) AS ab ON ab.service_id = sr.company_service_id
+--     UNION ALL
+--     SELECT
+--           sr.id AS service_review_id
+--     FROM
+--         service_reviews AS sr
+--     JOIN (
+--         SELECT
+--             unnest(scb.services_id) AS branch_service_id,
+--             scb.service_company_branches_id AS services_company
+--         FROM
+--             services_branch_companies_services scb
+--         WHERE
+--             scb.service_company_branches_id IN (
+--                 SELECT id FROM service_company_branches
+--                 WHERE users_id = $1
+--             )
+--     ) AS abc ON abc.branch_service_id = sr.company_service_id
+-- )
+-- SELECT COUNT(*) FROM x;
+
+-- -- name: GetAllServicesReviewsForCompanyUser :many
+ 
+-- SELECT
+--     sr.id AS service_review_id,
+--     ms.id AS main_service_id,
+--     ms.title AS main_service_title,
+--     s.id AS service_id,
+--     s.title AS service_name,
+--     u.email AS reviewer_email,
+--     u.username AS reviewer_username,
+--     sr.service_quality,
+--     sr.service_expertise,
+--     sr.service_facilities,
+--     sr.service_responsiveness,
+--     sr.review,
+--     sr.review_date, 
+--     sr.proof_images,
+--     sr.title
+-- FROM
+--     service_reviews AS sr
+-- INNER JOIN company_users cu on users_id=$1
+-- LEFT JOIN (
+--         SELECT
+--             unnest(sc.services_id) AS service_id,
+--             sc.services_companies_id AS services_company
+--         FROM
+--             services_companies_services sc
+-- ) AS ab ON ab.service_id = sr.company_service_id AND ab.services_company=cu.company_id AND cu.is_branch=FALSE
+-- LEFT JOIN (
+--         SELECT
+--             unnest(scb.services_id) AS branch_service_id,
+--             scb.service_company_branches_id AS services_company
+--         FROM
+--             services_branch_companies_services scb
+-- ) AS abc ON abc.branch_service_id = sr.company_service_id AND abc.services_company=cu.company_id AND cu.is_branch=TRUE
+-- INNER JOIN services s ON s.id = COALESCE(ab.service_id,abc.branch_service_id)
+-- INNER JOIN users u ON u.id = sr.reviewer
+-- INNER JOIN main_services ms ON s.main_services_id = ms.id
+-- ORDER BY sr.id  DESC
+-- LIMIT $2
+-- OFFSET $3;
+
+-- -- name: GetServicesReviewsCountForCompanyUser :one
+-- SELECT
+--    COUNT(*)
+-- FROM
+--     service_reviews AS sr
+-- INNER JOIN company_users cu on users_id=$1
+-- LEFT JOIN (
+--         SELECT
+--             unnest(sc.services_id) AS service_id,
+--             sc.services_companies_id AS services_company
+--         FROM
+--             services_companies_services sc
+-- ) AS ab ON ab.service_id = sr.company_service_id AND ab.services_company=cu.company_id AND cu.is_branch=FALSE
+-- LEFT JOIN (
+--         SELECT
+--             unnest(scb.services_id) AS branch_service_id,
+--             scb.service_company_branches_id AS services_company
+--         FROM
+--             services_branch_companies_services scb
+-- ) AS abc ON abc.branch_service_id = sr.company_service_id AND abc.services_company=cu.company_id AND cu.is_branch=TRUE
+-- INNER JOIN services s ON s.id = COALESCE(ab.service_id,abc.branch_service_id)
+-- INNER JOIN users u ON u.id = sr.reviewer
+-- INNER JOIN main_services ms ON s.main_services_id = ms.id;

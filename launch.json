@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+       
+ 
+        {
+            "name": "Golang Debug",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "./cmd/main/main.go",
+            "dlvFlags": ["--check-go-version=false"],
+            "cwd": ".",
+            "env": {
+                "REDIS_HOST":"192.168.1.238:6379",
+                "REDIS_DB":0,
+                "REDIS_PASSWORD":"root"
+            }
+        }
+    ]
+}

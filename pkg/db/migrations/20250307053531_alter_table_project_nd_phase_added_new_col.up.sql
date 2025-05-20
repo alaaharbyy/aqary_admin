@@ -1,0 +1,24 @@
+ALTER TABLE projects 
+ADD COLUMN bank_name VARCHAR NULL,
+ADD COLUMN registration_date DATE NULL,
+ADD COLUMN escrow_number VARCHAR NULL;
+
+ALTER TABLE phases 
+ADD COLUMN bank_name VARCHAR NOT NULL DEFAULT 'FAB',
+ADD COLUMN registration_date DATE NOT NULL DEFAULT now(),
+ADD COLUMN escrow_number VARCHAR NOT NULL DEFAULT 'escrow';
+
+ALTER TABLE phases 
+ALTER COLUMN bank_name DROP DEFAULT,
+ALTER COLUMN registration_date DROP DEFAULT,
+ALTER COLUMN escrow_number DROP DEFAULT;
+
+
+ALTER TABLE contacts 
+DROP COLUMN company_id,
+ADD COLUMN entity_id bigint NOT NULL DEFAULT 1,
+ADD COLUMN entity_type_id bigint NOT NULL DEFAULT 6;
+
+ALTER TABLE contacts 
+ALTER COLUMN entity_id DROP DEFAULT,
+ALTER COLUMN entity_type_id DROP DEFAULT;

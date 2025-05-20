@@ -1,0 +1,76 @@
+-- -- name: GetAllCompanyServices :many
+-- with x as (
+-- -- services
+-- select  i as service_id, s.title, s.description, scr.rating, 1 as "type", FALSE as "is_branch" from services_companies_services scs
+-- CROSS JOIN UNNEST(scs.services_id) as i LEFT JOIN services s ON i = s.id LEFT JOIN services_companies_reviews scr
+-- on scs.services_companies_id = scr.services_companies_id WHERE scs.services_companies_id = $1 AND FALSE = $2 AND 1 = $3
+-- UNION
+-- -- developer
+-- select  i as service_id, s.title, s.description, dcr.rating, 2 as "type", FALSE as "is_branch"  from developer_companies_services dcs  
+-- CROSS JOIN UNNEST(dcs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN developer_company_reviews dcr on dcs.developer_companies_id = dcr.developer_companies_id
+-- WHERE dcs.developer_companies_id = $1 AND FALSE = $2 AND 2 = $3
+-- UNION
+-- -- broker
+-- select  i as service_id, s.title, s.description, bcr.rating, 3 as "type", FALSE as "is_branch"  from broker_companies_services bcs  
+-- CROSS JOIN UNNEST(bcs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN broker_company_reviews bcr on bcs.broker_companies_id = bcr.broker_companies_id
+-- WHERE bcs.broker_companies_id = $1 AND FALSE = $2 AND 3 = $3
+-- UNION
+-- -- broker branch
+-- select  i as service_id, s.title, s.description, bbcr.rating, 3 as "type", TRUE as "is_branch"  from broker_companies_branches_services bcbs  
+-- CROSS JOIN UNNEST(bcbs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN broker_branch_company_reviews bbcr on bcbs.broker_companies_branches_id = bbcr.broker_companies_branches_id
+-- WHERE bcbs.broker_companies_branches_id = $1 AND TRUE = $2 AND 3 = $3
+-- UNION
+-- -- developer branch
+-- select  i as service_id, s.title, s.description, dbcr.rating, 2 as "type", TRUE as "is_branch"  from developer_companies_branches_services dcbs  
+-- CROSS JOIN UNNEST(dcbs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN developer_branch_company_reviews dbcr on dcbs.developer_company_branches_id = dbcr.developer_company_branches_id
+-- WHERE dcbs.developer_company_branches_id = $1 AND TRUE = $2 AND 2 = $3
+-- UNION
+-- -- services branch
+-- select  i as service_id, s.title, s.description, sbcr.rating, 1 as "type", TRUE as "is_branch"  from services_branch_companies_services sbcs  
+-- CROSS JOIN UNNEST(sbcs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN service_branch_company_reviews sbcr on sbcs.service_company_branches_id = sbcr.service_company_branches_id
+-- WHERE sbcs.service_company_branches_id = $1 AND TRUE = $2 AND 1 = $3
+-- ) SELECT * FROM x LIMIT $4 OFFSET $5;
+
+
+-- -- name: GetCountAllCompanyServices :one
+-- with x as (
+-- -- services
+-- select  i as service_id, s.title, s.description, scr.rating, 1 as "type", FALSE as "is_branch" from services_companies_services scs
+-- CROSS JOIN UNNEST(scs.services_id) as i LEFT JOIN services s ON i = s.id LEFT JOIN services_companies_reviews scr
+-- on scs.services_companies_id = scr.services_companies_id WHERE scs.services_companies_id = $1 AND FALSE = $2 AND 1 = $3
+-- UNION
+-- -- developer
+-- select  i as service_id, s.title, s.description, dcr.rating, 2 as "type", FALSE as "is_branch"  from developer_companies_services dcs  
+-- CROSS JOIN UNNEST(dcs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN developer_company_reviews dcr on dcs.developer_companies_id = dcr.developer_companies_id
+-- WHERE dcs.developer_companies_id = $1 AND FALSE = $2 AND 2 = $3
+-- UNION
+-- -- broker
+-- select  i as service_id, s.title, s.description, bcr.rating, 3 as "type", FALSE as "is_branch"  from broker_companies_services bcs  
+-- CROSS JOIN UNNEST(bcs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN broker_company_reviews bcr on bcs.broker_companies_id = bcr.broker_companies_id
+-- WHERE bcs.broker_companies_id = $1 AND FALSE = $2 AND 3 = $3
+-- UNION
+-- -- broker branch
+-- select  i as service_id, s.title, s.description, bbcr.rating, 3 as "type", TRUE as "is_branch"  from broker_companies_branches_services bcbs  
+-- CROSS JOIN UNNEST(bcbs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN broker_branch_company_reviews bbcr on bcbs.broker_companies_branches_id = bbcr.broker_companies_branches_id
+-- WHERE bcbs.broker_companies_branches_id = $1 AND TRUE = $2 AND 3 = $3
+-- UNION
+-- -- developer branch
+-- select  i as service_id, s.title, s.description, dbcr.rating, 2 as "type", TRUE as "is_branch"  from developer_companies_branches_services dcbs  
+-- CROSS JOIN UNNEST(dcbs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN developer_branch_company_reviews dbcr on dcbs.developer_company_branches_id = dbcr.developer_company_branches_id
+-- WHERE dcbs.developer_company_branches_id = $1 AND TRUE = $2 AND 2 = $3
+-- UNION
+-- -- services branch
+-- select  i as service_id, s.title, s.description, sbcr.rating, 1 as "type", TRUE as "is_branch"  from services_branch_companies_services sbcs  
+-- CROSS JOIN UNNEST(sbcs.services_id) as i LEFT JOIN services s ON i = s.id
+-- LEFT JOIN service_branch_company_reviews sbcr on sbcs.service_company_branches_id = sbcr.service_company_branches_id
+-- WHERE sbcs.service_company_branches_id = $1 AND TRUE = $2 AND 1 = $3
+-- )  SELECT COUNT(*) FROM x;

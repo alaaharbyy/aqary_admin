@@ -1,0 +1,1 @@
+ALTER TABLE company_activities ADD COLUMN activity_name_ar VARCHAR NULL;

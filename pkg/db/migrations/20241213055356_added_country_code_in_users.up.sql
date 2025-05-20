@@ -1,0 +1,3 @@
+ALTER TABLE users ADD COLUMN country_code bigint NULL DEFAULT 971;
+
+ALTER TABLE users ALTER COLUMN country_code DROP DEFAULT;

@@ -1,0 +1,5 @@
+ALTER TABLE projects DROP COLUMN IF EXISTS amenities_id;
+ALTER TABLE projects DROP COLUMN IF EXISTS facilities_id;
+
+ALTER TABLE phases DROP COLUMN IF EXISTS facilities;
+ALTER TABLE phases DROP COLUMN IF EXISTS amenities;

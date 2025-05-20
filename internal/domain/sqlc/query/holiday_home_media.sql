@@ -1,0 +1,26 @@
+-- -- name: CreateHolidayHomeMedia :one
+-- INSERT INTO holiday_home_media (
+--     image_url, 
+--     image360_url, 
+--     video_url, 
+--     panaroma_url, 
+--     main_media_section, 
+--     holiday_home_id,
+--     created_at,
+--     updated_at
+--     )
+-- VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+-- RETURNING *;
+
+-- -- name: UpdateHolidayHomeMedia :one
+-- UPDATE holiday_home_media
+-- SET 
+-- 	image_url = $2, 
+-- 	image360_url = $3, 
+-- 	video_url = $4, 
+-- 	panaroma_url = $5, 
+-- 	main_media_section = $6, 
+-- 	holiday_home_id = $7,
+-- 	updated_at = $8
+-- 	WHERE id = $1
+-- RETURNING *;

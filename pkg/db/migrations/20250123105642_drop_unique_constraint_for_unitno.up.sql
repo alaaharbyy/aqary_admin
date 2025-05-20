@@ -1,0 +1,1 @@
+ALTER TABLE units DROP CONSTRAINT unique_unit_no_entity_type_id_entity_id_units;

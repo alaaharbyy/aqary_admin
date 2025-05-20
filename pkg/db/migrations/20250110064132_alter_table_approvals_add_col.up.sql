@@ -1,0 +1,5 @@
+ALTER TABLE approvals
+ADD COLUMN user_ids bigint[] NOT NULL DEFAULT ARRAY[11];
+
+ALTER TABLE approvals
+ALTER COLUMN user_ids DROP DEFAULT;

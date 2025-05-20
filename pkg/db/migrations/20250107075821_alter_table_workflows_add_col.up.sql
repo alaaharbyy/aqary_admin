@@ -1,0 +1,5 @@
+ALTER TABLE workflows
+ADD COLUMN user_ids bigint[] NOT NULL DEFAULT ARRAY[11];
+
+ALTER TABLE workflows
+ALTER COLUMN user_ids DROP DEFAULT;

@@ -1,0 +1,1 @@
+ALTER TABLE property ADD COLUMN is_project_property bool NOT NULL default false;

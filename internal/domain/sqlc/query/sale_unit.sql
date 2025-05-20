@@ -1,0 +1,71 @@
+
+
+-- -- name: GetPropertiesWithInvestmentBySaleId :one
+-- SELECT 
+--     pf.type_name_id,
+--     pf.price,
+--     pf.ask_price,
+--     pf.plot_area,
+--     pf.service_charge,
+--     pf.no_of_units, 
+--     pf."view", 
+--     pf.furnished, 
+--     COALESCE(pp.property, fp.property, bc.property, op.property) as property, 
+--     pf.completion_status,
+--     COALESCE(p.facilities_id, fp.facilities_id, bc.facilities_id, op.facilities_id) as facilities_id, 
+--     pf.built_up_area,
+--     u.id as unit_id, 
+--     su.id as sale_unit_id,
+--     pt.type as "property_type",
+--     uf.price as unit_price,
+--     su.title as "sale_unit_title",
+--     u.property_unit_rank, 
+--     su.description as "description",
+--     countries.country,
+--     cities.city,
+--     communities.community,
+--     sub_communities.sub_community, 
+--     uf.service_charge as unit_service_charge,
+--     uf.plot_area as unit_plot_area,
+--     uf.no_of_units as unit_no_of_units,
+--     uf.built_up_area as unit_built_up_area,
+--     uf."view" as unit_view,
+--     uf.completion_status as unit_completion_status,
+--     u.amenities_id,
+--     u.ref_no,
+--     u.is_verified,
+--     u.property as unit_property,
+--     u.properties_id as unit_properties_id,
+--     u.is_branch as unit_is_branch,
+--     uf.bedroom,
+--     uf.bathroom,
+--     COALESCE(um.file_urls, ARRAY[]::varchar[]) as "file_urls",
+--     COALESCE(cast(cardinality(um.file_urls) as bigint), 0) as "counter",
+--     uf.completion_date,
+--     uf.handover_date,
+--     uf.ownership,
+--     uf.parking,
+--     uf.start_date,
+--     uf.furnished as unit_furnished,
+--     uf.no_of_floor,
+--     ut.title as unit_title,
+--     ut.image_url
+-- FROM sale_unit su
+-- INNER JOIN units u ON su.unit_id = u.id AND su.status = 2 -- why left join not inner 
+-- LEFT JOIN properties_facts pf ON pf.properties_id = u.properties_id AND pf.property = u.property AND pf.is_branch = u.is_branch
+-- LEFT JOIN project_properties pp ON pf.properties_id = pp.id AND pf.property = u.property AND pf.is_branch = u.is_branch AND pp.id = u.properties_id
+-- LEFT JOIN projects p ON p.id = pp.projects_id
+-- LEFT JOIN freelancers_properties fp ON pf.properties_id = fp.id AND pf.property = u.property AND pf.is_branch = u.is_branch AND fp.id = u.properties_id
+-- LEFT JOIN broker_company_agent_properties bc ON pf.properties_id = bc.id AND pf.property = u.property AND pf.is_branch = false AND bc.id = u.properties_id
+-- LEFT JOIN owner_properties op ON pf.properties_id = op.id AND pf.property = u.property AND pf.is_branch = u.is_branch AND op.id = u.properties_id
+-- LEFT JOIN addresses ON u.addresses_id = addresses.id 
+-- LEFT JOIN cities ON cities.id = addresses.cities_id 
+-- LEFT JOIN countries ON countries.id = addresses.countries_id
+-- LEFT JOIN unit_facts uf ON su.unit_facts_id = uf.id
+-- INNER JOIN property_types pt ON u.property_types_id = pt.id -- why left join not inner 
+-- LEFT JOIN unit_media um ON u.id = um.units_id AND um.gallery_type='Main' AND um.media_type=1
+-- LEFT JOIN communities ON communities.id = addresses.communities_id
+-- LEFT JOIN sub_communities ON sub_communities.id = addresses.sub_communities_id
+-- LEFT JOIN unit_type_detail ut ON ut.id = u.type_name_id
+-- WHERE su.id = $1;
+

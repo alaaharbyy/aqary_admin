@@ -1,0 +1,1 @@
+ALTER TABLE entity_review ADD COLUMN image_url VARCHAR[] NULL;

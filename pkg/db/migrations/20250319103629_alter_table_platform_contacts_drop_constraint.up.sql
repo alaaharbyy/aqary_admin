@@ -1,0 +1,2 @@
+ALTER TABLE platform_contacts DROP CONSTRAINT uc_platform_contacts_email;
+ALTER TABLE platform_contacts DROP CONSTRAINT uc_platform_contacts_email_platform;

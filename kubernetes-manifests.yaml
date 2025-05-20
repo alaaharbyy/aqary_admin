@@ -1,0 +1,199 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aqary
+
+---
+# ConfigMap for environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aqary-config
+  namespace: aqary
+data:
+  ENVIRONMENT: "production"
+  DOCKER_DB_ADDRESS: "postgres-service"
+
+---
+# Secret for sensitive data
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aqary-secrets
+  namespace: aqary
+type: Opaque
+data:
+  AZURE_STORAGE_CONNECTION_STRING: RGVmYXVsdEVuZHBvaW50c1Byb3RvY29sPWh0dHBzO0FjY291bnROYW1lPWFxYXJ5ZGFzaGJvYXJkO0FjY291bnRLZXk9NGQ5czJOZ0pXN1lvdmUxZHJMb2hKdDlLbHV6cXpOQnBySHNOOTdhN0N2NGhzT3h4eS81TVVRYnd6M1ZUSkFtN1ZjMUI2UkN6U0ZycCtBU3ROLzQ3RXc9PTtFbmRwb2ludFN1ZmZpeD1jb3JlLndpbmRvd3MubmV0
+  DB_PASSWORD: bG9zdDJkcmVhbWVy
+  DB_NAME: cG9zdGdyZXM=
+
+---
+# Postgres Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: aqary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aqary-secrets
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: aqary-secrets
+              key: DB_NAME
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        emptyDir: {}
+
+---
+# Postgres Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: aqary
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+# Main Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aqary-main-backend
+  namespace: aqary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aqary-main-backend
+  template:
+    metadata:
+      labels:
+        app: aqary-main-backend
+    spec:
+      containers:
+      - name: aqary-main-backend
+        image: localhost:5000/aqary-main-backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "0.0.0.0:8080"
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: aqary-config
+              key: ENVIRONMENT
+        - name: DOCKER_DB_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: aqary-config
+              key: DOCKER_DB_ADDRESS
+        - name: AZURE_STORAGE_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: aqary-secrets
+              key: AZURE_STORAGE_CONNECTION_STRING
+
+---
+# Main Backend Service (NodePort)
+apiVersion: v1
+kind: Service
+metadata:
+  name: aqary-main-backend-service
+  namespace: aqary
+spec:
+  type: NodePort
+  selector:
+    app: aqary-main-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+
+---
+# GraphQL Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aqary-graphql-backend
+  namespace: aqary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aqary-graphql-backend
+  template:
+    metadata:
+      labels:
+        app: aqary-graphql-backend
+    spec:
+      containers:
+      - name: aqary-graphql-backend
+        image: localhost:5000/aqary-graphql-backend:latest
+        ports:
+        - containerPort: 8090
+        env:
+        - name: PORT
+          value: "0.0.0.0:8090"
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: aqary-config
+              key: ENVIRONMENT
+        - name: DOCKER_DB_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: aqary-config
+              key: DOCKER_DB_ADDRESS
+        - name: AZURE_STORAGE_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: aqary-secrets
+              key: AZURE_STORAGE_CONNECTION_STRING
+
+---
+# GraphQL Backend Service (NodePort)
+apiVersion: v1
+kind: Service
+metadata:
+  name: aqary-graphql-backend-service
+  namespace: aqary
+spec:
+  type: NodePort
+  selector:
+    app: aqary-graphql-backend
+  ports:
+    - port: 8090
+      targetPort: 8090
+      nodePort: 30090

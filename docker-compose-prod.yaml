@@ -1,0 +1,180 @@
+version: "3"
+
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik-public"
+      - "--api.insecure=false"
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--log.level=DEBUG"
+      - "--accessLog=true"
+      - "--accessLog.fields.names.StartUTC=true"
+      - "--accessLog.fields.names.ClientAddr=true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "traefik-certificates:/letsencrypt"
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.aqaryservices.com`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$OLNoRWwg$$1WTlHk1eTv8WD1TlCTyAN."
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    environment:
+      - PORT=8080
+      - ENVIRONMENT=${ENVIRONMENT:-dev}
+      - DOCKER_DB_ADDRESS=${DOCKER_DB_ADDRESS}
+      - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
+      - REDIS_HOST=${REDIS_HOST:-redis:6379}
+      - REDIS_DB=${REDIS_DB:-0}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-root}
+      - REDIS_URL=${REDIS_URL}
+      - DB_HOST=${DB_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - HISTORY_SERVICE_API_TOKEN=${HISTORY_SERVICE_API_TOKEN}
+      - RABBITMQ_ADDRESS=amqp://admin:admin@rabbitmq:5672
+      - HISTORY_REPO_BASE_URL=${HISTORY_REPO_BASE_URL}
+      - APPLE_TEAM_ID_INVESTMENT=${APPLE_TEAM_ID_INVESTMENT}
+      - APPLE_CLIENT_ID_INVESTMENT=${APPLE_CLIENT_ID_INVESTMENT}
+      - APPLE_KEY_ID_INVESTMENT=${APPLE_KEY_ID_INVESTMENT}
+      - APPLE_PRIVATE_KEY_INVESTMENT=${APPLE_PRIVATE_KEY_INVESTMENT}
+      - APPLE_TEAM_ID_FINE_HOME=${APPLE_TEAM_ID_FINE_HOME}
+      - APPLE_CLIENT_ID_FINE_HOME=${APPLE_CLIENT_ID_FINE_HOME}
+      - APPLE_KEY_ID_FINE_HOME=${APPLE_KEY_ID_FINE_HOME}
+      - APPLE_PRIVATE_KEY_FINE_HOME=${APPLE_PRIVATE_KEY_FINE_HOME}
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - traefik-public
+      - aqary-internal
+    labels:
+      - "traefik.enable=true"
+      # HTTP Router
+      - "traefik.http.routers.app.entrypoints=web"
+      - "traefik.http.routers.app.rule=Host(`app.aqaryservices.com`)"
+      - "traefik.http.routers.app.middlewares=redirect-to-https"
+      # HTTPS Router
+      - "traefik.http.routers.app-secure.entrypoints=websecure"
+      - "traefik.http.routers.app-secure.rule=Host(`app.aqaryservices.com`)"
+      - "traefik.http.routers.app-secure.tls=true"
+      # - "traefik.http.routers.app-secure.tls.certresolver=letsencrypt"
+      # Service
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
+      - "traefik.http.services.app.loadbalancer.server.scheme=http"
+      # Middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      # Network
+      - "traefik.docker.network=traefik-public"
+  cron_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.cron
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-dev}
+      - DOCKER_DB_ADDRESS=${DOCKER_DB_ADDRESS}
+      - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
+      - REDIS_HOST=${REDIS_HOST:-redis:6379}
+      - REDIS_DB=${REDIS_DB:-0}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-root}
+      - REDIS_URL=${REDIS_URL}
+      - DB_HOST=${DB_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - HISTORY_SERVICE_API_TOKEN=${HISTORY_SERVICE_API_TOKEN}
+      - RABBITMQ_ADDRESS=amqp://admin:admin@rabbitmq:5672
+      - HISTORY_REPO_BASE_URL=${HISTORY_REPO_BASE_URL}
+      - APPLE_TEAM_ID_INVESTMENT=${APPLE_TEAM_ID_INVESTMENT}
+      - APPLE_CLIENT_ID_INVESTMENT=${APPLE_CLIENT_ID_INVESTMENT}
+      - APPLE_KEY_ID_INVESTMENT=${APPLE_KEY_ID_INVESTMENT}
+      - APPLE_PRIVATE_KEY_INVESTMENT=${APPLE_PRIVATE_KEY_INVESTMENT}
+    ports:
+      - "8082:8081"
+
+    networks:
+      - traefik-public
+      - aqary-internal
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:latest
+    container_name: db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-postgres}
+    command: postgres -c 'max_connections=1000'
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - aqary-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-backup:
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    volumes:
+      - /var/opt/postgres/backups:/backups
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${DB_NAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=postgres
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+    depends_on:
+      - db
+
+networks:
+  traefik-public:
+    external: true
+  aqary-internal:
+    name: aqary-internal
+    internal: true
+    external: true
+
+volumes:
+  postgres_data:
+  traefik-certificates:

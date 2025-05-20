@@ -1,0 +1,5753 @@
+-- -- name: GetTopAgents :many
+-- with x as (
+-- select broker_company_agents.id, broker_company_agents.brn, broker_company_agents.experience_since, broker_company_agents.users_id, broker_company_agents.nationalities, broker_company_agents.brn_expiry, broker_company_agents.verification_document_url, broker_company_agents.about, broker_company_agents.about_arabic, broker_company_agents.linkedin_profile_url, broker_company_agents.facebook_profile_url, broker_company_agents.twitter_profile_url, broker_company_agents.broker_companies_id, broker_company_agents.created_at, broker_company_agents.updated_at, broker_company_agents.status, broker_company_agents.is_verified, broker_company_agents.profiles_id, broker_company_agents.telegram, broker_company_agents.botim, broker_company_agents.tawasal, broker_company_agents.service_areas, broker_company_agents.agent_rank from broker_company_agents
+--     INNER JOIN users on broker_company_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN cities ON addresses.cities_id = cities.id
+--     INNER JOIN communities ON addresses.communities_id = communities.id
+--     INNER JOIN sub_communities ON addresses.sub_communities_id = sub_communities.id
+--     where 
+--     addresses.countries_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_agents.agent_rank = ANY($2::bigint[]))  AND
+--           cities.city ILIKE '%' || $3 || '%'  AND                 
+--           communities.community ILIKE '%' || $4 || '%'  AND       
+--           sub_communities.sub_community ILIKE '%' || $5 || '%'
+--          AND ($6::bool is NULL OR is_verified = $6::bool)
+--          AND (  
+--              profiles.first_name ILIKE '%' || $7 || '%'  OR 
+--              profiles.last_name ILIKE '%' || $7 || '%'  OR    
+--              cities.city ILIKE '%' || $7 || '%' OR
+--              communities.community ILIKE '%' || $7 || '%' OR
+--              sub_communities.sub_community ILIKE '%' || $7 || '%'
+--          ) AND broker_company_agents.status != 5 AND broker_company_agents.status != 6
+-- union all
+-- select broker_company_branches_agents.id, broker_company_branches_agents.brn, broker_company_branches_agents.experience_since, broker_company_branches_agents.users_id, broker_company_branches_agents.nationalities, broker_company_branches_agents.brn_expiry, broker_company_branches_agents.verification_document_url, broker_company_branches_agents.about, broker_company_branches_agents.about_arabic, broker_company_branches_agents.linkedin_profile_url, broker_company_branches_agents.facebook_profile_url, broker_company_branches_agents.twitter_profile_url, broker_company_branches_agents.broker_companies_branches_id as broker_companies_id , broker_company_branches_agents.created_at, broker_company_branches_agents.updated_at, broker_company_branches_agents.status, broker_company_branches_agents.is_verified, broker_company_branches_agents.profiles_id, broker_company_branches_agents.telegram, broker_company_branches_agents.botim, broker_company_branches_agents.tawasal, broker_company_branches_agents.service_areas, broker_company_branches_agents.agent_rank from broker_company_branches_agents
+-- INNER JOIN users on broker_company_branches_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_branches_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states  ON addresses.states_id = states.id
+--     INNER JOIN cities  ON addresses.cities_id = cities.id
+--     INNER JOIN communities ON addresses.communities_id = communities.id
+--     INNER JOIN sub_communities ON addresses.sub_communities_id = sub_communities.id
+-- where 
+-- addresses.countries_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_branches_agents.agent_rank = ANY($2::bigint[]))  AND
+--           cities.city ILIKE $3 AND                 
+--           communities.community ILIKE $4 AND       
+--           sub_communities.sub_community ILIKE $5
+--          AND ($6::bool is NULL OR is_verified = $6::bool)
+--          AND (  
+--              profiles.first_name ILIKE $7 OR 
+--              profiles.last_name ILIKE $7 OR    
+--              cities.city ILIKE $7 OR
+--              communities.community ILIKE $7 OR
+--              sub_communities.sub_community ILIKE $7 
+--          ) AND broker_company_branches_agents.status != 5 AND broker_company_branches_agents.status != 6
+-- ) select id, brn, experience_since, users_id, nationalities, brn_expiry, verification_document_url, about, about_arabic, linkedin_profile_url, facebook_profile_url, twitter_profile_url, broker_companies_id, created_at, updated_at, status, is_verified, profiles_id, telegram, botim, tawasal, service_areas, agent_rank from x
+-- limit $8 offset $9;
+
+
+-- -- name: GetCountTopAgents :one
+-- with x as (
+-- select broker_company_agents.id, broker_company_agents.brn, broker_company_agents.experience_since, broker_company_agents.users_id, broker_company_agents.nationalities, broker_company_agents.brn_expiry, broker_company_agents.verification_document_url, broker_company_agents.about, broker_company_agents.about_arabic, broker_company_agents.linkedin_profile_url, broker_company_agents.facebook_profile_url, broker_company_agents.twitter_profile_url, broker_company_agents.broker_companies_id, broker_company_agents.created_at, broker_company_agents.updated_at, broker_company_agents.status, broker_company_agents.is_verified, broker_company_agents.profiles_id, broker_company_agents.telegram, broker_company_agents.botim, broker_company_agents.tawasal, broker_company_agents.service_areas, broker_company_agents.agent_rank from broker_company_agents
+--     INNER JOIN users on broker_company_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN cities ON addresses.cities_id = cities.id
+--     INNER JOIN communities ON addresses.communities_id = communities.id
+--     INNER JOIN sub_communities ON addresses.sub_communities_id = sub_communities.id
+--     where 
+--     addresses.countries_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_agents.agent_rank = ANY($2::bigint[]))  AND
+--           cities.city ILIKE $3  AND                 
+--           communities.community ILIKE $4  AND       
+--           sub_communities.sub_community ILIKE $5
+--          AND ($6::bool is NULL OR is_verified = $6::bool)
+--          AND (  
+--              profiles.first_name ILIKE $7 OR 
+--              profiles.last_name ILIKE $7  OR    
+--              cities.city ILIKE $7 OR
+--              communities.community ILIKE $7 OR
+--              sub_communities.sub_community ILIKE $7
+--          ) AND broker_company_agents.status != 5 AND broker_company_agents.status != 6
+-- union all
+-- select broker_company_branches_agents.id, broker_company_branches_agents.brn, broker_company_branches_agents.experience_since, broker_company_branches_agents.users_id, broker_company_branches_agents.nationalities, broker_company_branches_agents.brn_expiry, broker_company_branches_agents.verification_document_url, broker_company_branches_agents.about, broker_company_branches_agents.about_arabic, broker_company_branches_agents.linkedin_profile_url, broker_company_branches_agents.facebook_profile_url, broker_company_branches_agents.twitter_profile_url, broker_company_branches_agents.broker_companies_branches_id as broker_companies_id , broker_company_branches_agents.created_at, broker_company_branches_agents.updated_at, broker_company_branches_agents.status, broker_company_branches_agents.is_verified, broker_company_branches_agents.profiles_id, broker_company_branches_agents.telegram, broker_company_branches_agents.botim, broker_company_branches_agents.tawasal, broker_company_branches_agents.service_areas, broker_company_branches_agents.agent_rank from broker_company_branches_agents
+-- INNER JOIN users on broker_company_branches_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_branches_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN cities  ON addresses.cities_id = cities.id
+--     INNER JOIN communities ON addresses.communities_id = communities.id
+--     INNER JOIN sub_communities ON addresses.sub_communities_id = sub_communities.id
+-- where 
+-- addresses.countries_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_branches_agents.agent_rank = ANY($2::bigint[]))  AND
+--           cities.city ILIKE $3  AND                 
+--           communities.community ILIKE $4 AND       
+--           sub_communities.sub_community ILIKE $5
+--          AND ($6::bool is NULL OR is_verified = $6::bool)
+--          AND (  
+--              profiles.first_name ILIKE $7  OR 
+--              profiles.last_name ILIKE $7 OR    
+--              cities.city ILIKE $7 OR
+--              communities.community ILIKE $7 OR
+--              sub_communities.sub_community ILIKE $7
+--          ) AND broker_company_branches_agents.status != 5 AND broker_company_branches_agents.status != 6
+-- ) SELECT COUNT(*) FROM x;
+
+-- -- name: GetCountStateAgents :one
+-- with x as (
+-- select broker_company_agents.id, broker_company_agents.brn, broker_company_agents.experience_since, broker_company_agents.users_id, broker_company_agents.nationalities, broker_company_agents.brn_expiry, broker_company_agents.verification_document_url, broker_company_agents.about, broker_company_agents.about_arabic, broker_company_agents.linkedin_profile_url, broker_company_agents.facebook_profile_url, broker_company_agents.twitter_profile_url, broker_company_agents.broker_companies_id, broker_company_agents.created_at, broker_company_agents.updated_at, broker_company_agents.status, broker_company_agents.is_verified, broker_company_agents.profiles_id, broker_company_agents.telegram, broker_company_agents.botim, broker_company_agents.tawasal, broker_company_agents.service_areas, broker_company_agents.agent_rank from broker_company_agents
+--     INNER JOIN users on broker_company_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states ON addresses.states_id = states.id
+--     INNER JOIN cities ON addresses.cities_id = cities.id
+--     where 
+--     addresses.cities_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_agents.agent_rank = ANY($2::bigint[]))  AND
+--           -- cities.city ILIKE '%' || $3 || '%'  AND                 
+--           -- communities.community ILIKE '%' || $4 || '%'  AND       
+--           -- sub_communities.sub_community ILIKE '%' || $5 || '%'
+--         ($3::bool is NULL OR is_verified = $3::bool)
+--          AND (  
+--              profiles.first_name ILIKE '%' || $4 || '%'  OR 
+--              profiles.last_name ILIKE '%' || $4 || '%'  OR    
+--              cities.city ILIKE '%' || $4 || '%' OR
+--              communities.community ILIKE '%' || $4 || '%' OR
+--              sub_communities.sub_community ILIKE '%' || $4 || '%'
+--          ) AND broker_company_agents.status != 5 AND broker_company_agents.status != 6
+-- union all
+-- select broker_company_branches_agents.id, broker_company_branches_agents.brn, broker_company_branches_agents.experience_since, broker_company_branches_agents.users_id, broker_company_branches_agents.nationalities, broker_company_branches_agents.brn_expiry, broker_company_branches_agents.verification_document_url, broker_company_branches_agents.about, broker_company_branches_agents.about_arabic, broker_company_branches_agents.linkedin_profile_url, broker_company_branches_agents.facebook_profile_url, broker_company_branches_agents.twitter_profile_url, broker_company_branches_agents.broker_companies_branches_id as broker_companies_id , broker_company_branches_agents.created_at, broker_company_branches_agents.updated_at, broker_company_branches_agents.status, broker_company_branches_agents.is_verified, broker_company_branches_agents.profiles_id, broker_company_branches_agents.telegram, broker_company_branches_agents.botim, broker_company_branches_agents.tawasal, broker_company_branches_agents.service_areas, broker_company_branches_agents.agent_rank from broker_company_branches_agents
+-- INNER JOIN users on broker_company_branches_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_branches_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states  ON addresses.states_id = states.id
+--     INNER JOIN cities  ON addresses.cities_id = cities.id
+-- where 
+-- addresses.cities_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_branches_agents.agent_rank = ANY($2::bigint[]))  AND
+--           -- cities.city ILIKE '%' || $3 || '%'  AND                 
+--           -- communities.community ILIKE '%' || $4 || '%'  AND       
+--           -- sub_communities.sub_community ILIKE '%' || $5 || '%'
+--          ($3::bool is NULL OR is_verified = $3::bool)
+--          AND (  
+--              profiles.first_name ILIKE $4 OR 
+--              profiles.last_name ILIKE $4 OR    
+--              cities.city ILIKE $4 OR
+--              communities.community ILIKE $4 OR
+--              sub_communities.sub_community ILIKE $4
+--          ) AND broker_company_branches_agents.status != 5 AND broker_company_branches_agents.status != 6
+-- ) SELECT COUNT(*) FROM x;
+
+-- -- name: GetCountCommunityAgents :one
+-- with x as (
+-- select broker_company_agents.id, broker_company_agents.brn, broker_company_agents.experience_since, broker_company_agents.users_id, broker_company_agents.nationalities, broker_company_agents.brn_expiry, broker_company_agents.verification_document_url, broker_company_agents.about, broker_company_agents.about_arabic, broker_company_agents.linkedin_profile_url, broker_company_agents.facebook_profile_url, broker_company_agents.twitter_profile_url, broker_company_agents.broker_companies_id, broker_company_agents.created_at, broker_company_agents.updated_at, broker_company_agents.status, broker_company_agents.is_verified, broker_company_agents.profiles_id, broker_company_agents.telegram, broker_company_agents.botim, broker_company_agents.tawasal, broker_company_agents.service_areas, broker_company_agents.agent_rank from broker_company_agents
+--     INNER JOIN users on broker_company_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states ON addresses.states_id = states.id
+--     INNER JOIN cities ON addresses.cities_id = cities.id
+--     where 
+--     addresses.communities_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_agents.agent_rank = ANY($2::bigint[]))  AND
+--           -- cities.city ILIKE '%' || $3 || '%'  AND                 
+--           -- communities.community ILIKE '%' || $4 || '%'  AND       
+--           -- sub_communities.sub_community ILIKE '%' || $5 || '%'
+--         ($3::bool is NULL OR is_verified = $3::bool)
+--          AND (  
+--              profiles.first_name ILIKE $4 OR 
+--              profiles.last_name ILIKE $4 OR    
+--              cities.city ILIKE $4 OR
+--              communities.community ILIKE $4 OR
+--              sub_communities.sub_community ILIKE $4
+--          ) AND broker_company_agents.status != 5 AND broker_company_agents.status != 6
+-- union all
+-- select broker_company_branches_agents.id, broker_company_branches_agents.brn, broker_company_branches_agents.experience_since, broker_company_branches_agents.users_id, broker_company_branches_agents.nationalities, broker_company_branches_agents.brn_expiry, broker_company_branches_agents.verification_document_url, broker_company_branches_agents.about, broker_company_branches_agents.about_arabic, broker_company_branches_agents.linkedin_profile_url, broker_company_branches_agents.facebook_profile_url, broker_company_branches_agents.twitter_profile_url, broker_company_branches_agents.broker_companies_branches_id as broker_companies_id , broker_company_branches_agents.created_at, broker_company_branches_agents.updated_at, broker_company_branches_agents.status, broker_company_branches_agents.is_verified, broker_company_branches_agents.profiles_id, broker_company_branches_agents.telegram, broker_company_branches_agents.botim, broker_company_branches_agents.tawasal, broker_company_branches_agents.service_areas, broker_company_branches_agents.agent_rank from broker_company_branches_agents
+-- INNER JOIN users on broker_company_branches_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_branches_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states  ON addresses.states_id = states.id
+--     INNER JOIN cities  ON addresses.cities_id = cities.id
+-- where 
+-- addresses.communities_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_branches_agents.agent_rank = ANY($2::bigint[]))  AND
+--           -- cities.city ILIKE '%' || $3 || '%'  AND                 
+--           -- communities.community ILIKE '%' || $4 || '%'  AND       
+--           -- sub_communities.sub_community ILIKE '%' || $5 || '%'
+--         ($3::bool is NULL OR is_verified = $3::bool)
+--          AND (  
+--              profiles.first_name ILIKE '%' || $4 || '%'  OR 
+--              profiles.last_name ILIKE '%' || $4 || '%'  OR    
+--              cities.city ILIKE '%' || $4 || '%' OR
+--              communities.community ILIKE '%' || $4 || '%' OR
+--              sub_communities.sub_community ILIKE '%' || $4 || '%'
+--          ) AND broker_company_branches_agents.status != 5 AND broker_company_branches_agents.status != 6
+-- ) SELECT COUNT(*) FROM x;
+
+-- -- name: GetCountSubCommunityAgents :one
+-- with x as (
+-- select broker_company_agents.id, broker_company_agents.brn, broker_company_agents.experience_since, broker_company_agents.users_id, broker_company_agents.nationalities, broker_company_agents.brn_expiry, broker_company_agents.verification_document_url, broker_company_agents.about, broker_company_agents.about_arabic, broker_company_agents.linkedin_profile_url, broker_company_agents.facebook_profile_url, broker_company_agents.twitter_profile_url, broker_company_agents.broker_companies_id, broker_company_agents.created_at, broker_company_agents.updated_at, broker_company_agents.status, broker_company_agents.is_verified, broker_company_agents.profiles_id, broker_company_agents.telegram, broker_company_agents.botim, broker_company_agents.tawasal, broker_company_agents.service_areas, broker_company_agents.agent_rank from broker_company_agents
+--     INNER JOIN users on broker_company_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states ON addresses.states_id = states.id
+--     INNER JOIN cities ON addresses.cities_id = cities.id
+--     where 
+--     addresses.sub_communities_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_agents.agent_rank = ANY($2::bigint[]))  AND
+--           -- cities.city ILIKE '%' || $3 || '%'  AND                 
+--           -- communities.community ILIKE '%' || $4 || '%'  AND       
+--           -- sub_communities.sub_community ILIKE '%' || $5 || '%'
+--         ($3::bool is NULL OR is_verified = $3::bool)
+--          AND (  
+--              profiles.first_name ILIKE  $4  OR 
+--              profiles.last_name ILIKE  $4   OR    
+--              cities.city ILIKE  $4 OR
+--              communities.community ILIKE  $4  OR
+--              sub_communities.sub_community ILIKE  $4 
+--          ) AND broker_company_agents.status != 5 AND broker_company_agents.status != 6
+-- union all
+-- select broker_company_branches_agents.id, broker_company_branches_agents.brn, broker_company_branches_agents.experience_since, broker_company_branches_agents.users_id, broker_company_branches_agents.nationalities, broker_company_branches_agents.brn_expiry, broker_company_branches_agents.verification_document_url, broker_company_branches_agents.about, broker_company_branches_agents.about_arabic, broker_company_branches_agents.linkedin_profile_url, broker_company_branches_agents.facebook_profile_url, broker_company_branches_agents.twitter_profile_url, broker_company_branches_agents.broker_companies_branches_id as broker_companies_id , broker_company_branches_agents.created_at, broker_company_branches_agents.updated_at, broker_company_branches_agents.status, broker_company_branches_agents.is_verified, broker_company_branches_agents.profiles_id, broker_company_branches_agents.telegram, broker_company_branches_agents.botim, broker_company_branches_agents.tawasal, broker_company_branches_agents.service_areas, broker_company_branches_agents.agent_rank from broker_company_branches_agents
+-- INNER JOIN users on broker_company_branches_agents.users_id = users.id
+--     and users.user_types_id = 2
+--     INNER JOIN profiles ON broker_company_branches_agents.profiles_id = profiles.id
+--     INNER JOIN addresses ON profiles.addresses_id = addresses.id
+--     INNER JOIN countries ON addresses.countries_id = countries.id
+--     INNER JOIN states  ON addresses.states_id = states.id
+--     INNER JOIN cities  ON addresses.cities_id = cities.id
+-- where 
+-- addresses.sub_communities_id = $1 AND
+--          ($2::bigint[] is NULL OR broker_company_branches_agents.agent_rank = ANY($2::bigint[]))  AND
+--           -- cities.city ILIKE '%' || $3 || '%'  AND                 
+--           -- communities.community ILIKE '%' || $4 || '%'  AND       
+--           -- sub_communities.sub_community ILIKE '%' || $5 || '%'
+--          ($3::bool is NULL OR is_verified = $3::bool)
+--          AND (  
+--              profiles.first_name ILIKE  $4  OR 
+--              profiles.last_name ILIKE  $4 OR    
+--              cities.city ILIKE  $4 OR
+--              communities.community ILIKE $4 OR
+--              sub_communities.sub_community ILIKE $4
+--          ) AND broker_company_branches_agents.status != 5 AND broker_company_branches_agents.status != 6
+-- ) SELECT COUNT(*) FROM x;
+
+
+-- -- name: GetOneTopAgent :one
+-- with x as (
+--   SELECT
+--     DISTINCT ON (id) --
+--     model.id,
+--     model.agent_rank,
+--     model.brn,
+--     model.experience_since,
+--     model.users_id,
+--     model.nationalities,
+--     model.brn_expiry,
+--     model.verification_document_url,
+--     model.about,
+--     model.about_arabic,
+--     model.linkedin_profile_url,
+--     model.facebook_profile_url,
+--     model.twitter_profile_url,
+--     model.broker_companies_id,
+--     model.created_at,
+--     model.updated_at,
+--     model.status,
+--     model.is_verified,
+--     model.profiles_id,
+--     model.telegram,
+--     model.botim,
+--     model.tawasal,
+--     0 as broker_companies_branches_id,
+
+--     -- profiles
+--     j_profiles.id as j_profiles_id,
+--     j_profiles.first_name as j_profiles_first_name,
+--     j_profiles.last_name as j_profiles_last_name,
+--     j_profiles.addresses_id as j_profiles_addresses_id,
+--     j_profiles.profile_image_url as j_profiles_profile_image_url,
+--     j_profiles.phone_number as j_profiles_phone_number,
+--     -- j_profiles.company_number as j_profiles_company_number,
+--     j_profiles.whatsapp_number as j_profiles_whatsapp_number,
+--     j_profiles.gender as j_profiles_gender,
+--     -- j_profiles.all_languages_id as j_profiles_all_languages_id,
+--     j_profiles.created_at as j_profiles_created_at,
+--     j_profiles.updated_at as j_profiles_updated_at,
+--     j_profiles.ref_no as j_profiles_ref_no,
+--     j_profiles.cover_image_url as j_profiles_cover_image_url,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng
+
+--   FROM
+--     broker_company_agents AS model
+--     INNER JOIN users as j_users on model.users_id = j_users.id
+--     and j_users.user_types_id = 2
+--     LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--     LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON j_broker_companies.id = model.broker_companies_id
+
+--   WHERE
+--   (
+--     COALESCE(@id::integer[], ARRAY[]::integer[]) = ARRAY[]::integer[] OR
+--     model.id = ANY(COALESCE(@id::integer[], ARRAY[]::integer[]))
+--   ) AND
+--   (
+--     COALESCE(@is_branch::boolean[], ARRAY[]::boolean[]) = ARRAY[]::boolean[] OR
+--     j_broker_companies.is_branch = ANY(COALESCE(@is_branch::boolean[], ARRAY[]::boolean[]))
+--   )
+
+--   UNION ALL
+
+--   SELECT
+--     DISTINCT ON (model.id) --
+--     model.id,
+--     model.agent_rank,
+--     model.brn,
+--     model.experience_since,
+--     model.users_id,
+--     model.nationalities,
+--     model.brn_expiry,
+--     model.verification_document_url,
+--     model.about,
+--     model.about_arabic,
+--     model.linkedin_profile_url,
+--     model.facebook_profile_url,
+--     model.twitter_profile_url,
+--     0 as broker_companies_id,
+--     model.created_at,
+--     model.updated_at,
+--     model.status,
+--     model.is_verified,
+--     model.profiles_id,
+--     model.telegram,
+--     model.botim,
+--     model.tawasal,
+--     model.broker_companies_branches_id,
+
+--     -- profiles
+--     j_profiles.id as j_profiles_id,
+--     j_profiles.first_name as j_profiles_first_name,
+--     j_profiles.last_name as j_profiles_last_name,
+--     j_profiles.addresses_id as j_profiles_addresses_id,
+--     j_profiles.profile_image_url as j_profiles_profile_image_url,
+--     j_profiles.phone_number as j_profiles_phone_number,
+--     j_profiles.company_number as j_profiles_company_number,
+--     j_profiles.whatsapp_number as j_profiles_whatsapp_number,
+--     j_profiles.gender as j_profiles_gender,
+--     j_profiles.all_languages_id as j_profiles_all_languages_id,
+--     j_profiles.created_at as j_profiles_created_at,
+--     j_profiles.updated_at as j_profiles_updated_at,
+--     j_profiles.ref_no as j_profiles_ref_no,
+--     j_profiles.cover_image_url as j_profiles_cover_image_url,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng
+
+--   FROM
+--     broker_company_branches_agents AS model
+--     INNER JOIN users as j_users on model.users_id = j_users.id
+--     and j_users.user_types_id = 2
+--     LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--     LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN broker_companies_branches AS j_broker_companies ON j_broker_companies.id = model.broker_companies_branches_id
+
+--   WHERE
+--   (
+--     COALESCE(@id::integer[], ARRAY[]::integer[]) = ARRAY[]::integer[] OR
+--     model.id = ANY(COALESCE(@id::integer[], ARRAY[]::integer[]))
+--   ) AND
+--   (
+--     COALESCE(@is_branch::boolean[], ARRAY[]::boolean[]) = ARRAY[]::boolean[] OR
+--     j_broker_companies.is_branch = ANY(COALESCE(@is_branch::boolean[], ARRAY[]::boolean[]))
+--   )
+
+-- )
+-- SELECT
+--   --
+--   id,
+--   agent_rank,
+--   brn,
+--   experience_since,
+--   users_id,
+--   nationalities,
+--   brn_expiry,
+--   verification_document_url,
+--   about,
+--   about_arabic,
+--   linkedin_profile_url,
+--   facebook_profile_url,
+--   twitter_profile_url,
+--   broker_companies_id,
+--   created_at,
+--   updated_at,
+--   status,
+--   is_verified,
+--   profiles_id,
+--   telegram,
+--   botim,
+--   tawasal,
+--   broker_companies_branches_id,
+--   --
+--   j_broker_companies_id,
+--   j_broker_companies_company_name,
+--   j_broker_companies_description,
+--   j_broker_companies_logo_url,
+--   j_broker_companies_addresses_id,
+--   j_broker_companies_email,
+--   j_broker_companies_phone_number,
+--   j_broker_companies_whatsapp_number,
+--   j_broker_companies_commercial_license_no,
+--   j_broker_companies_commercial_license_file_url,
+--   j_broker_companies_commercial_license_expiry,
+--   j_broker_companies_rera_no,
+--   j_broker_companies_rera_file_url,
+--   j_broker_companies_rera_expiry,
+--   j_broker_companies_is_verified,
+--   j_broker_companies_website_url,
+--   j_broker_companies_cover_image_url,
+--   j_broker_companies_tag_line,
+--   j_broker_companies_vat_no,
+--   j_broker_companies_vat_status,
+--   j_broker_companies_vat_file_url,
+--   j_broker_companies_facebook_profile_url,
+--   j_broker_companies_instagram_profile_url,
+--   j_broker_companies_twitter_profile_url,
+--   j_broker_companies_no_of_employees,
+--   j_broker_companies_users_id,
+--   j_broker_companies_linkedin_profile_url,
+--   j_broker_companies_company_rank,
+--   j_broker_companies_status,
+--   j_broker_companies_country_id,
+--   j_broker_companies_company_type,
+--   j_broker_companies_is_branch,
+--   j_broker_companies_created_at,
+--   j_broker_companies_updated_at,
+--   j_broker_companies_ref_no,
+--   j_broker_companies_rera_registration_date,
+--   j_broker_companies_rera_issue_date,
+--   j_broker_companies_commercial_license_registration_date,
+--   j_broker_companies_commercial_license_issue_date,
+--   j_broker_companies_youtube_profile_url,
+--   j_broker_companies_orn_license_no,
+--   j_broker_companies_orn_license_file_url,
+--   j_broker_companies_orn_registration_date,
+--   j_broker_companies_orn_license_expiry,
+--   --
+--   j_profiles_id,
+--   j_profiles_first_name,
+--   j_profiles_last_name,
+--   j_profiles_addresses_id,
+--   j_profiles_profile_image_url,
+--   j_profiles_phone_number,
+--   -- j_profiles_company_number,
+--   j_profiles_whatsapp_number,
+--   j_profiles_gender,
+--   -- j_profiles_all_languages_id,
+--   j_profiles_created_at,
+--   j_profiles_updated_at,
+--   j_profiles_ref_no,
+--   j_profiles_cover_image_url,
+--   --
+--   j_addresses_id,
+--   j_addresses_communities_id,
+--   j_addresses_sub_communities_id,
+--   j_addresses_locations_id,
+--   j_addresses_created_at,
+--   j_addresses_updated_at,
+--   --
+--   j_addresses_countries_country,
+--   j_addresses_countries_flag,
+--   j_addresses_countries_created_at,
+--   j_addresses_countries_updated_at,
+--   j_addresses_countries_alpha2_code,
+--   j_addresses_countries_alpha3_code,
+--   j_addresses_countries_country_code,
+--   j_addresses_countries_lat,
+--   j_addresses_countries_lng,
+--   --
+--   j_addresses_states_state,
+--   j_addresses_states_countries_id,
+--   j_addresses_states_created_at,
+--   j_addresses_states_updated_at,
+--   j_addresses_states_lat,
+--   j_addresses_states_lng,
+--   --
+--   j_addresses_cities_city,
+--   j_addresses_cities_states_id,
+--   j_addresses_cities_created_at,
+--   j_addresses_cities_updated_at,
+--   j_addresses_cities_lat,
+--   j_addresses_cities_lng,
+--   --
+--   j_addresses_countries_id,
+--   j_addresses_states_id,
+--   j_addresses_cities_id
+-- from
+--   x
+-- LIMIT 1;
+
+
+
+
+
+-- -- name: GetAgentsCountByStates :many
+-- SELECT
+--   state_name,
+--   states_id,
+--   COUNT(*) as count
+
+-- FROM
+
+--   (
+--     SELECT
+--       DISTINCT ON (model.id) j_addresses_states.state as state_name,
+--       j_addresses.states_id,
+--       -- COUNT(*) for the number of items in the same state
+--       COUNT(*) OVER (
+--         PARTITION BY j_addresses_states.state
+--       ) as items_in_same_state
+   
+--     FROM
+--       broker_company_agents AS model
+--       INNER JOIN users as j_users on model.users_id = j_users.id
+--       and j_users.user_types_id = 2
+--       LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--       LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--       LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--       LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--       LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--       LEFT JOIN communities AS j_addresses_communities ON j_addresses.communities_id = j_addresses_communities.id
+--       LEFT JOIN sub_communities AS j_addresses_sub_communities ON j_addresses.sub_communities_id = j_addresses_sub_communities.id
+--       LEFT JOIN broker_companies AS j_broker_companies ON j_broker_companies.id = model.broker_companies_id
+
+--     WHERE
+--       model.is_verified = ANY(@is_verified :: boolean[])
+--       AND model.agent_rank = ANY(@rank :: bigint[])
+--       AND (
+--         COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.countries_id = ANY(
+--           COALESCE(@country_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       -- AND (
+--       --   COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.states_id = ANY(
+--       --     COALESCE(@state_id, ARRAY[] :: bigint[])
+--       --   )
+--       -- )
+--       -- AND (
+--       --   COALESCE(
+--       --     @community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.communities_id = ANY(
+--       --     COALESCE(
+--       --       @community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       -- AND (
+--       --   COALESCE(
+--       --     @sub_community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.sub_communities_id = ANY(
+--       --     COALESCE(
+--       --       @sub_community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       AND (
+--         COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--         OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_states.state) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--       )
+
+--     UNION ALL
+
+--     SELECT
+--     DISTINCT ON (model.id) j_addresses_states.state as state_name,
+--     j_addresses.states_id,
+--     -- COUNT(*) for the number of items in the same state
+--     COUNT(*) OVER (
+--       PARTITION BY j_addresses_states.state
+--     ) as items_in_same_state
+
+--     FROM
+--       broker_company_branches_agents AS model
+--       INNER JOIN users as j_users on model.users_id = j_users.id
+--       and j_users.user_types_id = 2
+--       LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--       LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--       LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--       LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--       LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--       LEFT JOIN communities AS j_addresses_communities ON j_addresses.communities_id = j_addresses_communities.id
+--       LEFT JOIN sub_communities AS j_addresses_sub_communities ON j_addresses.sub_communities_id = j_addresses_sub_communities.id
+--       LEFT JOIN broker_companies_branches AS j_broker_companies ON j_broker_companies.id = model.broker_companies_branches_id
+
+--     WHERE
+--       model.is_verified = ANY(@is_verified :: boolean[])
+--       AND model.agent_rank = ANY(@rank :: bigint[])
+--       AND (
+--         COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.countries_id = ANY(
+--           COALESCE(@country_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       -- AND (
+--       --   COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.states_id = ANY(
+--       --     COALESCE(@state_id, ARRAY[] :: bigint[])
+--       --   )
+--       -- )
+--       -- AND (
+--       --   COALESCE(
+--       --     @community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.communities_id = ANY(
+--       --     COALESCE(
+--       --       @community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       -- AND (
+--       --   COALESCE(
+--       --     @sub_community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.sub_communities_id = ANY(
+--       --     COALESCE(
+--       --       @sub_community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       AND (
+--         COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--         OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_states.state) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         ) -- OR
+--         -- LOWER(model.property_title) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[]) OR
+--         -- LOWER(j_property_types.type) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[]) OR
+--         -- LOWER(model.property_title_arabic) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[])
+--         )
+ 
+--   ) AS subquery
+
+-- GROUP BY
+--   state_name,
+--   states_id
+-- ORDER BY
+--   states_id;
+
+
+-- -- name: GetAgentsCountByCommunities :many
+-- SELECT
+--   community_name,
+--   communities_id,
+--   COUNT(*) as count
+
+-- FROM
+
+--   (
+--     SELECT
+--       DISTINCT ON (model.id) j_addresses_communities.community as community_name,
+--       j_addresses.communities_id,
+--       -- COUNT(*) for the number of items in the same community
+--       COUNT(*) OVER (
+--         PARTITION BY j_addresses_communities.community
+--       ) as items_in_same_community
+   
+--     FROM
+--       broker_company_agents AS model
+--       INNER JOIN users as j_users on model.users_id = j_users.id
+--       and j_users.user_types_id = 2
+--       LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--       LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--       LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--       LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--       LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--       LEFT JOIN communities AS j_addresses_communities ON j_addresses.communities_id = j_addresses_communities.id
+--       LEFT JOIN sub_communities AS j_addresses_sub_communities ON j_addresses.sub_communities_id = j_addresses_sub_communities.id
+--       LEFT JOIN broker_companies AS j_broker_companies ON j_broker_companies.id = model.broker_companies_id
+
+--     WHERE
+--       model.is_verified = ANY(@is_verified :: boolean[])
+--       AND model.agent_rank = ANY(@rank :: bigint[])
+--       AND (
+--         COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.countries_id = ANY(
+--           COALESCE(@country_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       AND (
+--         COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.states_id = ANY(
+--           COALESCE(@state_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       -- AND (
+--       --   COALESCE(
+--       --     @community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.communities_id = ANY(
+--       --     COALESCE(
+--       --       @community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       -- AND (
+--       --   COALESCE(
+--       --     @sub_community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.sub_communities_id = ANY(
+--       --     COALESCE(
+--       --       @sub_community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       AND (
+--         COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--         OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_states.state) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--       )
+
+--     UNION ALL
+
+--     SELECT
+--       DISTINCT ON (model.id) j_addresses_communities.community as community_name,
+--       j_addresses.communities_id,
+--       -- COUNT(*) for the number of items in the same community
+--       COUNT(*) OVER (
+--         PARTITION BY j_addresses_communities.community
+--       ) as items_in_same_community
+
+--     FROM
+--       broker_company_branches_agents AS model
+--       INNER JOIN users as j_users on model.users_id = j_users.id
+--       and j_users.user_types_id = 2
+--       LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--       LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--       LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--       LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--       LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--       LEFT JOIN communities AS j_addresses_communities ON j_addresses.communities_id = j_addresses_communities.id
+--       LEFT JOIN sub_communities AS j_addresses_sub_communities ON j_addresses.sub_communities_id = j_addresses_sub_communities.id
+--       LEFT JOIN broker_companies_branches AS j_broker_companies ON j_broker_companies.id = model.broker_companies_branches_id
+
+--     WHERE
+--       model.is_verified = ANY(@is_verified :: boolean[])
+--       AND model.agent_rank = ANY(@rank :: bigint[])
+--       AND (
+--         COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.countries_id = ANY(
+--           COALESCE(@country_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       AND (
+--         COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.states_id = ANY(
+--           COALESCE(@state_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       -- AND (
+--       --   COALESCE(
+--       --     @community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.communities_id = ANY(
+--       --     COALESCE(
+--       --       @community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       -- AND (
+--       --   COALESCE(
+--       --     @sub_community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.sub_communities_id = ANY(
+--       --     COALESCE(
+--       --       @sub_community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       AND (
+--         COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--         OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_states.state) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         ) -- OR
+--         -- LOWER(model.property_title) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[]) OR
+--         -- LOWER(j_property_types.type) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[]) OR
+--         -- LOWER(model.property_title_arabic) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[])
+--         )
+ 
+--   ) AS subquery
+
+-- GROUP BY
+--   community_name,
+--   communities_id
+-- ORDER BY
+--   communities_id;
+
+
+-- -- name: GetAgentsCountBySubCommunities :many
+-- SELECT
+--   sub_community_name,
+--   sub_communities_id,
+--   COUNT(*) as count
+
+-- FROM
+
+--   (
+--     SELECT
+--       DISTINCT ON (model.id) j_addresses_sub_communities.sub_community as sub_community_name,
+--       j_addresses.sub_communities_id,
+--       -- COUNT(*) for the number of items in the same sub-community
+--       COUNT(*) OVER (
+--         PARTITION BY j_addresses_sub_communities.sub_community
+--       ) as items_in_same_sub_community
+   
+--     FROM
+--       broker_company_agents AS model
+--       INNER JOIN users as j_users on model.users_id = j_users.id
+--       and j_users.user_types_id = 2
+--       LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--       LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--       LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--       LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--       LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--       LEFT JOIN communities AS j_addresses_communities ON j_addresses.communities_id = j_addresses_communities.id
+--       LEFT JOIN sub_communities AS j_addresses_sub_communities ON j_addresses.sub_communities_id = j_addresses_sub_communities.id
+--       LEFT JOIN broker_companies AS j_broker_companies ON j_broker_companies.id = model.broker_companies_id
+
+--     WHERE
+--       model.is_verified = ANY(@is_verified :: boolean[])
+--       AND model.agent_rank = ANY(@rank :: bigint[])
+--       AND (
+--         COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.countries_id = ANY(
+--           COALESCE(@country_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       AND (
+--         COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.states_id = ANY(
+--           COALESCE(@state_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       AND (
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         ) = ARRAY[] :: bigint[]
+--         OR j_addresses.communities_id = ANY(
+--           COALESCE(
+--             @community_id, ARRAY[] :: bigint[]
+--           )
+--         )
+--       )
+--       -- AND (
+--       --   COALESCE(
+--       --     @sub_community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.sub_communities_id = ANY(
+--       --     COALESCE(
+--       --       @sub_community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       AND (
+--         COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--         OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_states.state) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--       )
+
+--     UNION ALL
+
+--     SELECT
+--       DISTINCT ON (model.id) j_addresses_sub_communities.sub_community as sub_community_name,
+--       j_addresses.sub_communities_id,
+--       -- COUNT(*) for the number of items in the same sub-community
+--       COUNT(*) OVER (
+--         PARTITION BY j_addresses_sub_communities.sub_community
+--       ) as items_in_same_sub_community
+
+--     FROM
+--       broker_company_branches_agents AS model
+--       INNER JOIN users as j_users on model.users_id = j_users.id
+--       and j_users.user_types_id = 2
+--       LEFT JOIN profiles AS j_profiles ON model.profiles_id = j_profiles.id
+--       LEFT JOIN addresses AS j_addresses ON j_profiles.addresses_id = j_addresses.id
+--       LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--       LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--       LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--       LEFT JOIN communities AS j_addresses_communities ON j_addresses.communities_id = j_addresses_communities.id
+--       LEFT JOIN sub_communities AS j_addresses_sub_communities ON j_addresses.sub_communities_id = j_addresses_sub_communities.id
+--       LEFT JOIN broker_companies_branches AS j_broker_companies ON j_broker_companies.id = model.broker_companies_branches_id
+
+--     WHERE
+--       model.is_verified = ANY(@is_verified :: boolean[])
+--       AND model.agent_rank = ANY(@rank :: bigint[])
+--       AND (
+--         COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.countries_id = ANY(
+--           COALESCE(@country_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       AND (
+--         COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--         OR j_addresses.states_id = ANY(
+--           COALESCE(@state_id, ARRAY[] :: bigint[])
+--         )
+--       )
+--       AND (
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         ) = ARRAY[] :: bigint[]
+--         OR j_addresses.communities_id = ANY(
+--           COALESCE(
+--             @community_id, ARRAY[] :: bigint[]
+--           )
+--         )
+--       )
+--       -- AND (
+--       --   COALESCE(
+--       --     @sub_community_id, ARRAY[] :: bigint[]
+--       --   ) = ARRAY[] :: bigint[]
+--       --   OR j_addresses.sub_communities_id = ANY(
+--       --     COALESCE(
+--       --       @sub_community_id, ARRAY[] :: bigint[]
+--       --     )
+--       --   )
+--       -- )
+--       AND (
+--         COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--         OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_states.state) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         )
+--         OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--           array(
+--             select
+--               '%' || pt || '%'
+--             from
+--               unnest(@search_text :: TEXT[]) pt
+--           ):: TEXT[]
+--         ) -- OR
+--         -- LOWER(model.property_title) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[]) OR
+--         -- LOWER(j_property_types.type) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[]) OR
+--         -- LOWER(model.property_title_arabic) ILIKE ANY(array(select '%' || pt || '%' from unnest(@search_text::TEXT[]) pt)::TEXT[])
+--         )
+ 
+--   ) AS subquery
+
+-- GROUP BY
+--   sub_community_name,
+--   sub_communities_id
+-- ORDER BY
+--   sub_communities_id;
+
+-- -- name: GetPropertiesByBrokerAgentId :many
+-- with x as (
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     model.broker_companies_id,
+--     model.broker_company_agents,
+--     0 as freelancers_id,
+--     0 as broker_companies_branches_id,
+--     0 as broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     agricultural_broker_agent_properties AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+--     LEFT JOIN agricultural_broker_agent_properties_media AS j_properties_media ON model.id = j_properties_media.agricultural_broker_agent_properties_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_agents
+--     LEFT JOIN agricultural_properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     0 as broker_companies_id,
+--     0 as broker_company_agents,
+--     0 as freelancers_id,
+--     model.broker_companies_branches_id,
+--     model.broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     agricultural_broker_agent_properties_branch AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies_branches AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+--     LEFT JOIN agricultural_broker_agent_properties_branch_media AS j_properties_media ON model.id = j_properties_media.agricultural_broker_agent_properties_branch_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_branches_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_branches_agents
+--     LEFT JOIN agricultural_properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_branches_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     model.broker_companies_id,
+--     model.broker_company_agents,
+--     0 as freelancers_id,
+--     0 as broker_companies_branches_id,
+--     0 as broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     broker_company_agent_properties AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+ 
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     0 as broker_companies_id,
+--     0 as broker_company_agents,
+--     0 as freelancers_id,
+--     model.broker_companies_branches_id,
+--     model.broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     broker_company_agent_properties_branch AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media_branch AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_branch_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_branches_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_branches_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_branches_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     model.broker_companies_id,
+--     model.broker_company_agents,
+--     0 as freelancers_id,
+--     0 as broker_companies_branches_id,
+--     0 as broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     industrial_broker_agent_properties AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+ 
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     0 as broker_companies_id,
+--     0 as broker_company_agents,
+--     0 as freelancers_id,
+--     model.broker_companies_branches_id,
+--     model.broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     industrial_broker_agent_properties_branch AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies_branches AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media_branch AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_branch_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_branches_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_branches_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_branches_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+   
+-- )
+
+-- Select
+--   id,
+--   property_title,
+--   property_title_arabic,
+--   description,
+--   description_arabic,
+--   is_verified,
+--   property_rank,
+--   addresses_id,
+--   locations_id,
+--   property_types_id,
+--   status,
+--   created_at,
+--   updated_at,
+--   facilities_id,
+--   amenities_id,
+--   is_show_owner_info,
+--   property,
+--   countries_id,
+--   ref_no,
+--   category,
+--   investment,
+--   contract_start_datetime,
+--   contract_end_datetime,
+--   amount,
+--   unit_types,
+--   users_id,
+--   developer_company_name,
+--   sub_developer_company_name,
+--   broker_companies_id,
+--   broker_company_agents,
+--   is_branch,
+--   property_name,
+--   from_xml,
+--   freelancers_id,
+--   --
+--   j_property_types_id,
+--   j_property_types_type,
+--   j_property_types_code,
+--   j_property_types_is_residential,
+--   j_property_types_is_commercial,
+--   j_property_types_created_at,
+--   j_property_types_updated_at,
+--   j_property_types_property_type_facts_id,
+--   j_property_types_category,
+--   j_property_types_status,
+--   j_property_types_unit_types --
+--   j_broker_companies_id,
+--   j_broker_companies_company_name,
+--   j_broker_companies_description,
+--   j_broker_companies_logo_url,
+--   j_broker_companies_addresses_id,
+--   j_broker_companies_email,
+--   j_broker_companies_phone_number,
+--   j_broker_companies_whatsapp_number,
+--   j_broker_companies_commercial_license_no,
+--   j_broker_companies_commercial_license_file_url,
+--   j_broker_companies_commercial_license_expiry,
+--   j_broker_companies_rera_no,
+--   j_broker_companies_rera_file_url,
+--   j_broker_companies_rera_expiry,
+--   j_broker_companies_is_verified,
+--   j_broker_companies_website_url,
+--   j_broker_companies_cover_image_url,
+--   j_broker_companies_tag_line,
+--   j_broker_companies_vat_no,
+--   j_broker_companies_vat_status,
+--   j_broker_companies_vat_file_url,
+--   j_broker_companies_facebook_profile_url,
+--   j_broker_companies_instagram_profile_url,
+--   j_broker_companies_twitter_profile_url,
+--   j_broker_companies_no_of_employees,
+--   j_broker_companies_users_id,
+--   j_broker_companies_linkedin_profile_url,
+--   j_broker_companies_company_rank,
+--   j_broker_companies_status,
+--   j_broker_companies_country_id,
+--   j_broker_companies_company_type,
+--   j_broker_companies_is_branch,
+--   j_broker_companies_created_at,
+--   j_broker_companies_updated_at,
+--   j_broker_companies_ref_no,
+--   j_broker_companies_rera_registration_date,
+--   j_broker_companies_commercial_license_registration_date,
+--   j_broker_companies_commercial_license_issue_date,
+--   j_broker_companies_youtube_profile_url,
+--   j_broker_companies_orn_license_no,
+--   j_broker_companies_orn_license_file_url,
+--   j_broker_companies_orn_registration_date,
+--   j_broker_companies_orn_license_expiry,
+--   --
+--   j_addresses_id,
+--   j_addresses_communities_id,
+--   j_addresses_sub_communities_id,
+--   j_addresses_locations_id,
+--   j_addresses_created_at,
+--   j_addresses_updated_at,
+--   --
+--   j_addresses_countries_country,
+--   j_addresses_countries_flag,
+--   j_addresses_countries_created_at,
+--   j_addresses_countries_updated_at,
+--   j_addresses_countries_alpha2_code,
+--   j_addresses_countries_alpha3_code,
+--   j_addresses_countries_country_code,
+--   j_addresses_countries_lat,
+--   j_addresses_countries_lng,
+--   --
+--   j_addresses_states_state,
+--   j_addresses_states_countries_id,
+--   j_addresses_states_created_at,
+--   j_addresses_states_updated_at,
+--   j_addresses_states_lat,
+--   j_addresses_states_lng,
+--   --
+--   j_addresses_cities_city,
+--   j_addresses_cities_states_id,
+--   j_addresses_cities_created_at,
+--   j_addresses_cities_updated_at,
+--   j_addresses_cities_lat,
+--   j_addresses_cities_lng,
+--   --
+--   j_properties_media_id,
+--   j_properties_media_image_url,
+--   j_properties_media_image360_url,
+--   j_properties_media_video_url,
+--   j_properties_media_panaroma_url,
+--   j_properties_media_main_media_section,
+--   j_properties_media_created_at,
+--   j_properties_media_updated_at,
+--   j_properties_media_is_branch,
+--   --
+--   j_properties_facts_id,
+--   j_properties_facts_bedroom,
+--   j_properties_facts_bathroom,
+--   j_properties_facts_plot_area,
+--   j_properties_facts_built_up_area,
+--   j_properties_facts_view,
+--   j_properties_facts_furnished,
+--   j_properties_facts_ownership,
+--   j_properties_facts_completion_status,
+--   j_properties_facts_start_date,
+--   j_properties_facts_completion_date,
+--   j_properties_facts_handover_date,
+--   j_properties_facts_no_of_floor,
+--   j_properties_facts_no_of_units,
+--   j_properties_facts_min_area,
+--   j_properties_facts_max_area,
+--   j_properties_facts_service_charge,
+--   j_properties_facts_parking,
+--   j_properties_facts_ask_price,
+--   j_properties_facts_price,
+--   j_properties_facts_rent_type,
+--   j_properties_facts_no_of_payment,
+--   j_properties_facts_no_of_retail,
+--   j_properties_facts_no_of_pool,
+--   j_properties_facts_elevator,
+--   j_properties_facts_starting_price,
+--   j_properties_facts_life_style,
+--   j_properties_facts_properties_id,
+--   j_properties_facts_property,
+--   j_properties_facts_is_branch,
+--   j_properties_facts_created_at,
+--   j_properties_facts_updated_at,
+--   j_properties_facts_available_units,
+--   j_properties_facts_commercial_tax,
+--   j_properties_facts_municipality_tax,
+--   --
+--   j_broker_company_agents_about,
+--   j_broker_company_agents_about_arabic,
+--   j_broker_company_agents_agent_rank,
+--   j_broker_company_agents_botim,
+--   j_broker_company_agents_brn,
+--   j_broker_company_agents_brn_expiry,
+--   -- j_broker_company_agents_broker_companies_branches_id,
+--   -- j_broker_company_agents_broker_companies_id,
+--   j_broker_company_agents_created_at,
+--   j_broker_company_agents_experience_since,
+--   j_broker_company_agents_facebook_profile_url,
+--   j_broker_company_agents_id,
+--   j_broker_company_agents_is_verified,
+--   j_broker_company_agents_linkedin_profile_url,
+--   j_broker_company_agents_nationalities,
+--   j_broker_company_agents_profiles_id,
+--   j_broker_company_agents_service_areas,
+--   j_broker_company_agents_status,
+--   j_broker_company_agents_telegram,
+--   j_broker_company_agents_tawasal,
+--   j_broker_company_agents_twitter_profile_url,
+--   j_broker_company_agents_updated_at,
+--   j_broker_company_agents_users_id,
+--   j_broker_company_agents_verification_document_url,
+--   --
+--   j_addresses_countries_id,
+--   j_addresses_states_id,
+--   j_addresses_cities_id
+ 
+-- from
+--   x
+-- ORDER BY
+--   CASE WHEN @order_by :: bigint = 1 THEN created_at END DESC,
+--   CASE WHEN @order_by :: bigint = 2 THEN j_properties_facts_price END,
+--   CASE WHEN @order_by :: bigint = 3 THEN j_properties_facts_price END DESC,
+--   CASE WHEN @order_by :: bigint = 4 THEN j_properties_facts_bedroom END,
+--   CASE WHEN @order_by :: bigint = 5 THEN j_properties_facts_bedroom END DESC
+-- LIMIT
+--   $1 OFFSET $2;
+
+
+-- -- name: GetPropertiesCountByBrokerAgentId :one
+-- with x as (
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     model.broker_companies_id,
+--     model.broker_company_agents,
+--     0 as freelancers_id,
+--     0 as broker_companies_branches_id,
+--     0 as broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     agricultural_broker_agent_properties AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+--     LEFT JOIN agricultural_broker_agent_properties_media AS j_properties_media ON model.id = j_properties_media.agricultural_broker_agent_properties_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_agents
+--     LEFT JOIN agricultural_properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     0 as broker_companies_id,
+--     0 as broker_company_agents,
+--     0 as freelancers_id,
+--     model.broker_companies_branches_id,
+--     model.broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     agricultural_broker_agent_properties_branch AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies_branches AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+--     LEFT JOIN agricultural_broker_agent_properties_branch_media AS j_properties_media ON model.id = j_properties_media.agricultural_broker_agent_properties_branch_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_branches_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_branches_agents
+--     LEFT JOIN agricultural_properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_branches_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     model.broker_companies_id,
+--     model.broker_company_agents,
+--     0 as freelancers_id,
+--     0 as broker_companies_branches_id,
+--     0 as broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     broker_company_agent_properties AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+ 
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     0 as broker_companies_id,
+--     0 as broker_company_agents,
+--     0 as freelancers_id,
+--     model.broker_companies_branches_id,
+--     model.broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     broker_company_agent_properties_branch AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media_branch AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_branch_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_branches_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_branches_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_branches_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     model.broker_companies_id,
+--     model.broker_company_agents,
+--     0 as freelancers_id,
+--     0 as broker_companies_branches_id,
+--     0 as broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     industrial_broker_agent_properties AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+ 
+--   UNION ALL
+
+--   SELECT DISTINCT ON (model.id)
+--     model.id,
+--     model.property_title,
+--     model.property_title_arabic,
+--     model.description,
+--     model.description_arabic,
+--     model.is_verified,
+--     model.property_rank,
+--     model.addresses_id,
+--     model.locations_id,
+--     model.property_types_id,
+--     model.status,
+--     model.created_at,
+--     model.updated_at,
+--     model.facilities_id,
+--     model.amenities_id,
+--     model.is_show_owner_info,
+--     model.property,
+--     model.countries_id,
+--     model.ref_no,
+--     model.category,
+--     model.investment,
+--     model.contract_start_datetime,
+--     model.contract_end_datetime,
+--     model.amount,
+--     model.unit_types,
+--     model.users_id,
+--     model.developer_company_name,
+--     model.sub_developer_company_name,
+--     model.is_branch,
+--     model.property_name,
+--     model.from_xml,
+--     0 as broker_companies_id,
+--     0 as broker_company_agents,
+--     0 as freelancers_id,
+--     model.broker_companies_branches_id,
+--     model.broker_company_branches_agents,
+
+--     -- property_types
+--     j_property_types.id as j_property_types_id,
+--     j_property_types.type as j_property_types_type,
+--     j_property_types.code as j_property_types_code,
+--     j_property_types.is_residential as j_property_types_is_residential,
+--     j_property_types.is_commercial as j_property_types_is_commercial,
+--     j_property_types.created_at as j_property_types_created_at,
+--     j_property_types.updated_at as j_property_types_updated_at,
+--     j_property_types.property_type_facts_id as j_property_types_property_type_facts_id,
+--     j_property_types.category as j_property_types_category,
+--     j_property_types.status as j_property_types_status,
+--     j_property_types.unit_types as j_property_types_unit_types,
+
+--     -- broker_companies
+--     j_broker_companies.id as j_broker_companies_id,
+--     j_broker_companies.company_name as j_broker_companies_company_name,
+--     j_broker_companies.description as j_broker_companies_description,
+--     j_broker_companies.logo_url as j_broker_companies_logo_url,
+--     j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--     j_broker_companies.email as j_broker_companies_email,
+--     j_broker_companies.phone_number as j_broker_companies_phone_number,
+--     j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--     j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--     j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--     j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--     j_broker_companies.rera_no as j_broker_companies_rera_no,
+--     j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--     j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--     j_broker_companies.is_verified as j_broker_companies_is_verified,
+--     j_broker_companies.website_url as j_broker_companies_website_url,
+--     j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--     j_broker_companies.tag_line as j_broker_companies_tag_line,
+--     j_broker_companies.vat_no as j_broker_companies_vat_no,
+--     j_broker_companies.vat_status as j_broker_companies_vat_status,
+--     j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--     j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--     j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--     j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--     j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--     j_broker_companies.users_id as j_broker_companies_users_id,
+--     j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--     j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--     j_broker_companies.company_rank as j_broker_companies_company_rank,
+--     j_broker_companies.status as j_broker_companies_status,
+--     j_broker_companies.country_id as j_broker_companies_country_id,
+--     j_broker_companies.company_type as j_broker_companies_company_type,
+--     j_broker_companies.is_branch as j_broker_companies_is_branch,
+--     j_broker_companies.created_at as j_broker_companies_created_at,
+--     j_broker_companies.updated_at as j_broker_companies_updated_at,
+--     j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--     j_broker_companies.ref_no as j_broker_companies_ref_no,
+--     j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--     j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--     j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url,
+--     j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--     j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--     j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--     j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+
+--     -- addresses
+--     j_addresses.id as j_addresses_id,
+--     j_addresses.countries_id as j_addresses_countries_id,
+--     j_addresses.states_id as j_addresses_states_id,
+--     j_addresses.cities_id as j_addresses_cities_id,
+--     j_addresses.communities_id as j_addresses_communities_id,
+--     j_addresses.sub_communities_id as j_addresses_sub_communities_id,
+--     j_addresses.locations_id as j_addresses_locations_id,
+--     j_addresses.created_at as j_addresses_created_at,
+--     j_addresses.updated_at as j_addresses_updated_at,
+
+--     -- countries
+--     -- j_addresses_countries.id as j_addresses_countries_id,
+--     j_addresses_countries.country as j_addresses_countries_country,
+--     j_addresses_countries.flag as j_addresses_countries_flag,
+--     j_addresses_countries.created_at as j_addresses_countries_created_at,
+--     j_addresses_countries.updated_at as j_addresses_countries_updated_at,
+--     j_addresses_countries.alpha2_code as j_addresses_countries_alpha2_code,
+--     j_addresses_countries.alpha3_code as j_addresses_countries_alpha3_code,
+--     j_addresses_countries.country_code as j_addresses_countries_country_code,
+--     j_addresses_countries.lat as j_addresses_countries_lat,
+--     j_addresses_countries.lng as j_addresses_countries_lng,
+
+--     -- states
+--     -- j_addresses_states.id as j_addresses_states_id,
+--     j_addresses_states.state as j_addresses_states_state,
+--     j_addresses_states.countries_id as j_addresses_states_countries_id,
+--     j_addresses_states.created_at as j_addresses_states_created_at,
+--     j_addresses_states.updated_at as j_addresses_states_updated_at,
+--     j_addresses_states.lat as j_addresses_states_lat,
+--     j_addresses_states.lng as j_addresses_states_lng,
+
+--     -- cities
+--     -- j_addresses_cities.id as j_addresses_cities_id,
+--     j_addresses_cities.city as j_addresses_cities_city,
+--     j_addresses_cities.states_id as j_addresses_cities_states_id,
+--     j_addresses_cities.created_at as j_addresses_cities_created_at,
+--     j_addresses_cities.updated_at as j_addresses_cities_updated_at,
+--     j_addresses_cities.lat as j_addresses_cities_lat,
+--     j_addresses_cities.lng as j_addresses_cities_lng,
+
+--     -- Media
+--     j_properties_media.id as j_properties_media_id,
+--     j_properties_media.image_url as j_properties_media_image_url,
+--     j_properties_media.image360_url as j_properties_media_image360_url,
+--     j_properties_media.video_url as j_properties_media_video_url,
+--     j_properties_media.panaroma_url as j_properties_media_panaroma_url,
+--     j_properties_media.main_media_section as j_properties_media_main_media_section,
+--     j_properties_media.created_at as j_properties_media_created_at,
+--     j_properties_media.updated_at as j_properties_media_updated_at,
+--     j_properties_media.is_branch as j_properties_media_is_branch,
+
+--     -- agricultural_properties_facts
+--     j_properties_facts.id as j_properties_facts_id,
+--     j_properties_facts.bedroom as j_properties_facts_bedroom,
+--     j_properties_facts.bathroom as j_properties_facts_bathroom,
+--     j_properties_facts.plot_area as j_properties_facts_plot_area,
+--     j_properties_facts.built_up_area as j_properties_facts_built_up_area,
+--     j_properties_facts.view as j_properties_facts_view,
+--     j_properties_facts.furnished as j_properties_facts_furnished,
+--     j_properties_facts.ownership as j_properties_facts_ownership,
+--     j_properties_facts.completion_status as j_properties_facts_completion_status,
+--     j_properties_facts.start_date as j_properties_facts_start_date,
+--     j_properties_facts.completion_date as j_properties_facts_completion_date,
+--     j_properties_facts.handover_date as j_properties_facts_handover_date,
+--     j_properties_facts.no_of_floor as j_properties_facts_no_of_floor,
+--     j_properties_facts.no_of_units as j_properties_facts_no_of_units,
+--     j_properties_facts.min_area as j_properties_facts_min_area,
+--     j_properties_facts.max_area as j_properties_facts_max_area,
+--     j_properties_facts.service_charge as j_properties_facts_service_charge,
+--     j_properties_facts.parking as j_properties_facts_parking,
+--     j_properties_facts.ask_price as j_properties_facts_ask_price,
+--     j_properties_facts.price as j_properties_facts_price,
+--     j_properties_facts.rent_type as j_properties_facts_rent_type,
+--     j_properties_facts.no_of_payment as j_properties_facts_no_of_payment,
+--     j_properties_facts.no_of_retail as j_properties_facts_no_of_retail,
+--     j_properties_facts.no_of_pool as j_properties_facts_no_of_pool,
+--     j_properties_facts.elevator as j_properties_facts_elevator,
+--     j_properties_facts.starting_price as j_properties_facts_starting_price,
+--     j_properties_facts.life_style as j_properties_facts_life_style,
+--     j_properties_facts.properties_id as j_properties_facts_properties_id,
+--     j_properties_facts.property as j_properties_facts_property,
+--     j_properties_facts.is_branch as j_properties_facts_is_branch,
+--     j_properties_facts.created_at as j_properties_facts_created_at,
+--     j_properties_facts.updated_at as j_properties_facts_updated_at,
+--     j_properties_facts.available_units as j_properties_facts_available_units,
+--     j_properties_facts.commercial_tax as j_properties_facts_commercial_tax,
+--     j_properties_facts.municipality_tax as j_properties_facts_municipality_tax,
+   
+   
+   
+
+--     -- j_broker_company_agents
+--     j_broker_company_agents.about as j_broker_company_agents_about,
+--     j_broker_company_agents.about_arabic as j_broker_company_agents_about_arabic,
+--     j_broker_company_agents.agent_rank as j_broker_company_agents_agent_rank,
+--     j_broker_company_agents.botim as j_broker_company_agents_botim,
+--     j_broker_company_agents.brn as j_broker_company_agents_brn,
+--     j_broker_company_agents.brn_expiry as j_broker_company_agents_brn_expiry,
+--     -- j_broker_company_agents.broker_companies_branches_id as j_broker_company_agents_broker_companies_branches_id,
+--     -- j_broker_company_agents.broker_companies_id as j_broker_company_agents_broker_companies_id,
+--     j_broker_company_agents.created_at as j_broker_company_agents_created_at,
+--     j_broker_company_agents.experience_since as j_broker_company_agents_experience_since,
+--     j_broker_company_agents.facebook_profile_url as j_broker_company_agents_facebook_profile_url,
+--     j_broker_company_agents.id as j_broker_company_agents_id,
+--     j_broker_company_agents.is_verified as j_broker_company_agents_is_verified,
+--     j_broker_company_agents.linkedin_profile_url as j_broker_company_agents_linkedin_profile_url,
+--     j_broker_company_agents.nationalities as j_broker_company_agents_nationalities,
+--     j_broker_company_agents.profiles_id as j_broker_company_agents_profiles_id,
+--     j_broker_company_agents.service_areas as j_broker_company_agents_service_areas,
+--     j_broker_company_agents.status as j_broker_company_agents_status,
+--     j_broker_company_agents.telegram as j_broker_company_agents_telegram,
+--     j_broker_company_agents.tawasal as j_broker_company_agents_tawasal,
+--     j_broker_company_agents.twitter_profile_url as j_broker_company_agents_twitter_profile_url,
+--     j_broker_company_agents.updated_at as j_broker_company_agents_updated_at,
+--     j_broker_company_agents.users_id as j_broker_company_agents_users_id,
+--     j_broker_company_agents.verification_document_url as j_broker_company_agents_verification_document_url,
+
+--     -- unit_facts
+--     j_unit_facts.id as j_unit_facts_id,
+--     j_unit_facts.category as j_unit_facts_category
+
+--   FROM
+--     industrial_broker_agent_properties_branch AS model
+--     LEFT JOIN property_types AS j_property_types ON model.property_types_id = j_property_types.id
+--     LEFT JOIN broker_companies_branches AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+--     LEFT JOIN broker_company_agent_properties_media_branch AS j_properties_media ON model.id = j_properties_media.broker_company_agent_properties_branch_id
+--     LEFT JOIN addresses AS j_addresses ON model.addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+--     LEFT JOIN unit_facts AS j_unit_facts ON j_unit_facts.unit_id = model.id
+--     LEFT JOIN broker_company_branches_agents AS j_broker_company_agents ON j_broker_company_agents.id = model.broker_company_branches_agents
+--     LEFT JOIN properties_facts AS j_properties_facts ON j_properties_facts.properties_id = model.id AND j_properties_facts.property = 3
+
+--   WHERE
+--     model.is_verified = ANY(@is_verified :: boolean[])
+--     AND -- (@is_verified::boolean is NULL OR model.is_verified = @is_verified::boolean) AND
+--     model.property_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_company_branches_agents = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       CASE WHEN @section :: bigint = 1 THEN model.category = 'rent' WHEN @section :: bigint = 2 THEN model.category = 'sale' WHEN @section :: bigint = 3 THEN model.category = 'exchange' ELSE FALSE END
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_property_types.type) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(model.property_title_arabic) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+   
+-- )
+
+-- SELECT
+--   COUNT(*)
+-- FROM
+--   x;
+
+
+
+
+
+-- -- name: GetServicesCountByBrokerCompanyId :one
+-- with x as (
+--   SELECT DISTINCT ON (model.id)
+--     --
+--     model.id,
+--     model.broker_companies_id,
+--     model.created_at,
+--     model.services_id,
+--     model.updated_at,
+
+--     --
+--     j_broker_companies_id,
+--     j_broker_companies_addresses_id,
+--     j_broker_companies_commercial_license_expiry,
+--     j_broker_companies_commercial_license_file_url,
+--     j_broker_companies_commercial_license_issue_date,
+--     j_broker_companies_commercial_license_no,
+--     j_broker_companies_commercial_license_registration_date,
+--     j_broker_companies_company_name,
+--     j_broker_companies_company_rank,
+--     j_broker_companies_company_type,
+--     j_broker_companies_country_id,
+--     j_broker_companies_cover_image_url,
+--     j_broker_companies_created_at,
+--     j_broker_companies_description,
+--     j_broker_companies_email,
+--     j_broker_companies_facebook_profile_url,
+--     j_broker_companies_instagram_profile_url,
+--     j_broker_companies_is_branch,
+--     j_broker_companies_is_verified,
+--     j_broker_companies_linkedin_profile_url,
+--     j_broker_companies_logo_url,
+--     j_broker_companies_no_of_employees,
+--     j_broker_companies_orn_license_expiry,
+--     j_broker_companies_orn_license_file_url,
+--     j_broker_companies_orn_license_no,
+--     j_broker_companies_orn_registration_date,
+--     j_broker_companies_phone_number,
+--     j_broker_companies_ref_no,
+--     j_broker_companies_rera_expiry,
+--     j_broker_companies_rera_file_url,
+--     j_broker_companies_rera_issue_date,
+--     j_broker_companies_rera_no,
+--     j_broker_companies_rera_registration_date,
+--     j_broker_companies_status,
+--     j_broker_companies_tag_line,
+--     j_broker_companies_twitter_profile_url,
+--     j_broker_companies_updated_at,
+--     j_broker_companies_users_id,
+--     j_broker_companies_vat_file_url,
+--     j_broker_companies_vat_no,
+--     j_broker_companies_vat_status,
+--     j_broker_companies_website_url,
+--     j_broker_companies_whatsapp_number,
+--     j_broker_companies_youtube_profile_url
+
+--     --
+--     -- j_services.id as j_services_id,
+--     -- j_services.title as j_services_title,
+--     -- j_services.description as j_services_description,
+--     -- j_services.icon_url as j_services_icon_url,
+--     -- j_services.image_url as j_services_image_url,
+--     -- j_services.main_services_id as j_services_main_services_id,
+--     -- j_services.created_at as j_services_created_at,
+--     -- j_services.updated_at as j_services_updated_at
+
+--   FROM 
+--     (
+--       SELECT
+--         model.id,
+--         model.broker_companies_id,
+--         model.created_at,
+--         model.services_id,
+--         model.updated_at,
+
+--         --
+--         j_broker_companies.id as j_broker_companies_id,
+--         j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--         j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--         j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--         j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--         j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--         j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--         j_broker_companies.company_name as j_broker_companies_company_name,
+--         j_broker_companies.company_rank as j_broker_companies_company_rank,
+--         j_broker_companies.company_type as j_broker_companies_company_type,
+--         j_broker_companies.country_id as j_broker_companies_country_id,
+--         j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--         j_broker_companies.created_at as j_broker_companies_created_at,
+--         j_broker_companies.description as j_broker_companies_description,
+--         j_broker_companies.email as j_broker_companies_email,
+--         j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--         j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--         j_broker_companies.is_branch as j_broker_companies_is_branch,
+--         j_broker_companies.is_verified as j_broker_companies_is_verified,
+--         j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--         j_broker_companies.logo_url as j_broker_companies_logo_url,
+--         j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--         j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+--         j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--         j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--         j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--         j_broker_companies.phone_number as j_broker_companies_phone_number,
+--         j_broker_companies.ref_no as j_broker_companies_ref_no,
+--         j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--         j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--         j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--         j_broker_companies.rera_no as j_broker_companies_rera_no,
+--         j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--         j_broker_companies.status as j_broker_companies_status,
+--         j_broker_companies.tag_line as j_broker_companies_tag_line,
+--         j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--         j_broker_companies.updated_at as j_broker_companies_updated_at,
+--         j_broker_companies.users_id as j_broker_companies_users_id,
+--         j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--         j_broker_companies.vat_no as j_broker_companies_vat_no,
+--         j_broker_companies.vat_status as j_broker_companies_vat_status,
+--         j_broker_companies.website_url as j_broker_companies_website_url,
+--         j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--         j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url
+
+--       FROM broker_companies_services as model
+--       LEFT JOIN broker_companies AS j_broker_companies ON model.broker_companies_id = j_broker_companies.id
+
+--       UNION ALL
+
+--       SELECT
+--         model.id,
+--         model.broker_companies_branches_id,
+--         model.created_at,
+--         model.services_id,
+--         model.updated_at,
+
+--         --
+--         j_broker_companies.id as j_broker_companies_id,
+--         j_broker_companies.addresses_id as j_broker_companies_addresses_id,
+--         j_broker_companies.commercial_license_expiry as j_broker_companies_commercial_license_expiry,
+--         j_broker_companies.commercial_license_file_url as j_broker_companies_commercial_license_file_url,
+--         j_broker_companies.commercial_license_issue_date as j_broker_companies_commercial_license_issue_date,
+--         j_broker_companies.commercial_license_no as j_broker_companies_commercial_license_no,
+--         j_broker_companies.commercial_license_registration_date as j_broker_companies_commercial_license_registration_date,
+--         j_broker_companies.company_name as j_broker_companies_company_name,
+--         j_broker_companies.company_rank as j_broker_companies_company_rank,
+--         j_broker_companies.company_type as j_broker_companies_company_type,
+--         j_broker_companies.country_id as j_broker_companies_country_id,
+--         j_broker_companies.cover_image_url as j_broker_companies_cover_image_url,
+--         j_broker_companies.created_at as j_broker_companies_created_at,
+--         j_broker_companies.description as j_broker_companies_description,
+--         j_broker_companies.email as j_broker_companies_email,
+--         j_broker_companies.facebook_profile_url as j_broker_companies_facebook_profile_url,
+--         j_broker_companies.instagram_profile_url as j_broker_companies_instagram_profile_url,
+--         j_broker_companies.is_branch as j_broker_companies_is_branch,
+--         j_broker_companies.is_verified as j_broker_companies_is_verified,
+--         j_broker_companies.linkedin_profile_url as j_broker_companies_linkedin_profile_url,
+--         j_broker_companies.logo_url as j_broker_companies_logo_url,
+--         j_broker_companies.main_services_id as j_broker_companies_main_services_id,
+--         j_broker_companies.no_of_employees as j_broker_companies_no_of_employees,
+--         j_broker_companies.orn_license_expiry as j_broker_companies_orn_license_expiry,
+--         j_broker_companies.orn_license_file_url as j_broker_companies_orn_license_file_url,
+--         j_broker_companies.orn_license_no as j_broker_companies_orn_license_no,
+--         j_broker_companies.orn_registration_date as j_broker_companies_orn_registration_date,
+--         j_broker_companies.phone_number as j_broker_companies_phone_number,
+--         j_broker_companies.ref_no as j_broker_companies_ref_no,
+--         j_broker_companies.rera_expiry as j_broker_companies_rera_expiry,
+--         j_broker_companies.rera_file_url as j_broker_companies_rera_file_url,
+--         j_broker_companies.rera_issue_date as j_broker_companies_rera_issue_date,
+--         j_broker_companies.rera_no as j_broker_companies_rera_no,
+--         j_broker_companies.rera_registration_date as j_broker_companies_rera_registration_date,
+--         j_broker_companies.status as j_broker_companies_status,
+--         j_broker_companies.subcompany_type as j_broker_companies_subcompany_type,
+--         j_broker_companies.tag_line as j_broker_companies_tag_line,
+--         j_broker_companies.twitter_profile_url as j_broker_companies_twitter_profile_url,
+--         j_broker_companies.updated_at as j_broker_companies_updated_at,
+--         j_broker_companies.users_id as j_broker_companies_users_id,
+--         j_broker_companies.vat_file_url as j_broker_companies_vat_file_url,
+--         j_broker_companies.vat_no as j_broker_companies_vat_no,
+--         j_broker_companies.vat_status as j_broker_companies_vat_status,
+--         j_broker_companies.website_url as j_broker_companies_website_url,
+--         j_broker_companies.whatsapp_number as j_broker_companies_whatsapp_number,
+--         j_broker_companies.youtube_profile_url as j_broker_companies_youtube_profile_url
+
+--       FROM broker_companies_branches_services  as model
+--       LEFT JOIN broker_companies_branches AS j_broker_companies ON model.broker_companies_branches_id = j_broker_companies.id
+
+--     ) AS model
+   
+--     LEFT JOIN services AS j_services ON j_services.id = ANY(model.services_id)
+--     LEFT JOIN addresses AS j_addresses ON j_broker_companies_addresses_id = j_addresses.id
+--     LEFT JOIN countries AS j_addresses_countries ON j_addresses.countries_id = j_addresses_countries.id
+--     LEFT JOIN states AS j_addresses_states ON j_addresses.states_id = j_addresses_states.id
+--     LEFT JOIN cities AS j_addresses_cities ON j_addresses.cities_id = j_addresses_cities.id
+   
+--   WHERE
+--     j_broker_companies_is_verified = ANY(@is_verified :: boolean[])
+--     AND
+--     j_broker_companies_company_rank = ANY(@property_rank :: bigint[])
+--     AND (
+--       COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR model.broker_companies_id = ANY(
+--         COALESCE(@broker_company_agent_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@country_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.countries_id = ANY(
+--         COALESCE(@country_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(@state_id, ARRAY[] :: bigint[]) = ARRAY[] :: bigint[]
+--       OR j_addresses.states_id = ANY(
+--         COALESCE(@state_id, ARRAY[] :: bigint[])
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.communities_id = ANY(
+--         COALESCE(
+--           @community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(
+--         @sub_community_id, ARRAY[] :: bigint[]
+--       ) = ARRAY[] :: bigint[]
+--       OR j_addresses.sub_communities_id = ANY(
+--         COALESCE(
+--           @sub_community_id, ARRAY[] :: bigint[]
+--         )
+--       )
+--     )
+--     AND (
+--       COALESCE(@search_text, ARRAY[] :: TEXT[]) = ARRAY[] :: TEXT[]
+--       OR LOWER(j_addresses_countries.country) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_states.state) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_addresses_cities.city) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--       OR LOWER(j_broker_companies_company_name) ILIKE ANY(
+--         array(
+--           select
+--             '%' || pt || '%'
+--           from
+--             unnest(@search_text :: TEXT[]) pt
+--         ):: TEXT[]
+--       )
+--     )
+   
+--   --   --
+-- )
+-- SELECT 
+--   COUNT(*)
+-- FROM 
+--   x;
+
+
+

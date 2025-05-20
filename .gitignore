@@ -1,0 +1,14 @@
+Makefile
+/tmp
+/data/*
+/.vscode/*
+main
+.env
+config/.env
+upload/*
+/config/dev.json
+internal/domain/sqlc/sqlc/*.exe
+certbot/
+property.csv
+dashboard_sections_menubar_generator
+xmlfeed/*

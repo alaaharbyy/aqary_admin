@@ -1,0 +1,178 @@
+-- -- name: GetProductBranchReviewCount :one 
+-- select 
+-- count(*)
+-- from product_reviews pr
+-- join companies_products cp on cp.id=pr.companies_products_id
+-- join product_companies_branches pcb on pcb.id=cp.companies_id
+-- where pcb.id=$1  and cp.is_branch=true;
+
+-- -- name: GetAllProductReviewsForAdmin :many
+-- select 
+-- cp.product_name,
+-- cp.products_categories_id,
+-- pr.*,
+-- u.email as reviewer_email,
+-- u.username as reviwer_username,
+-- cp.companies_id,
+-- cp.is_branch,
+-- COALESCE(pc.users_id,pcb.users_id) as admin,
+-- x.company_name
+-- from product_reviews pr
+-- JOIN users u on u.id=pr.reviewer
+-- join companies_products cp on cp.id=pr.companies_products_id
+-- LEFT JOIN product_companies pc on pc.id=cp.companies_id and pc.is_branch=false
+-- LEFT JOIN product_companies_branches pcb  on pcb.id=cp.companies_id and pcb.is_branch=TRUE
+-- JOIN (
+--         SELECT id AS company_id, 4 AS company_type, FALSE AS is_branch, users_id,company_name FROM product_companies
+--         WHERE product_companies.users_id = $3
+--         UNION ALL
+--         SELECT id AS company_id, 4 AS company_type, TRUE AS is_branch, users_id ,company_name FROM product_companies_branches
+--         WHERE product_companies_branches.users_id = $3
+-- ) AS x
+-- ON x.company_id=COALESCE(pc.id,pcb.id) and x.is_branch=COALESCE(pc.is_branch,pcb.is_branch)
+-- ORDER BY 
+--     pr.id DESC
+-- LIMIT $1 OFFSET $2;
+
+-- -- name: GetProductReviewsCountForAdmin :one
+-- select 
+-- COUNT(*)
+-- from product_reviews pr
+-- join companies_products cp on cp.id=pr.companies_products_id
+-- LEFT JOIN product_companies pc on pc.id=cp.companies_id and pc.is_branch=false
+-- LEFT JOIN product_companies_branches pcb  on pcb.id=cp.companies_id and pcb.is_branch=TRUE
+-- JOIN ( 
+--     SELECT id AS company_id, 4 AS company_type, FALSE AS is_branch, users_id,company_name FROM product_companies
+--     WHERE product_companies.users_id = $1
+--     UNION ALL
+--     SELECT id AS company_id, 4 AS company_type, TRUE AS is_branch, users_id ,company_name FROM product_companies_branches
+--     WHERE product_companies_branches.users_id = $1
+-- ) AS x
+-- ON x.company_id=COALESCE(pc.id,pcb.id) and x.is_branch=COALESCE(pc.is_branch,pcb.is_branch);
+
+-- -- name: GetAllProductReviewsForCompanyUser :many
+-- SELECT 
+-- cp.product_name,
+-- cp.products_categories_id,
+-- pr.*,
+-- u.email AS reviewer_email,
+-- u.username AS reviwer_username
+-- FROM product_reviews pr
+-- JOIN users u ON u.id=pr.reviewer
+-- join companies_products cp ON cp.id=pr.companies_products_id
+-- where cp.companies_id=$1 AND cp.is_branch=$2
+-- ORDER BY 
+--     pr.id DESC
+-- LIMIT $4 OFFSET $3;
+
+-- -- name: GetProductReviewsCountForCompanyUser :one
+-- SELECT 
+-- COUNT(*)
+-- FROM product_reviews pr
+-- join companies_products cp ON cp.id=pr.companies_products_id
+-- where cp.companies_id=$1 AND cp.is_branch=$2;
+
+-- -- name: GetAllCompanyReviewsForAdmin :many
+ 
+--    SELECT 
+-- 	    cr.id, cr.ref_no, cr.company_type_id, cr.is_branch, cr.company_id, cr.customer_service, cr.staff_courstesy, cr.implementation, cr.properties_quality, cr.description, cr.reviewer, cr.proof_images ,cr.title,
+-- 	    u.email,
+-- 	    u.username,
+--            x.company_name
+--     FROM 
+--       	company_reviews cr
+--     JOIN 
+--       	users u ON u.id = cr.reviewer 
+-- 	JOIN
+-- 	(
+--         SELECT  'broker_companies' AS table_name, id,1 AS company_type, FALSE AS is_branch, users_id,company_name FROM broker_companies
+--         WHERE broker_companies.users_id = $1
+--         UNION ALL
+--         SELECT  'broker_companies_branches' AS table_name, id,1 AS company_type, TRUE AS is_branch, users_id,company_name FROM broker_companies_branches
+--         WHERE broker_companies_branches.users_id = $1
+--         UNION ALL
+--         SELECT  'developer_companies' AS table_name,id,2 AS company_type, FALSE AS is_branch, users_id,company_name FROM developer_companies
+--         WHERE developer_companies.users_id = $1
+--         UNION ALL
+--         SELECT  'developer_company_branches' AS table_name, id,2 AS company_type, TRUE AS is_branch, users_id,company_name FROM developer_company_branches
+--         WHERE developer_company_branches.users_id = $1
+--         UNION ALL
+--         SELECT 'services_companies' AS table_name, id,3 AS company_type, FALSE AS is_branch, users_id,company_name FROM services_companies
+--         WHERE services_companies.users_id = $1
+--         UNION ALL
+--         SELECT 'service_company_branches' AS table_name, id,3 AS company_type, TRUE AS is_branch, users_id,company_name FROM service_company_branches
+--         WHERE service_company_branches.users_id = $1
+--         UNION ALL
+--         SELECT 'product_company' AS table_name, id, 4 AS company_type, FALSE AS is_branch, users_id,company_name FROM product_companies
+--         WHERE product_companies.users_id = $1
+--         UNION ALL
+--         SELECT 'product_company_branches' AS table_name,id, 4 AS company_type, TRUE AS is_branch, users_id ,company_name FROM product_companies_branches
+--         WHERE product_companies_branches.users_id = $1
+-- 	)as x 
+-- 	on x.id = cr.company_id
+-- 	AND x.company_type = cr.company_type_id
+-- 	AND x.is_branch = cr.is_branch
+-- 	ORDER BY cr.id DESC
+-- 	LIMIT $2
+-- 	OFFSET $3;
+
+-- -- name: GetAllCompanyReviewsForCompanyUser :many
+-- SELECT
+-- 	    cr.id, cr.ref_no, cr.company_type_id, cr.is_branch, cr.company_id, cr.customer_service, cr.staff_courstesy, cr.implementation, cr.properties_quality, cr.description, cr.reviewer,cr.proof_images ,cr.title,
+-- 	    u.email,
+-- 	    u.username
+--     FROM 
+--       	company_reviews cr
+--     JOIN 
+--       	users u ON u.id = cr.reviewer 
+--     JOIN 
+--         company_users cu on cu.company_id=cr.company_id and cu.is_branch=cr.is_branch and cu.company_type=cr.company_type_id
+--     WHERE cu.users_id=$1   
+--     ORDER BY cr.id DESC
+-- 	LIMIT $2
+-- 	OFFSET $3; 
+
+-- -- name: GetCompanyReviewsCountForAdmin :one
+--    SELECT 
+-- 	  count(*)
+--     FROM 
+--       	company_reviews cr
+-- 	JOIN
+-- 	(
+--         SELECT  'broker_companies' AS table_name, id,1 AS company_type, FALSE AS is_branch, users_id,company_name FROM broker_companies
+--         WHERE broker_companies.users_id = $1
+--         UNION ALL
+--         SELECT  'broker_companies_branches' AS table_name, id,1 AS company_type, TRUE AS is_branch, users_id,company_name FROM broker_companies_branches
+--         WHERE broker_companies_branches.users_id = $1
+--         UNION ALL
+--         SELECT  'developer_companies' AS table_name,id,2 AS company_type, FALSE AS is_branch, users_id,company_name FROM developer_companies
+--         WHERE developer_companies.users_id = $1
+--         UNION ALL
+--         SELECT  'developer_company_branches' AS table_name, id,2 AS company_type, TRUE AS is_branch, users_id,company_name FROM developer_company_branches
+--         WHERE developer_company_branches.users_id =$1
+--         UNION ALL
+--         SELECT 'services_companies' AS table_name, id,3 AS company_type, FALSE AS is_branch, users_id,company_name FROM services_companies
+--         WHERE services_companies.users_id =$1
+--         UNION ALL
+--         SELECT 'service_company_branches' AS table_name, id,3 AS company_type, TRUE AS is_branch, users_id,company_name FROM service_company_branches
+--         WHERE service_company_branches.users_id = $1
+--         UNION ALL
+--         SELECT 'product_company' AS table_name, id, 4 AS company_type, FALSE AS is_branch, users_id,company_name FROM product_companies
+--         WHERE product_companies.users_id = $1
+--         UNION ALL
+--         SELECT 'product_company_branches' AS table_name,id, 4 AS company_type, TRUE AS is_branch, users_id ,company_name FROM product_companies_branches
+--         WHERE product_companies_branches.users_id = $1
+	
+-- 	)as x 
+-- 	on x.id = cr.company_id
+-- 	AND x.company_type = cr.company_type_id
+-- 	AND x.is_branch = cr.is_branch;
+
+-- -- name: GetCompanyReviewsCountForCompanyUser :one
+--    SELECT
+-- 	  count(*)
+--     FROM 
+--       	company_reviews cr
+--     JOIN 
+--         company_users cu on cu.company_id=cr.company_id and cu.is_branch=cr.is_branch and cu.company_type=cr.company_type_id
+--     WHERE cu.users_id=$1;

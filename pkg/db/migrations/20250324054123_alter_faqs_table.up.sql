@@ -1,0 +1,1 @@
+ALTER TABLE faqs ALTER COLUMN media_urls DROP NOT NULL;

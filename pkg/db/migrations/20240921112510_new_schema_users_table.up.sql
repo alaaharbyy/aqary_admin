@@ -1,0 +1,39 @@
+-- DROP TABLE IF EXISTS users CASCADE;
+
+-- CREATE TABLE "users" (
+--     "id" bigserial   NOT NULL,
+--     "email" varchar   NOT NULL,
+--     "username" varchar   NOT NULL,
+--     "password" varchar   NOT NULL,
+--     "status" bigint   NOT NULL,
+--     -- FK >- roles.id
+--     "roles_id" bigint    NULL,
+--     "profiles_id" bigint   NOT NULL,
+--     "user_types_id" bigint   NOT NULL,
+--     "social_login" varchar   NULL,
+--     -- added by Reyan 5-Sep-2024
+--     "show_hide_details" bool  DEFAULT false NOT NULL,
+--     "prefers_language" varchar  DEFAULT 'us-en' NOT NULL,
+--     "created_at" timestamptz  DEFAULT now() NOT NULL,
+--     "updated_at" timestamptz  DEFAULT now() NOT NULL,
+--     -- permissions_id bigint[]
+--     -- sub_section_permission bigint[]
+--     -- is_agent bool default=false
+--     "experience_since" timestamptz   NULL,
+--     "is_verified" bool   NOT NULL,
+--     CONSTRAINT "pk_users" PRIMARY KEY (
+--         "id"
+--      ),
+--     CONSTRAINT "uc_users_email" UNIQUE (
+--         "email"
+--     ),
+--     CONSTRAINT "uc_users_username" UNIQUE (
+--         "username"
+--     )
+-- );
+
+-- ALTER TABLE "users" ADD CONSTRAINT "fk_users_profiles_id" FOREIGN KEY("profiles_id")
+-- REFERENCES "profiles" ("id");
+
+-- ALTER TABLE "users" ADD CONSTRAINT "fk_users_user_types_id" FOREIGN KEY("user_types_id")
+-- REFERENCES "user_types" ("id");

@@ -1,0 +1,2 @@
+ALTER TABLE states
+ADD is_capital BOOLEAN DEFAULT FALSE;

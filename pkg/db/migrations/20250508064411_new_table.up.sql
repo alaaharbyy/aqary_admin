@@ -1,0 +1,20 @@
+CREATE TABLE listing_sections (
+    id SERIAL PRIMARY KEY,
+    section_key BIGINT NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255) NOT NULL,
+    sort BIGINT NOT NULL DEFAULT 1,
+    properties BIGINT NOT NULL DEFAULT 0,
+    is_external BOOLEAN NOT NULL DEFAULT FALSE,
+    is_coming_soon BOOLEAN NOT NULL DEFAULT FALSE,
+    show_on VARCHAR[] NOT NULL, 
+    platforms BIGINT[], 
+    color VARCHAR(20) NOT NULL,
+    icon_path VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    view_all_image VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE "faqs" ADD COLUMN "platform_id" BIGINT NOT NULL DEFAULT 1;

@@ -1,0 +1,201 @@
+-- name: GetAllCompanyReviews :many
+-- SELECT 
+--     cr.*,
+--     u.email,
+--     u.username,
+--    (SELECT
+--     company_name
+--     FROM
+--     services_companies
+--     WHERE
+--     users_id = cr.reviewer
+--     UNION
+--     SELECT
+--     company_name
+--     FROM
+--     service_company_branches
+--     WHERE
+--     users_id = cr.reviewer
+--     UNION
+--     SELECT
+--     company_name
+-- 	FROM
+--     broker_companies_branches
+-- 	WHERE
+--    users_id = cr.reviewer
+-- 	UNION
+-- 	SELECT
+--     company_name
+-- 	FROM
+--     broker_companies
+-- 	WHERE
+--     users_id = cr.reviewer
+-- 	UNION
+-- 	SELECT
+--     company_name
+-- 	FROM
+--     developer_company_branches
+-- 	WHERE
+--     users_id = cr.reviewer
+-- 	UNION
+-- 	SELECT
+--     company_name
+-- 	FROM
+--     developer_companies
+-- 	WHERE
+--     users_id = cr.reviewer
+-- 	LIMIT 1) as reviewer_company
+-- FROM 
+--     company_reviews cr
+-- JOIN 
+--     users u ON u.id = cr.reviewer 
+-- JOIN 
+--     (
+--         SELECT 
+--             'broker_companies' AS table_name,
+--             bc.id AS company_id,
+--             bc.company_type,
+--             bc.is_branch,
+--             bc.company_name
+--         FROM 
+--             broker_companies bc
+--         WHERE 
+--             bc.users_id = $1
+--         UNION 
+--         SELECT 
+--             'broker_companies_branches' AS table_name,
+--             bcb.id AS company_id,
+--             bcb.company_type,
+--             bcb.is_branch,
+--             bcb.company_name
+--         FROM 
+--             broker_companies_branches bcb
+--         WHERE 
+--             bcb.users_id = $1
+--         UNION 
+--         SELECT 
+--             'developer_companies' AS table_name,
+--             dc.id AS company_id,
+--             dc.company_type,
+--             dc.is_branch,
+--             dc.company_name
+--         FROM 
+--             developer_companies dc
+--         WHERE 
+--             dc.users_id = $1
+--         UNION 
+--         SELECT 
+--             'developer_company_branches' AS table_name,
+--             dcb.id AS company_id, 
+--             dcb.company_type,
+--             dcb.is_branch,
+--             dcb.company_name
+--         FROM 
+--             developer_company_branches dcb
+--         WHERE 
+--             dcb.users_id = $1
+--         UNION 
+--         SELECT 
+--             'services_companies' AS table_name,
+--             sc.id AS company_id,
+--             sc.company_type,
+--             sc.is_branch,
+--             sc.company_name
+--         FROM 
+--             services_companies sc
+--         WHERE 
+--             sc.users_id = $1
+--         UNION 
+--         SELECT 
+--             'service_company_branches' AS table_name,
+--             scb.id AS company_id,
+--             scb.company_type,
+--             scb.is_branch,
+--             scb.company_name
+--         FROM 
+--             service_company_branches scb
+--         WHERE 
+--             scb.users_id = $1
+--         LIMIT 1
+--     ) AS ab ON ab.company_id = cr.company_id
+--     AND ab.company_type = cr.company_type_id
+--     AND ab.is_branch = cr.is_branch
+-- LIMIT $2
+-- OFFSET $3;
+
+
+-- -- name: GetCountCompanyReviews :one
+-- SELECT COUNT(*)
+-- FROM 
+--     company_reviews cr
+-- JOIN 
+--     (
+--         SELECT 
+--             'broker_companies' AS table_name,
+--             bc.id AS company_id,
+--             bc.company_type,
+--             bc.is_branch,
+--             bc.company_name
+--         FROM 
+--             broker_companies bc
+--         WHERE 
+--             bc.users_id = $1
+--         UNION 
+--         SELECT 
+--             'broker_companies_branches' AS table_name,
+--             bcb.id AS company_id,
+--             bcb.company_type,
+--             bcb.is_branch,
+--             bcb.company_name
+--         FROM 
+--             broker_companies_branches bcb
+--         WHERE 
+--             bcb.users_id = $1
+--         UNION 
+--         SELECT 
+--             'developer_companies' AS table_name,
+--             dc.id AS company_id,
+--             dc.company_type,
+--             dc.is_branch,
+--             dc.company_name
+--         FROM 
+--             developer_companies dc
+--         WHERE 
+--             dc.users_id = $1
+--         UNION 
+--         SELECT 
+--             'developer_company_branches' AS table_name,
+--             dcb.id AS company_id, 
+--             dcb.company_type,
+--             dcb.is_branch,
+--             dcb.company_name
+--         FROM 
+--             developer_company_branches dcb
+--         WHERE 
+--             dcb.users_id = $1
+--         UNION 
+--         SELECT 
+--             'services_companies' AS table_name,
+--             sc.id AS company_id,
+--             sc.company_type,
+--             sc.is_branch,
+--             sc.company_name
+--         FROM 
+--             services_companies sc
+--         WHERE 
+--             sc.users_id =$1
+--         UNION 
+--         SELECT 
+--             'service_company_branches' AS table_name,
+--             scb.id AS company_id,
+--             scb.company_type,
+--             scb.is_branch,
+--             scb.company_name
+--         FROM 
+--             service_company_branches scb
+--         WHERE 
+--             scb.users_id = $1
+--         LIMIT 1
+--     ) AS ab ON ab.company_id = cr.company_id
+--     AND ab.company_type = cr.company_type_id
+--     AND ab.is_branch = cr.is_branch;

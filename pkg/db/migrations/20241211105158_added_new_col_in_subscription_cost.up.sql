@@ -1,0 +1,1 @@
+ALTER TABLE subscription_cost ADD COLUMN status bigint DEFAULT 1 NOT NULL;

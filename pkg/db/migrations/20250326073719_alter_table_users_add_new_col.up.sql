@@ -1,0 +1,2 @@
+ALTER TABLE users
+ADD COLUMN profile_views BIGINT DEFAULT 0 NOT NULL;

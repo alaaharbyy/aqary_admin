@@ -1,0 +1,1 @@
+ALTER TABLE property_versions RENAME COLUMN property_type TO category;

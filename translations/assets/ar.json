@@ -1,0 +1,15 @@
+{
+  "greeting": "Hello, {{.Name}}!",
+  "farewell": "Goodbye, {{.Name}}!",
+  "test": "هذا اختبار!",
+  "Male": "ذكر",
+  "Female": "أنثى",
+  "emails": {
+    "otp-subject": "OTP Verification",
+    "xml-report": "XML Report for {{.purpose}}"
+  },
+  "Residential":"سكني",
+  "Commercial":   "تجاري",
+	"Agricultural": "زراعي",
+	"Industrial":   "صناعي"
+}

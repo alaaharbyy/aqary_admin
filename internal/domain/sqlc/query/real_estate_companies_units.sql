@@ -1,0 +1,71 @@
+-- -- name: FilterSaleCompanyUnits :many
+-- With x As(
+--  SELECT sale_unit.id, sale_unit.title, sale_unit.title_arabic, sale_unit.description, sale_unit.description_arabic, sale_unit.unit_id, sale_unit.unit_facts_id, sale_unit.created_at, sale_unit.updated_at, sale_unit.contract_start_datetime, sale_unit.contract_end_datetime, sale_unit.contract_amount, sale_unit.contract_currency, sale_unit.status, units.unit_no, units.unitno_is_public, units.notes, units.notes_arabic, units.notes_public, units.is_verified, units.amenities_id, units.property_unit_rank, units.properties_id, units.property, units.ref_no, units.addresses_id, units.countries_id, units.property_types_id, units.created_by, units.property_name, units.section, units.type_name_id, units.owner_users_id, units.from_xml, units.is_branch,
+--  sale_unit.created_at AS created_time,  
+--  unit_facts.price AS unit_price,
+--  unit_facts.bedroom AS unit_bedroom 
+--    FROM sale_unit 
+--  INNER JOIN units ON sale_unit.unit_id = units.id and units.section = 'sale'
+--  INNER JOIN addresses ON units.addresses_id = addresses.id 
+--  INNER JOIN cities ON addresses.cities_id = cities.id
+--  INNER JOIN communities ON addresses.communities_id = communities.id
+--  INNER JOIN sub_communities ON addresses.sub_communities_id = sub_communities.id
+--  INNER JOIN property_types ON units.property_types_id = property_types.id
+--  INNER JOIN unit_facts ON sale_unit.id = unit_facts.unit_id
+--  WHERE   
+--          LOWER(unit_facts.category) = 'sale' AND
+--          addresses.countries_id = $1 AND
+--          ($2::bigint[] is NULL OR units.property_unit_rank = ANY($2::bigint[]))  AND
+--           cities.city ILIKE '%' || $3 || '%'  AND                 
+--           communities.community ILIKE '%' || $4 || '%'  AND       
+--           sub_communities.sub_community ILIKE '%' || $5 || '%'
+--          AND ($6::bool is NULL OR is_verified = $6::bool)
+--          AND (  
+--              sale_unit.title ILIKE '%' || $7 || '%'  OR 
+--              sale_unit.title_arabic ILIKE '%' || $7 || '%'  OR    
+--              property_types.type  ILIKE '%' || $7 || '%'  OR  
+--              cities.city ILIKE '%' || $7 || '%' OR
+--              communities.community ILIKE '%' || $7 || '%' OR
+--              sub_communities.sub_community ILIKE '%' || $7 || '%'
+--          ) AND sale_unit.status != 5 AND sale_unit.status != 6
+ 
+-- ) SELECT * FROM x  
+-- ORDER BY
+--     CASE WHEN $10::bigint = 5 THEN unit_bedroom END DESC, 
+--     CASE WHEN $10::bigint = 4 THEN unit_bedroom END, 
+--     CASE WHEN $10::bigint = 3 THEN unit_price END DESC,
+--     CASE WHEN $10::bigint = 2 THEN unit_price END,
+--     CASE WHEN $10::bigint = 1 THEN created_time END DESC,
+--     property_unit_rank desc, 
+--     is_verified desc 
+-- LIMIT $8 OFFSET $9;
+
+
+-- -- name: CountFilterCompanySaleUnits :one
+-- With x As(
+--  SELECT sale_unit.id, sale_unit.title, sale_unit.title_arabic, sale_unit.description, sale_unit.description_arabic, sale_unit.unit_id, sale_unit.unit_facts_id, sale_unit.created_at, sale_unit.updated_at, sale_unit.contract_start_datetime, sale_unit.contract_end_datetime, sale_unit.contract_amount, sale_unit.contract_currency, sale_unit.status, units.unit_no, units.unitno_is_public, units.notes, units.notes_arabic, units.notes_public, units.is_verified, units.amenities_id, units.property_unit_rank, units.properties_id, units.property, units.ref_no, units.addresses_id, units.countries_id, units.property_types_id, units.created_by, units.property_name, units.section, units.type_name_id, units.owner_users_id, units.from_xml, units.is_branch
+--  FROM sale_unit
+--  INNER JOIN units ON sale_unit.unit_id = units.id and units.section = 'sale'
+--  INNER JOIN addresses ON units.addresses_id = addresses.id 
+--  INNER JOIN cities ON addresses.cities_id = cities.id
+--  INNER JOIN communities ON addresses.communities_id = communities.id
+--  INNER JOIN sub_communities ON addresses.sub_communities_id = sub_communities.id
+--  INNER JOIN property_types ON units.property_types_id = property_types.id
+--  INNER JOIN unit_facts ON sale_unit.id = unit_facts.unit_id
+--  WHERE 
+--          LOWER(unit_facts.category) = 'sale'  AND
+--          addresses.countries_id = $1 AND
+--          ($2::bigint[] is NULL OR units.property_unit_rank = ANY($2::bigint[]))  AND   
+--           cities.city ILIKE '%' || $3 || '%'  AND                 
+--           communities.community ILIKE '%' || $4 || '%'  AND       
+--           sub_communities.sub_community ILIKE '%' || $5 || '%'
+--          AND ($6::bool is NULL OR is_verified = $6::bool)
+--          AND ( 
+--              sale_unit.title ILIKE '%' || $7 || '%'  OR 
+--              sale_unit.title_arabic ILIKE '%' || $7 || '%'  OR    
+--              property_types.type  ILIKE '%' || $7 || '%'  OR  
+--              cities.city ILIKE '%' || $7 || '%' OR
+--              communities.community ILIKE '%' || $7 || '%' OR
+--              sub_communities.sub_community ILIKE '%' || $7 || '%'
+--             ) AND sale_unit.status != 5 AND sale_unit.status != 6
+-- ) SELECT COUNT(*) FROM x;

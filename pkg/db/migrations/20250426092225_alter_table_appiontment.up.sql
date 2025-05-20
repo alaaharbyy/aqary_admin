@@ -1,0 +1,1 @@
+ALTER TABLE "appointment" ALTER COLUMN "valid_id" DROP NOT NULL;

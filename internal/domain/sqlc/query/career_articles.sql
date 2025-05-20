@@ -1,0 +1,31 @@
+-- -- name: CreateCareerArticle :one
+-- INSERT INTO career_articles (
+--     ref_no,
+--     title,
+--     description,
+--     description_ar,
+--     cover_image,
+--     created_at,
+--     created_by,
+--     status,
+--     updated_at,
+--     employers_id
+-- ) VALUES (
+--     $1, $2, $3, $4, $5, $6, $7, $8, $9,$10
+-- ) RETURNING *;
+
+-- -- name: UpdateCareerArticle :one
+-- UPDATE career_articles
+-- SET
+--     title = $1,
+--     description = $2,
+--     description_ar = $3,
+--     cover_image = $4,
+--     updated_at=$5,
+--     employers_id=$6
+-- WHERE
+--     id = $7
+-- RETURNING *;
+
+-- -- name: GetArticlesCount :one
+-- select count(*) from career_articles where status != 5 AND status!=6;

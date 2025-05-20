@@ -1,0 +1,1 @@
+ALTER TABLE company_verification ADD COLUMN created_at timestamptz DEFAULT now() NOT NULL;

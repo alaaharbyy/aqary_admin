@@ -1,0 +1,1202 @@
+-- -- name: GetUnitsWithAdvancedSearch :many
+-- WITH facilities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS facilities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+--     group by uv.id -- facilities
+-- ),
+-- amenities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS amenities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+--     group by uv.id -- amenities
+-- )
+-- SELECT
+-- sqlc.embed(uv),
+-- sqlc.embed(u),
+-- sqlc.embed(a),
+-- f.facilities,
+-- am.amenities
+-- FROM unit_versions uv
+-- JOIN units u on u.id=uv.unit_id
+-- left JOIN addresses a on u.addresses_id=a.id
+-- LEFT JOIN cities ci ON a.cities_id = ci.id
+-- LEFT JOIN communities com ON a.communities_id = com.id
+-- LEFT JOIN sub_communities subcom ON a.sub_communities_id = subcom.id
+-- LEFT JOIN facilities f ON f.id=uv.id
+-- LEFT JOIN amenities am ON am.id=uv.id
+-- WHERE
+-- 	(CASE WHEN @agent_id::bigint= 0 then true else uv.listed_by=  @agent_id::bigint end)
+-- AND 
+--     (@is_verified::bool IS NULL
+--         OR u.is_verified = @is_verified::bool)
+-- AND
+--     (CASE WHEN  @country_id::bigint=0 THEN TRUE ELSE a.countries_id = @country_id::bigint end) 
+-- AND
+--     (CASE WHEN @company_id::bigint=0 THEN TRUE ELSE u.company_id= @company_id::bigint END)
+-- AND
+--     -- 1=>Sale, 2=>Rent, 3=>Swap & 4=>Booking
+--     uv."type" = @category::bigint 
+-- AND
+--     -- from unit type table
+--     (CASE WHEN ARRAY_LENGTH(@unit_types::bigint[], 1) IS NULL THEN TRUE ELSE u.unit_type_id = ANY(@unit_types::bigint[]) END)  
+-- AND
+-- 	(case when @unit_no::varchar='' then true else  u.unit_no = @unit_no::varchar end )
+--    AND  u.unitno_is_public = TRUE  --unit no
+-- AND
+--     (CASE WHEN @ref_no::varchar='' THEN TRUE ELSE uv.ref_no = @ref_no::varchar END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@keywords::VARCHAR[], 1) IS NULL --keywords
+--     THEN TRUE ELSE
+--     uv.title ILIKE ANY(@keywords::VARCHAR[])
+--     OR uv.description ILIKE ANY(@keywords::VARCHAR[])
+--     OR ci.city ILIKE ANY(@keywords::VARCHAR[])
+--     OR com.community ILIKE ANY(@keywords::VARCHAR[])
+--     OR subcom.sub_community ILIKE ANY(@keywords::VARCHAR[])
+--     END)
+-- AND
+--         -- location
+--     (CASE WHEN @city_id::bigint=0 THEN TRUE ELSE a.cities_id= @city_id::bigint END)
+--      AND
+--      (CASE WHEN @communities_id::bigint=0 THEN TRUE ELSE a.communities_id= @communities_id::bigint END)
+--      AND
+--      (CASE WHEN @sub_communities_id::bigint=0 THEN TRUE ELSE a.sub_communities_id= @sub_communities_id::bigint END)
+-- AND
+--         --created at
+--     (CASE
+--     WHEN @dates::BIGINT= 0 THEN true
+--     WHEN COALESCE(@dates::BIGINT,1) =1 THEN true
+--     WHEN @dates::BIGINT= 2 THEN uv.created_at >= DATE_TRUNC ('day', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 3 THEN uv.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')AND uv.created_at < DATE_TRUNC('week', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 4 THEN uv.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') AND uv.created_at < DATE_TRUNC('month', CURRENT_DATE)
+--     END)
+--     --unit rank
+-- AND
+--     (ARRAY_LENGTH(@rank::bigint [],1) IS NULL
+--         OR uv.unit_rank = ANY (@rank::bigint []))
+-- --FACTS STUFF--
+-- AND
+--     (CASE WHEN @completion_status::bigint IS NULL THEN
+--         TRUE
+--     WHEN @completion_status::bigint = 0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'completion_status')::bigint = @completion_status::bigint
+--     END)
+-- -- AND
+-- --     (u.facts->>'starting_price' >= @starting_price OR @disable_starting_price::BOOLEAN)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bedroom::VARCHAR[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bedroom')::varchar = ANY(@bedroom::VARCHAR[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bathroom::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bathroom')::bigint = ANY(@bathroom::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_floor::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_floor')::bigint = ANY(@no_of_floor::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_payment::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_payment')::bigint = ANY(@no_of_payment::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_retail::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_retail')::bigint = ANY(@no_of_retail::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_pool::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_pool')::bigint = ANY(@no_of_pool::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@furnished::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'furnished')::bigint = ANY(@furnished::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@elevator::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'elevator')::bigint = ANY(@elevator::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@ownership::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'ownership')::bigint = ANY(@ownership::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@parking::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'parking')::bigint = ANY(@parking::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@views::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'views')::bigint[] && @views::bigint[] END)
+-- AND -- build up area
+--     (CASE WHEN @min_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @min_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float >= @min_built_up_area::float
+--     END
+--     AND
+--     CASE WHEN @max_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @max_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float <= @max_built_up_area::float
+--     END)    
+-- AND -- plot area
+--    (CASE WHEN @min_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @min_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float >= @min_plot_area::float
+--         END
+--         -- max plot area
+--         AND CASE WHEN @max_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @max_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float <= @max_plot_area::float
+--         END)
+-- -- AND --price
+--         -- ((u.facts->>'price')::bigint >= @min_price::bigint
+--         -- -- max plot area
+--         -- AND CASE 
+--         -- WHEN @max_price::bigint = 0 THEN
+--         --     TRUE
+--         -- ELSE
+--         --     (u.facts->>'price')::bigint <= @max_price::bigint
+--         -- END)
+-- --  amenities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@amenities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             am.amenities && @amenities::bigint []
+--         END)
+--     --  facilities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@facilities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             f.facilities && @facilities::bigint []
+--         END)
+-- ORDER BY
+--     CASE
+--         WHEN @sort::bigint = 1 THEN uv.updated_at END DESC,
+--     CASE
+--         WHEN @sort::bigint = 4 THEN uv.unit_rank END ASC,
+--     CASE
+--         WHEN @sort::bigint = 2 THEN (u.facts->>'price')::bigint END ASC
+--  LIMIT $1
+-- OFFSET $2;
+
+-- -- name: GetUnitsCountWithAdvancedSearch :one
+-- WITH facilities AS(
+-- 	SELECT uv.id, 
+-- 	array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS facilities
+-- 	FROM unit_versions uv
+-- 	JOIN units u on u.id=uv.unit_id
+-- 	LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+-- 	LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+-- 	group by uv.id -- facilities
+-- ),
+-- amenities AS(
+-- 	SELECT uv.id, 
+-- 	array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS amenities
+-- 	FROM unit_versions uv
+-- 	JOIN units u on u.id=uv.unit_id
+-- 	LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+-- 	LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+-- 	group by uv.id -- amenities
+-- )
+-- SELECT
+-- COUNT(uv.*)
+-- FROM unit_versions uv
+-- JOIN units u on u.id=uv.unit_id
+-- left JOIN addresses a on u.addresses_id=a.id
+-- LEFT JOIN cities ci ON a.cities_id = ci.id
+-- LEFT JOIN communities com ON a.communities_id = com.id
+-- LEFT JOIN sub_communities subcom ON a.sub_communities_id = subcom.id
+-- LEFT JOIN facilities f ON f.id=uv.id
+-- LEFT JOIN amenities am ON am.id=uv.id
+-- WHERE
+-- 	(CASE WHEN @agent_id::bigint= 0 then true else uv.listed_by=  @agent_id::bigint end)
+-- AND 
+--     (@is_verified::bool IS NULL
+--         OR u.is_verified = @is_verified::bool)
+-- AND
+--     (CASE WHEN  @country_id::bigint=0 THEN TRUE ELSE a.countries_id = @country_id::bigint end) --country
+-- AND
+--     (CASE WHEN @company_id::bigint=0 THEN TRUE ELSE u.company_id= @company_id::bigint END)
+-- AND
+--     -- 1=>Sale, 2=>Rent, 3=>Swap & 4=>Booking
+--     uv."type" = @category::bigint 
+-- AND
+--     -- from unit type table
+--     (CASE WHEN ARRAY_LENGTH(@unit_types::bigint[], 1) IS NULL THEN TRUE ELSE u.unit_type_id = ANY(@unit_types::bigint[]) END)  
+-- AND
+-- 	(case when @unit_no::varchar='' then true else  u.unit_no = @unit_no::varchar end )
+--    AND  u.unitno_is_public = TRUE  --unit no
+-- AND
+--     (CASE WHEN @ref_no::varchar='' THEN TRUE ELSE uv.ref_no = @ref_no::varchar END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@keywords::VARCHAR[], 1) IS NULL --keywords
+--     THEN TRUE ELSE
+--     uv.title ILIKE ANY(@keywords::VARCHAR[])
+--     OR uv.description ILIKE ANY(@keywords::VARCHAR[])
+--     OR ci.city ILIKE ANY(@keywords::VARCHAR[])
+--     OR com.community ILIKE ANY(@keywords::VARCHAR[])
+--     OR subcom.sub_community ILIKE ANY(@keywords::VARCHAR[])
+--     END)
+-- AND
+--         -- location
+--     (CASE WHEN @city_id::bigint=0 THEN TRUE ELSE a.cities_id= @city_id::bigint END)
+--      AND
+--      (CASE WHEN @communities_id::bigint=0 THEN TRUE ELSE a.communities_id= @communities_id::bigint END)
+--      AND
+--      (CASE WHEN @sub_communities_id::bigint=0 THEN TRUE ELSE a.sub_communities_id= @sub_communities_id::bigint END)
+-- AND
+--         --created at
+--     (CASE
+--     WHEN @dates::BIGINT= 0 THEN true
+--     WHEN COALESCE(@dates::BIGINT,1) =1 THEN true
+--     WHEN @dates::BIGINT= 2 THEN uv.created_at >= DATE_TRUNC ('day', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 3 THEN uv.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')AND uv.created_at < DATE_TRUNC('week', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 4 THEN uv.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') AND uv.created_at < DATE_TRUNC('month', CURRENT_DATE)
+--     END)
+--     --unit rank
+-- AND
+--     (ARRAY_LENGTH(@rank::bigint [],1) IS NULL
+--         OR uv.unit_rank = ANY (@rank::bigint []))
+-- --FACTS STUFF--
+-- AND
+--     (CASE WHEN @completion_status::bigint IS NULL THEN
+--         TRUE
+--     WHEN @completion_status::bigint = 0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'completion_status')::bigint = @completion_status::bigint
+--     END)
+-- -- AND
+-- --     (u.facts->>'starting_price' >= @starting_price OR @disable_starting_price::BOOLEAN)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bedroom::VARCHAR[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bedroom')::varchar = ANY(@bedroom::VARCHAR[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bathroom::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bathroom')::bigint = ANY(@bathroom::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_floor::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_floor')::bigint = ANY(@no_of_floor::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_payment::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_payment')::bigint = ANY(@no_of_payment::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_retail::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_retail')::bigint = ANY(@no_of_retail::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_pool::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_pool')::bigint = ANY(@no_of_pool::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@furnished::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'furnished')::bigint = ANY(@furnished::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@elevator::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'elevator')::bigint = ANY(@elevator::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@ownership::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'ownership')::bigint = ANY(@ownership::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@parking::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'parking')::bigint = ANY(@parking::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@views::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'views')::bigint[] && @views::bigint[] END)
+-- AND -- build up area
+--     (CASE WHEN @min_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @min_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float >= @min_built_up_area::float
+--     END
+--     AND
+--     CASE WHEN @max_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @max_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float <= @max_built_up_area::float
+--     END)    
+-- AND -- plot area
+--    (CASE WHEN @min_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @min_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float >= @min_plot_area::float
+--         END
+--         -- max plot area
+--         AND CASE WHEN @max_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @max_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float <= @max_plot_area::float
+--         END)
+-- -- AND --price
+--         -- ((u.facts->>'price')::bigint >= @min_price::bigint
+--         -- -- max plot area
+--         -- AND CASE 
+--         -- WHEN @max_price::bigint = 0 THEN
+--         --     TRUE
+--         -- ELSE
+--         --     (u.facts->>'price')::bigint <= @max_price::bigint
+--         -- END)
+-- --  amenities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@amenities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             am.amenities && @amenities::bigint []
+--         END)
+--     --  facilities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@facilities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             f.facilities && @facilities::bigint []
+--         END);
+
+-- name: GetUnit :one
+WITH facilities AS(
+	SELECT uv.id, 
+	array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS facilities
+	FROM unit_versions uv
+	JOIN units u on u.id=uv.unit_id
+	LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+	LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+	group by uv.id -- facilities
+),
+amenities AS(
+	SELECT uv.id, 
+	array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS amenities
+	FROM unit_versions uv
+	JOIN units u on u.id=uv.unit_id
+	LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+	LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+	group by uv.id -- amenities
+),
+reviews AS(
+	SELECT uv.id, 
+	array_agg(DISTINCT coalesce(rv.id,0))::bigint[] AS reviews
+	FROM unit_versions uv 
+	LEFT JOIN units_reviews rv on rv.units_id=uv.id
+	group by uv.id 
+)
+SELECT 
+sqlc.embed(uv),
+sqlc.embed(u),
+f.facilities,
+am.amenities,
+rvs.reviews
+FROM unit_versions uv
+JOIN units u on u.id=uv.unit_id
+JOIN addresses a on u.addresses_id=a.id
+LEFT JOIN facilities f ON f.id=uv.id
+LEFT JOIN amenities am ON am.id=uv.id
+LEFT JOIN reviews rvs ON rvs.id=uv.id
+WHERE 
+	uv.id=$1;
+
+-- -- name: GetAmenitiesByEntityType :many
+-- SELECT 
+-- sqlc.embed(fa) 
+-- FROM  facilities_amenities_entity fae
+-- LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+-- WHERE fae.entity_type_id=$1;
+ 
+-- name: GetAmenitiesByEntityTypeAndIDs :many
+SELECT 
+sqlc.embed(fa),
+fae.id as facility_amenity_entity_id
+FROM  facilities_amenities_entity fae
+LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id
+WHERE fae.entity_type_id=$1 and fae.entity_id=$2;
+ 
+ 
+-- -- name: GetFacilitiesByEntityType :many
+-- SELECT 
+-- sqlc.embed(fa)
+-- FROM  facilities_amenities_entity fae
+-- LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+-- WHERE fae.entity_type_id=$1;
+ 
+-- name: GetFacilitiesByEntityTypeAndIDs :many
+SELECT 
+sqlc.embed(fa)
+FROM  facilities_amenities_entity fae
+LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+WHERE fae.entity_type_id=$1 and fae.entity_id=$2 and fa.id=ANY(@ids::bigint[]);
+
+-- name: GetUnitTypeByID :one
+SELECT * FROM unit_type 
+WHERE id=$1 AND status!=6;
+ 
+-- -- name: GetUnitTypesByUsage :many
+-- SELECT * FROM unit_type 
+-- WHERE "usage"=$1 AND status!=6;
+
+
+
+-- -- name: GetAllFineHomeAgents :many
+-- SELECT profiles.first_name,profiles.last_name,profiles.profile_image_url,profiles.cover_image_url, 
+-- -- company_users.designation,
+-- COALESCE((SELECT (AVG(user_review.knowledge) + AVG(user_review.expertise) + AVG(user_review.responsiveness) + AVG(user_review.negotiation)) / 4 FROM
+--                 user_review WHERE user_id=users.id),0)::FLOAT AS "agent_rating", company_users.id AS "company_user_id",users.id AS "user_id"
+-- FROM 
+-- 	companies 
+-- INNER JOIN 
+-- 	company_users 
+-- 		ON company_users.company_id=companies.id
+-- INNER JOIN 
+-- 	users 
+-- 		ON users.id=company_users.users_id AND users.status!=6 AND users.user_types_id=2
+-- INNER JOIN 
+-- 	profiles 
+-- 		ON profiles.id=users.profiles_id
+-- WHERE 
+-- 	companies.ref_no='COMPANY1234' AND companies.status!=6
+--     AND 
+-- 	(CASE WHEN @keywords::VARCHAR  ='' --keywords
+--     THEN TRUE ELSE
+--     profiles.first_name ILIKE @keywords::VARCHAR
+--     OR profiles.last_name ILIKE @keywords::VARCHAR
+--     OR users.username ILIKE @keywords::VARCHAR
+--     END)
+-- ORDER BY agent_rating DESC
+-- LIMIT $1
+-- OFFSET $2;
+
+
+
+-- -- name: GetNumberOfFineHomeAgents :one
+-- SELECT 
+-- 	COUNT(*) 
+-- FROM 
+-- 	companies 
+-- INNER JOIN 
+-- 	company_users 
+-- 		ON company_users.company_id=companies.id 
+-- INNER JOIN users
+-- 		ON users.id=company_users.users_id AND users.status!=6 AND users.user_types_id=2
+-- WHERE companies.ref_no='COMPANY1234' AND companies.status!=6; 
+
+
+-- -- name: GetServices :many 
+-- SELECT
+-- sqlc.embed(s),
+-- COALESCE((SELECT(AVG(service_quality)+AVG(service_expertise)+AVG(service_facilities)+AVG(service_responsiveness))/4 FROM service_reviews WHERE service=s.id) ,0)::FLOAT AS "rating",
+-- c.is_verified
+-- FROM services s
+-- LEFT JOIN service_reviews sr ON sr.service=s.id
+-- JOIN companies c on c.id= @company_id::BIGINT
+-- WHERE s.company_id=c.id
+-- AND 
+-- 		(CASE WHEN @company_activities_id::bigint = 0 
+-- 		THEN TRUE 
+--         ELSE  s.company_activities_id= @company_activities_id::bigint
+--         END)
+-- AND 
+-- 		(ARRAY_LENGTH(@service_rank::bigint [],1) IS NULL
+-- 		OR  s.service_rank = ANY (@service_rank::bigint []))
+-- ORDER BY
+--     CASE
+--         WHEN @sort::bigint = 1 THEN s.updated_at END DESC,
+--     CASE
+--         WHEN  @sort::bigint = 2 THEN s.price END ASC,
+--     CASE
+--         WHEN  @sort::bigint = 3 THEN s.price END DESC 
+-- LIMIT $1
+-- OFFSET $2;
+
+-- -- name: GetServicesCount :one 
+-- SELECT
+-- COUNT(s.*)
+-- FROM services s
+-- WHERE s.company_id=$1 
+-- AND 
+-- 	(ARRAY_LENGTH(@service_rank::bigint [],1) IS NULL OR  s.service_rank = ANY (@service_rank::bigint []))
+-- AND 
+-- 		(CASE WHEN @company_activities_id::bigint = 0 
+-- 		THEN TRUE 
+--         ELSE  s.company_activities_id= @company_activities_id::bigint
+--         END);
+ 
+
+-- -- name: GetSingleService :one
+-- WITH reviews AS(
+-- 	SELECT 
+-- 	sr.service,
+-- 	array_agg(DISTINCT coalesce(sr.id,0))::bigint[] AS service_reviews
+-- 	FROM service_reviews sr 
+-- 	WHERE sr.service=$1
+-- 	group by sr.service 
+-- )
+-- SELECT 
+-- sqlc.embed(s),
+-- COALESCE((SELECT(AVG(service_quality)+AVG(service_expertise)+AVG(service_facilities)+AVG(service_responsiveness))/4 FROM service_reviews WHERE service=s.id) ,0)::FLOAT AS "rating",
+-- rv.service_reviews,c.is_verified
+-- FROM services s
+-- JOIN companies c ON s.company_id = c.id
+-- LEFT JOIN service_reviews sr ON sr.service=s.id
+-- JOIN reviews rv ON rv.service=s.id
+-- WHERE s.id=$1;
+
+-- -- name: GetSimilarServices :many
+-- SELECT
+-- sqlc.embed(s),
+-- COALESCE((SELECT(AVG(service_quality)+AVG(service_expertise)+AVG(service_facilities)+AVG(service_responsiveness))/4 FROM service_reviews WHERE service=s.id) ,0)::FLOAT AS "rating",
+-- c.is_verified
+-- FROM services s
+-- LEFT JOIN service_reviews sr ON sr.service=s.id
+-- JOIN companies c on c.id= @company_id::bigint
+-- WHERE s.company_id=c.id
+-- AND s.company_activities_id= @similarity::bigint AND s.id!= @current_service::bigint
+-- LIMIT $1
+-- OFFSET $2;
+ 
+-- -- name: GetSimilarServicesCount :one
+-- SELECT
+-- COUNT(s)
+-- FROM services s
+-- LEFT JOIN service_reviews sr ON sr.service=s.id
+-- JOIN companies c on c.id= @company_id::bigint
+-- WHERE s.company_id=c.id
+-- AND s.company_activities_id= @similarity::bigint AND s.id!= @current_service::bigint;
+
+ 
+-- -- name: GetServiceReviewsByList :many
+-- SELECT 
+-- sqlc.embed(rv),
+-- sqlc.embed(u),
+-- sqlc.embed(p)
+-- from service_reviews rv 
+-- join users u on u.id=rv.reviewed_by
+-- join profiles p on u.profiles_id=p.id
+-- WHERE rv.id= ANY (@ids::bigint []);
+
+
+-- -- name: GetCompanyNetwork :many
+
+-- SELECT 
+-- sqlc.embed(sc),
+-- sqlc.embed(c)
+-- FROM social_connections sc
+-- JOIN companies c ON sc.requested_by = c.id
+-- where sc.companies_id=$1 AND c.company_type=$2 AND c.status!=6
+-- LIMIT $3
+-- OFFSET $4;
+
+
+-- -- name: GetCompanyNetworkCount :one
+-- SELECT COUNT(sc) FROM social_connections sc 
+-- JOIN companies c ON sc.requested_by = c.id 
+-- where sc.companies_id=$1 AND c.company_type=$2 AND c.status!=6;
+
+
+
+
+
+
+-- -- name: GetFineHomeAgent :one
+-- SELECT
+--     (
+--         SELECT
+--             array_agg("language")::VARCHAR[]
+--         FROM
+--             all_languages
+--         WHERE
+--             id = ANY (profiles.all_languages_id :: BIGINT [])
+--     )::VARCHAR[] AS "languages",
+--     (
+--         SELECT
+--             COUNT(*)
+--         FROM
+--             real_estate_agents
+--         WHERE
+--             real_estate_agents.entity_type_id = @license_type_id::BIGINT
+--             AND real_estate_agents.agent_id = @company_user_id::BIGINT
+--     ) AS "active listings",
+--     (
+--         SELECT
+--             array_agg(sub_communities.sub_community)::VARCHAR[]
+--         FROM
+--             service_areas
+--             INNER JOIN sub_communities ON sub_communities.id = service_areas.service_areas_id
+--         WHERE
+--             service_areas.company_users_id = @company_user_id::BIGINT
+--             AND service_areas.entity_type_id = @service_areas_entity_type_id::BIGINT
+--     )::VARCHAR[] AS "area",
+--    (
+--     COALESCE(
+--         (
+--             SELECT
+--                 ARRAY[
+--                     (AVG(user_review.knowledge) + AVG(user_review.expertise) + AVG(user_review.responsiveness) + AVG(user_review.negotiation)) / 4,
+--                     COUNT(id)
+--                 ]::FLOAT[]
+--             FROM
+--                 user_review
+--             WHERE
+--                 user_review.user_id = users.id
+--         ),
+--         ARRAY[0, 0]::FLOAT[]
+--     )
+-- )::FLOAT[] AS "rating_and_number_of_reviews" ,
+--     profiles.first_name,
+--     profiles.last_name,
+--     users.phone_number,
+--     profiles.whatsapp_number,
+--     profiles.cover_image_url,
+--     profiles.profile_image_url,
+--     EXTRACT(
+--         YEAR
+--         FROM
+--             age(CURRENT_DATE, users.experience_since)
+--     )::BIGINT AS "years of experience",
+--     countries.country,
+--     license.license_no, 
+--     users.email
+-- FROM
+--     users
+--     INNER JOIN profiles ON users.profiles_id = profiles.id
+--     INNER JOIN license ON license.entity_type_id = @license_entity_type_id::BIGINT
+--     AND license.entity_id = users.id
+--     AND license.license_type_id = @license_type_id::BIGINT
+--     INNER JOIN addresses ON addresses.id = profiles.addresses_id
+--     INNER JOIN countries ON countries.id = addresses.countries_id
+-- WHERE
+--     users.id = @user_id::BIGINT
+--     AND users.status != 6;
+
+
+-- -- name: GetGlobalMediaForEntity :many
+-- SELECT global_media.id AS "global_media_id",global_media.media_type,global_media.gallery_type,global_media.entity_id AS "entity_id" , global_media.entity_type_id AS "entity_type_id" ,global_media.created_at,global_media.updated_at,global_media.file_urls
+-- FROM 
+-- 	global_media
+-- WHERE 
+-- 	global_media.entity_id= @entity_id::BIGINT AND global_media.entity_type_id= @entity_type::BIGINT AND
+-- 	COALESCE((SELECT CASE  @entity_type::BIGINT
+--                WHEN 1 THEN (SELECT projects.status::BIGINT FROM projects WHERE projects.id = @entity_id::BIGINT)
+--                WHEN 2 THEN (SELECT phases.status::BIGINT FROM phases WHERE phases.id = @entity_id::BIGINT)
+--                WHEN 3 THEN (SELECT property.status::BIGINT FROM property WHERE property.id = @entity_id::BIGINT)
+--                WHEN 4 THEN (SELECT exhibitions.event_status::BIGINT FROM exhibitions WHERE exhibitions.id = @entity_id::BIGINT)
+--                WHEN 5 THEN (SELECT units.status::BIGINT FROM units WHERE units.id = @entity_id::BIGINT)
+--                WHEN 6 THEN (SELECT companies.status::BIGINT FROM companies WHERE companies.id = @entity_id::BIGINT)
+--                WHEN 7 THEN (SELECT 1 FROM profiles WHERE profiles.id = @entity_id::BIGINT)
+--                WHEN 8 THEN (SELECT freelancers.status::BIGINT FROM freelancers WHERE freelancers.id = @entity_id::BIGINT)
+--                WHEN 9 THEN (SELECT users.status::BIGINT FROM users WHERE users.id = @entity_id::BIGINT)
+--                WHEN 10 THEN (SELECT holiday_home.status::BIGINT FROM holiday_home WHERE holiday_home.id = @entity_id::BIGINT)
+--                WHEN 11 THEN (SELECT 1 FROM services WHERE services.id = @entity_id::BIGINT)
+--                ELSE 0::BIGINT
+--            END),6::BIGINT) NOT IN(0,6)
+-- ORDER BY 
+-- 	global_media.updated_at DESC;
+ 
+ 
+
+-- -- name: GetGlobalPlansForEntity :many
+-- SELECT plans.id AS "global_plan_id",plans.title,plans.entity_id AS "entity_id" , plans.entity_type_id AS "entity_type_id" ,plans.created_at,plans.updated_at,plans.file_urls,plans.uploaded_by,plans.updated_by
+-- FROM 
+-- 	plans
+-- WHERE 
+-- 	plans.entity_id= @entity_id::BIGINT AND plans.entity_type_id= @entity_type::BIGINT AND
+-- 	COALESCE((SELECT CASE  @entity_type::BIGINT
+--                WHEN 1 THEN (SELECT projects.status::BIGINT FROM projects WHERE projects.id = @entity_id::BIGINT)
+--                WHEN 2 THEN (SELECT phases.status::BIGINT FROM phases WHERE phases.id = @entity_id::BIGINT)
+--                WHEN 3 THEN (SELECT property.status::BIGINT FROM property WHERE property.id = @entity_id::BIGINT)
+--                WHEN 4 THEN (SELECT exhibitions.event_status::BIGINT FROM exhibitions WHERE exhibitions.id = @entity_id::BIGINT)
+--                WHEN 5 THEN (SELECT units.status::BIGINT FROM units WHERE units.id = @entity_id::BIGINT)
+--                WHEN 6 THEN (SELECT companies.status::BIGINT FROM companies WHERE companies.id = @entity_id::BIGINT)
+--                WHEN 7 THEN (SELECT 1 FROM profiles WHERE profiles.id = @entity_id::BIGINT)
+--                WHEN 8 THEN (SELECT freelancers.status::BIGINT FROM freelancers WHERE freelancers.id = @entity_id::BIGINT)
+--                WHEN 9 THEN (SELECT users.status::BIGINT FROM users WHERE users.id = @entity_id::BIGINT)
+--                WHEN 10 THEN (SELECT holiday_home.status::BIGINT FROM holiday_home WHERE holiday_home.id = @entity_id::BIGINT)
+--                ELSE 0::BIGINT
+--            END),6::BIGINT) NOT IN(0,6)
+-- ORDER BY 
+-- 	plans.updated_at DESC;
+
+
+-- -- name: GetUnitsReviews :many
+-- SELECT 
+-- sqlc.embed(ur),
+-- sqlc.embed(u),
+-- sqlc.embed(p)
+ 
+-- from units_reviews ur
+-- join users u on u.id=ur.reviewer
+-- join profiles p on u.profiles_id=p.id
+-- WHERE ur.id= ANY (@ids::bigint []);
+ 
+-- -- name: GetReviewsForFineHomeAgent :many    
+-- SELECT
+--     profiles.first_name,
+--     profiles.last_name,
+--     profiles.profile_image_url,
+--     user_review.review_description,
+    
+--     user_review.reviewed_at,
+    
+--     ((user_review.knowledge::FLOAT + user_review.expertise::FLOAT + user_review.responsiveness::FLOAT + user_review.negotiation::FLOAT)/4.0)::FLOAT AS "rating"
+-- FROM
+--     user_review
+--     INNER JOIN users ON users.id = user_review.reviewed_by AND users.status!=6 
+--     INNER JOIN profiles ON profiles.id=users.id
+-- WHERE
+--     user_review.user_id = @user_id::BIGINT AND (SELECT status FROM users WHERE users.id= @user_id::BIGINT)!=6
+-- ORDER BY user_review.reviewed_at 
+-- LIMIT $1 
+-- OFFSET $2;
+
+-- -- name: GetRealEstateHistory :many
+-- SELECT * FROM real_estate_history
+-- WHERE entity_type_id=$1 AND entity_id=$2;
+
+
+
+
+-- -- name: GetCityUnitCount :many
+-- WITH facilities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS facilities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+--     group by uv.id -- facilities
+-- ),
+-- amenities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS amenities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+--     group by uv.id -- amenities
+-- )
+-- SELECT
+--     ci.id,ci.city,COUNT(uv.*)
+-- FROM unit_versions uv
+-- JOIN units u on u.id=uv.unit_id
+-- left JOIN addresses a on u.addresses_id=a.id
+-- LEFT JOIN cities ci ON a.cities_id = ci.id
+ 
+-- LEFT JOIN facilities f ON f.id=uv.id
+-- LEFT JOIN amenities am ON am.id=uv.id
+-- WHERE
+--     (CASE WHEN @agent_id::bigint= 0 then true else uv.listed_by=  @agent_id::bigint end)
+-- AND
+--     (@is_verified::bool IS NULL
+--         OR u.is_verified = @is_verified::bool)
+-- AND
+--    a.countries_id = @country_id::BIGINT
+-- AND
+--     (CASE WHEN @company_id::bigint=0 THEN TRUE ELSE u.company_id= @company_id::bigint END)
+-- AND
+--     -- 1=>Sale, 2=>Rent, 3=>Swap & 4=>Booking
+--     uv."type" = @category::bigint
+-- AND
+--     -- from unit type table
+--     (CASE WHEN ARRAY_LENGTH(@unit_types::bigint[], 1) IS NULL THEN TRUE ELSE u.unit_type_id = ANY(@unit_types::bigint[]) END)  
+-- AND
+--     (case when @unit_no::varchar='' then true else  u.unit_no = @unit_no::varchar end )
+--    AND  u.unitno_is_public = TRUE  --unit no
+-- AND
+--     (CASE WHEN @ref_no::varchar='' THEN TRUE ELSE uv.ref_no = @ref_no::varchar END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@keywords::VARCHAR[], 1) IS NULL --keywords
+--     THEN TRUE ELSE
+--     uv.title ILIKE ANY(@keywords::VARCHAR[])
+--     OR uv.description ILIKE ANY(@keywords::VARCHAR[])
+--     OR ci.city ILIKE ANY(@keywords::VARCHAR[])
+   
+--     END)
+-- AND
+--         --created at
+--     (CASE
+--     WHEN @dates::BIGINT= 0 THEN true
+--     WHEN COALESCE(@dates::BIGINT,1) =1 THEN true
+--     WHEN @dates::BIGINT= 2 THEN uv.created_at >= DATE_TRUNC ('day', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 3 THEN uv.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')AND uv.created_at < DATE_TRUNC('week', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 4 THEN uv.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') AND uv.created_at < DATE_TRUNC('month', CURRENT_DATE)
+--     END)
+--     --unit rank
+-- AND
+--     (ARRAY_LENGTH(@rank::bigint [],1) IS NULL
+--         OR uv.unit_rank = ANY (@rank::bigint []))
+-- --FACTS STUFF--
+-- AND
+--     (CASE WHEN @completion_status::bigint IS NULL THEN
+--         TRUE
+--     WHEN @completion_status::bigint = 0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'completion_status')::bigint = @completion_status::bigint
+--     END)
+-- -- AND
+-- --     (u.facts->>'starting_price' >= @starting_price OR @disable_starting_price::BOOLEAN)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bedroom::VARCHAR[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bedroom')::varchar = ANY(@bedroom::VARCHAR[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bathroom::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bathroom')::bigint = ANY(@bathroom::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_floor::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_floor')::bigint = ANY(@no_of_floor::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_payment::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_payment')::bigint = ANY(@no_of_payment::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_retail::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_retail')::bigint = ANY(@no_of_retail::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_pool::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_pool')::bigint = ANY(@no_of_pool::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@furnished::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'furnished')::bigint = ANY(@furnished::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@elevator::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'elevator')::bigint = ANY(@elevator::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@ownership::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'ownership')::bigint = ANY(@ownership::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@parking::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'parking')::bigint = ANY(@parking::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@views::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'views')::bigint[] && @views::bigint[] END)
+-- AND -- build up area
+--     (CASE WHEN @min_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @min_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float >= @min_built_up_area::float
+--     END
+--     AND
+--     CASE WHEN @max_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @max_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float <= @max_built_up_area::float
+--     END)    
+-- AND -- plot area
+--    (CASE WHEN @min_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @min_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float >= @min_plot_area::float
+--         END
+--         -- max plot area
+--         AND CASE WHEN @max_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @max_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float <= @max_plot_area::float
+--         END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@amenities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             am.amenities && @amenities::bigint []
+--         END)
+--     --  facilities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@facilities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             f.facilities && @facilities::bigint []
+--         END)
+-- group by ci.id,ci.city;
+ 
+-- -- name: GetCommunityUnitCount :many
+-- WITH facilities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS facilities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+--     group by uv.id -- facilities
+-- ),
+-- amenities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS amenities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+--     group by uv.id -- amenities
+-- )
+-- SELECT
+--     com.id,com.community,COUNT(uv.*)
+-- FROM unit_versions uv
+-- JOIN units u on u.id=uv.unit_id
+-- left JOIN addresses a on u.addresses_id=a.id
+-- LEFT JOIN communities com ON a.communities_id = com.id
+ 
+-- LEFT JOIN facilities f ON f.id=uv.id
+-- LEFT JOIN amenities am ON am.id=uv.id
+-- WHERE
+--     (CASE WHEN @agent_id::bigint= 0 then true else uv.listed_by=  @agent_id::bigint end)
+-- AND
+--     (@is_verified::bool IS NULL
+--         OR u.is_verified = @is_verified::bool)
+-- AND
+--     a.cities_id = @cities_id::BIGINT
+-- AND
+--     (CASE WHEN @company_id::bigint=0 THEN TRUE ELSE u.company_id= @company_id::bigint END)
+-- AND
+--     -- 1=>Sale, 2=>Rent, 3=>Swap & 4=>Booking
+--     uv."type" = @category::bigint
+-- AND
+--     -- from unit type table
+--     (CASE WHEN ARRAY_LENGTH(@unit_types::bigint[], 1) IS NULL THEN TRUE ELSE u.unit_type_id = ANY(@unit_types::bigint[]) END)  
+-- AND
+--     (case when @unit_no::varchar='' then true else  u.unit_no = @unit_no::varchar end )
+--    AND  u.unitno_is_public = TRUE  --unit no
+-- AND
+--     (CASE WHEN @ref_no::varchar='' THEN TRUE ELSE uv.ref_no = @ref_no::varchar END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@keywords::VARCHAR[], 1) IS NULL --keywords
+--     THEN TRUE ELSE
+--     uv.title ILIKE ANY(@keywords::VARCHAR[])
+--     OR uv.description ILIKE ANY(@keywords::VARCHAR[])
+--     OR com.community ILIKE ANY(@keywords::VARCHAR[])
+--     END)
+-- AND
+--         --created at
+--     (CASE
+--     WHEN @dates::BIGINT= 0 THEN true
+--     WHEN COALESCE(@dates::BIGINT,1) =1 THEN true
+--     WHEN @dates::BIGINT= 2 THEN uv.created_at >= DATE_TRUNC ('day', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 3 THEN uv.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')AND uv.created_at < DATE_TRUNC('week', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 4 THEN uv.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') AND uv.created_at < DATE_TRUNC('month', CURRENT_DATE)
+--     END)
+--     --unit rank
+-- AND
+--     (ARRAY_LENGTH(@rank::bigint [],1) IS NULL
+--         OR uv.unit_rank = ANY (@rank::bigint []))
+-- --FACTS STUFF--
+-- AND
+--     (CASE WHEN @completion_status::bigint IS NULL THEN
+--         TRUE
+--     WHEN @completion_status::bigint = 0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'completion_status')::bigint = @completion_status::bigint
+--     END)
+-- -- AND
+-- --     (u.facts->>'starting_price' >= @starting_price OR @disable_starting_price::BOOLEAN)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bedroom::VARCHAR[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bedroom')::varchar = ANY(@bedroom::VARCHAR[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bathroom::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bathroom')::bigint = ANY(@bathroom::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_floor::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_floor')::bigint = ANY(@no_of_floor::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_payment::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_payment')::bigint = ANY(@no_of_payment::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_retail::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_retail')::bigint = ANY(@no_of_retail::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_pool::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_pool')::bigint = ANY(@no_of_pool::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@furnished::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'furnished')::bigint = ANY(@furnished::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@elevator::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'elevator')::bigint = ANY(@elevator::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@ownership::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'ownership')::bigint = ANY(@ownership::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@parking::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'parking')::bigint = ANY(@parking::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@views::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'views')::bigint[] && @views::bigint[] END)
+-- AND -- build up area
+--     (CASE WHEN @min_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @min_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float >= @min_built_up_area::float
+--     END
+--     AND
+--     CASE WHEN @max_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @max_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float <= @max_built_up_area::float
+--     END)    
+-- AND -- plot area
+--    (CASE WHEN @min_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @min_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float >= @min_plot_area::float
+--         END
+--         -- max plot area
+--         AND CASE WHEN @max_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @max_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float <= @max_plot_area::float
+--         END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@amenities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             am.amenities && @amenities::bigint []
+--         END)
+--     --  facilities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@facilities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             f.facilities && @facilities::bigint []
+--         END)
+-- group by com.id,com.community;
+ 
+ 
+-- -- name: GetSubCommunityUnitCount :many
+-- WITH facilities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS facilities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=1
+--     group by uv.id -- facilities
+-- ),
+-- amenities AS(
+--     SELECT uv.id,
+--     array_agg(DISTINCT coalesce(fae.facility_amenity_id,0))::bigint[] AS amenities
+--     FROM unit_versions uv
+--     JOIN units u on u.id=uv.unit_id
+--     LEFT JOIN facilities_amenities_entity fae ON fae.entity_id=u.id AND fae.entity_type_id=5
+--     LEFT JOIN facilities_amenities fa ON fae.facility_amenity_id=fa.id AND fa."type"=2
+--     group by uv.id -- amenities
+-- )
+-- SELECT
+--     subco.id,subco.sub_community,COUNT(uv.*)
+   
+-- FROM unit_versions uv
+-- JOIN units u on u.id=uv.unit_id
+-- left JOIN addresses a on u.addresses_id=a.id
+-- LEFT JOIN sub_communities subco ON a.sub_communities_id = subco.id
+ 
+-- LEFT JOIN facilities f ON f.id=uv.id
+-- LEFT JOIN amenities am ON am.id=uv.id
+-- WHERE
+--     (CASE WHEN @agent_id::bigint= 0 then true else uv.listed_by=  @agent_id::bigint end)
+-- AND
+--     (@is_verified::bool IS NULL
+--         OR u.is_verified = @is_verified::bool)
+-- AND
+--    a.communities_id = @communities_id::BIGINT
+-- AND
+--     (CASE WHEN @company_id::bigint=0 THEN TRUE ELSE u.company_id= @company_id::bigint END)
+-- AND
+--     -- 1=>Sale, 2=>Rent, 3=>Swap & 4=>Booking
+--     uv."type" = @category::bigint
+-- AND
+--     -- from unit type table
+--     (CASE WHEN ARRAY_LENGTH(@unit_types::bigint[], 1) IS NULL THEN TRUE ELSE u.unit_type_id = ANY(@unit_types::bigint[]) END)  
+-- AND
+--     (case when @unit_no::varchar='' then true else  u.unit_no = @unit_no::varchar end )
+--    AND  u.unitno_is_public = TRUE  --unit no
+-- AND
+--     (CASE WHEN @ref_no::varchar='' THEN TRUE ELSE uv.ref_no = @ref_no::varchar END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@keywords::VARCHAR[], 1) IS NULL --keywords
+--     THEN TRUE ELSE
+--     uv.title ILIKE ANY(@keywords::VARCHAR[])
+--     OR uv.description ILIKE ANY(@keywords::VARCHAR[])
+--     OR subco.sub_community ILIKE ANY(@keywords::VARCHAR[])
+--     END)
+-- AND
+--         --created at
+--     (CASE
+--     WHEN @dates::BIGINT= 0 THEN true
+--     WHEN COALESCE(@dates::BIGINT,1) =1 THEN true
+--     WHEN @dates::BIGINT= 2 THEN uv.created_at >= DATE_TRUNC ('day', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 3 THEN uv.created_at >= DATE_TRUNC('week', CURRENT_DATE - INTERVAL '1 week')AND uv.created_at < DATE_TRUNC('week', CURRENT_DATE)
+--     WHEN @dates::BIGINT = 4 THEN uv.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') AND uv.created_at < DATE_TRUNC('month', CURRENT_DATE)
+--     END)
+--     --unit rank
+-- AND
+--     (ARRAY_LENGTH(@rank::bigint [],1) IS NULL
+--         OR uv.unit_rank = ANY (@rank::bigint []))
+-- --FACTS STUFF--
+-- AND
+--     (CASE WHEN @completion_status::bigint IS NULL THEN
+--         TRUE
+--     WHEN @completion_status::bigint = 0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'completion_status')::bigint = @completion_status::bigint
+--     END)
+-- -- AND
+-- --     (u.facts->>'starting_price' >= @starting_price OR @disable_starting_price::BOOLEAN)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bedroom::VARCHAR[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bedroom')::varchar = ANY(@bedroom::VARCHAR[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@bathroom::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'bathroom')::bigint = ANY(@bathroom::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_floor::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_floor')::bigint = ANY(@no_of_floor::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_payment::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_payment')::bigint = ANY(@no_of_payment::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_retail::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_retail')::bigint = ANY(@no_of_retail::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@no_of_pool::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'no_of_pool')::bigint = ANY(@no_of_pool::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@furnished::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'furnished')::bigint = ANY(@furnished::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@elevator::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'elevator')::bigint = ANY(@elevator::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@ownership::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'ownership')::bigint = ANY(@ownership::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@parking::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'parking')::bigint = ANY(@parking::bigint[]) END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@views::bigint[], 1) IS NULL THEN TRUE ELSE (u.facts->>'views')::bigint[] && @views::bigint[] END)
+-- AND -- build up area
+--     (CASE WHEN @min_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @min_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float >= @min_built_up_area::float
+--     END
+--     AND
+--     CASE WHEN @max_built_up_area::float IS NULL THEN
+--         TRUE
+--     WHEN @max_built_up_area::float = 0.0 THEN
+--         TRUE
+--     ELSE
+--         (u.facts->>'built_up_area')::float <= @max_built_up_area::float
+--     END)    
+-- AND -- plot area
+--    (CASE WHEN @min_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @min_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float >= @min_plot_area::float
+--         END
+--         -- max plot area
+--         AND CASE WHEN @max_plot_area::float IS NULL THEN
+--             TRUE
+--         WHEN @max_plot_area::float = 0.0 THEN
+--             TRUE
+--         ELSE
+--             (u.facts->>'plot_area')::float <= @max_plot_area::float
+--         END)
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@amenities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             am.amenities && @amenities::bigint []
+--         END)
+--     --  facilities
+-- AND
+--     (CASE WHEN ARRAY_LENGTH(@facilities::bigint [],
+--             1) IS NULL THEN
+--             TRUE
+--         ELSE
+--             f.facilities && @facilities::bigint []
+--         END)
+-- group by subco.id,subco.sub_community;

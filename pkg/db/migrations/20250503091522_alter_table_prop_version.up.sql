@@ -1,0 +1,1 @@
+ALTER TABLE property_versions ADD COLUMN property_rank bigint default 1 not null

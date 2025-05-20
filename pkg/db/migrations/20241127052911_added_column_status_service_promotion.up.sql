@@ -1,0 +1,2 @@
+ALTER TABLE service_promotions
+ADD COLUMN status BIGINT NOT NULL DEFAULT 1;

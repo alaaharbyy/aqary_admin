@@ -1,0 +1,46 @@
+-- -- name: CreateProjectsSectionsActivities :one
+-- INSERT INTO projects_sections_activities (
+--     ref_no,
+--     activity_type,
+--     activity_date,
+--     project_name,
+--     image_id,
+--     plans_id,
+--     web_portals_id,
+--     project_id,
+--     previous_activity,
+--     activity,
+--     users_id
+-- )VALUES (
+--     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+-- ) RETURNING *;
+
+-- -- name: GetProjectsSectionsActivities :one
+-- SELECT * FROM projects_sections_activities
+-- WHERE id = $1 LIMIT $1;
+
+-- -- name: GetAllProjectsSectionsActivities :many
+-- SELECT * FROM projects_sections_activities
+-- ORDER BY id
+-- LIMIT $1
+-- OFFSET $2;
+
+-- -- name: UpdateProjectsSectionsActivities :one
+-- UPDATE projects_sections_activities
+-- SET ref_no = $2,
+--     activity_type = $3,
+--     activity_date = $4,
+--     project_name = $5,
+--     image_id = $6,
+--     plans_id = $7,
+--     web_portals_id = $8,
+--     project_id = $9,
+--     previous_activity = $10,
+--     activity = $11,
+--     users_id = $12
+-- Where id = $1
+-- RETURNING *;
+
+-- -- name: DeleteProjectsSectionsActivities :exec
+-- DELETE FROM projects_sections_activities
+-- Where id = $1;

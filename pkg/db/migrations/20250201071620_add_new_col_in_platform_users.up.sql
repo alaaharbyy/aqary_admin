@@ -1,0 +1,1 @@
+ALTER TABLE platform_users ADD COLUMN social_login VARCHAR NULL;
