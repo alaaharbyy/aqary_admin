@@ -4,7 +4,7 @@ import (
 	domain "aqary_admin/internal/domain/requests/user"
 	response "aqary_admin/internal/domain/responses/user"
 	"aqary_admin/internal/domain/sqlc/sqlc"
-	"errors"
+	// "errors"
 	"log"
 	"time"
 
@@ -18,7 +18,7 @@ import (
 	"aqary_admin/pkg/utils/security"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	// "github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -68,83 +68,83 @@ func (uc *companyUserUseCase) ResetCompanyUserPassword(ctx *gin.Context, req dom
 	return er
 }
 
-func (uc *companyUserUseCase) UpdateCompanyUserByStatus(ctx *gin.Context, req domain.UpdateUserByStatusReq) *exceptions.Exception {
+// func (uc *companyUserUseCase) UpdateCompanyUserByStatus(ctx *gin.Context, req domain.UpdateUserByStatusReq) *exceptions.Exception {
 
-	user, err := uc.repo.GetUserRegardlessOfStatus(ctx, req.ID)
-	if err != nil {
-		return err
-	}
+// 	user, err := uc.repo.GetUserRegardlessOfStatus(ctx, req.ID)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	// companyUser, errr := uc.store.GetCompanyUserByUserId(ctx, sqlc.GetCompanyUserByUserIdParams{
-	// 	CompanyID: 0,
-	// 	UserID:   user.ID,
-	// })
-	// if errr != nil {
-	// 	// return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, errr.Error())
-	// }
+// 	// companyUser, errr := uc.store.GetCompanyUserByUserId(ctx, sqlc.GetCompanyUserByUserIdParams{
+// 	// 	CompanyID: 0,
+// 	// 	UserID:   user.ID,
+// 	// })
+// 	// if errr != nil {
+// 	// 	// return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, errr.Error())
+// 	// }
 
-	// if user type is agent then block or unblock all property and unit versions listed by him
-	if user.UserTypesID == constants.AgentUserTypes.Int64() {
-		// start transaction for UpdateCompanyUserByStatus
-		allErr := sqlc.ExecuteTxWithException(ctx, uc.pool, func(q sqlc.Querier) *exceptions.Exception {
-			_, err2 := q.UpdateUserStatus(ctx, sqlc.UpdateUserStatusParams{
-				ID:     user.ID,
-				Status: req.Status,
-			})
+// 	// if user type is agent then block or unblock all property and unit versions listed by him
+// 	if user.UserTypesID == constants.AgentUserTypes.Int64() {
+// 		// start transaction for UpdateCompanyUserByStatus
+// 		allErr := sqlc.ExecuteTxWithException(ctx, uc.pool, func(q sqlc.Querier) *exceptions.Exception {
+// 			_, err2 := q.UpdateUserStatus(ctx, sqlc.UpdateUserStatusParams{
+// 				ID:     user.ID,
+// 				Status: req.Status,
+// 			})
 
-			if err2 != nil {
-				if errors.Is(err2, pgx.ErrNoRows) {
-					return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.NoDataFoundErrorCode, "user not found")
-				}
+// 			if err2 != nil {
+// 				if errors.Is(err2, pgx.ErrNoRows) {
+// 					return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.NoDataFoundErrorCode, "user not found")
+// 				}
 
-				return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, "issue encountered while changing the user status")
-			}
+// 				return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, "issue encountered while changing the user status")
+// 			}
 
-			var status int64 = constants.DraftStatus.Int64()
+// 			var status int64 = constants.DraftStatus.Int64()
 
-			if req.Status == constants.DeletedStatus.Int64() {
-				status = constants.BlockedStatus.Int64()
-			}
+// 			if req.Status == constants.DeletedStatus.Int64() {
+// 				status = constants.BlockedStatus.Int64()
+// 			}
 
-			// block or unblock property versions status listed by this agent
-			err = uc.repo.UpdatePropertyVersionsStatusForAgent(ctx, sqlc.UpdatePropertyVersionsStatusForAgentParams{
-				Status:  status,
-				AgentID: user.ID,
-			}, q)
+// 			// block or unblock property versions status listed by this agent
+// 			err = uc.repo.UpdatePropertyVersionsStatusForAgent(ctx, sqlc.UpdatePropertyVersionsStatusForAgentParams{
+// 				Status:  status,
+// 				AgentID: user.ID,
+// 			}, q)
 
-			if err != nil {
-				return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, "issue encountered while changing statuses of property versions")
-			}
+// 			if err != nil {
+// 				return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, "issue encountered while changing statuses of property versions")
+// 			}
 
-			// block or unblock unit versions status listed by this agent
-			err = uc.repo.UpdateUnitVersionsStatusForAgent(ctx, sqlc.UpdateUnitVersionsStatusForAgentParams{
-				Status:  status,
-				AgentID: user.ID,
-			}, q)
+// 			// block or unblock unit versions status listed by this agent
+// 			err = uc.repo.UpdateUnitVersionsStatusForAgent(ctx, sqlc.UpdateUnitVersionsStatusForAgentParams{
+// 				Status:  status,
+// 				AgentID: user.ID,
+// 			}, q)
 
-			if err != nil {
-				return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, "issue encountered while changing statuses of unit versions")
-			}
-			return nil
+// 			if err != nil {
+// 				return exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.SomethingWentWrongErrorCode, "issue encountered while changing statuses of unit versions")
+// 			}
+// 			return nil
 
-		})
+// 		})
 
-		if allErr != nil {
-			return allErr
-		}
+// 		if allErr != nil {
+// 			return allErr
+// 		}
 
-	} else {
-		_, err = uc.repo.UpdateUserStatus(ctx, sqlc.UpdateUserStatusParams{
-			ID:     user.ID,
-			Status: req.Status,
-		})
-		if err != nil {
-			return err
-		}
-	}
+// 	} else {
+// 		_, err = uc.repo.UpdateUserStatus(ctx, sqlc.UpdateUserStatusParams{
+// 			ID:     user.ID,
+// 			Status: req.Status,
+// 		})
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // including freelancer and owner also
 func (uc *companyUserUseCase) UpdateCompanyUser(c *gin.Context, req domain.UpdateCompanyUserRequest) (any, *exceptions.Exception) {

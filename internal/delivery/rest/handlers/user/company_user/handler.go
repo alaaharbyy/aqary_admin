@@ -20,7 +20,7 @@ func (h *CompanyUserHandler) RegisterAuthRoutes(r *gin.RouterGroup) {
 	r.GET("/getCompanyUser", h.GetCompanyUser)
 	r.GET("/getCompanyOfUser", h.GetCompanyOfUser)
 	r.GET("/getCompanyUsersByStatus", h.GetCompanyUsersByStatus)
-	r.PUT("/updateCompanyUserByStatus", h.UpdateCompanyUserByStatus)
+	// r.PUT("/updateCompanyUserByStatus", h.UpdateCompanyUserByStatus)
 	r.PUT("/updateCompanyUser", h.UpdateCompanyUser)
 	r.GET("/getCountCompanyUsers", h.GetCountCompanyUsers)
 	r.PUT("/resetCompanyUserPassword", h.ResetCompanyUserPassword)

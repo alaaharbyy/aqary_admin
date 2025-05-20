@@ -35,7 +35,7 @@ type PendingUserRepo interface {
 	GetCity(ctx *gin.Context, id int32) (sqlc.City, *exceptions.Exception)
 	GetCommunity(ctx *gin.Context, id int32) (sqlc.Community, *exceptions.Exception)
 	GetSubCommunity(ctx *gin.Context, id int32) (sqlc.SubCommunity, *exceptions.Exception)
-	UpdatePropertyVersionsStatusForAgent(ctx *gin.Context, arg sqlc.UpdatePropertyVersionsStatusForAgentParams, q sqlc.Querier) *exceptions.Exception
+	// UpdatePropertyVersionsStatusForAgent(ctx *gin.Context, arg sqlc.UpdatePropertyVersionsStatusForAgentParams, q sqlc.Querier) *exceptions.Exception
 	UpdateUnitVersionsStatusForAgent(ctx *gin.Context, arg sqlc.UpdateUnitVersionsStatusForAgentParams, q sqlc.Querier) *exceptions.Exception
 }
 
@@ -43,21 +43,21 @@ type pendingRepository struct {
 	querier sqlc.Querier
 }
 
-// UpdatePropertyVersionsStatusForAgent implements PendingUserRepo.
-func (r *pendingRepository) UpdatePropertyVersionsStatusForAgent(ctx *gin.Context, arg sqlc.UpdatePropertyVersionsStatusForAgentParams, q sqlc.Querier) *exceptions.Exception {
+// // UpdatePropertyVersionsStatusForAgent implements PendingUserRepo.
+// func (r *pendingRepository) UpdatePropertyVersionsStatusForAgent(ctx *gin.Context, arg sqlc.UpdatePropertyVersionsStatusForAgentParams, q sqlc.Querier) *exceptions.Exception {
 
-	if q == nil {
-		q = r.querier
-	}
+// 	if q == nil {
+// 		q = r.querier
+// 	}
 
-	err := q.UpdatePropertyVersionsStatusForAgent(ctx, arg)
+// 	err := q.UpdatePropertyVersionsStatusForAgent(ctx, arg)
 
-	if err != nil {
-		return repoerror.BuildRepoErr("Pending User ", "UpdatePropertyVersionsStatusForAgent", err)
-	}
+// 	if err != nil {
+// 		return repoerror.BuildRepoErr("Pending User ", "UpdatePropertyVersionsStatusForAgent", err)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // UpdateUnitVersionsStatusForAgent implements PendingUserRepo.
 func (r *pendingRepository) UpdateUnitVersionsStatusForAgent(ctx *gin.Context, arg sqlc.UpdateUnitVersionsStatusForAgentParams, q sqlc.Querier) *exceptions.Exception {

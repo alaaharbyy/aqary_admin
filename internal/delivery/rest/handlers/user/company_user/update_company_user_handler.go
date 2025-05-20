@@ -61,21 +61,21 @@ func (h *CompanyUserHandler) ResetCompanyUserPassword(c *gin.Context) {
 // @Failure 500 {object} utils.ErrResponseSwagger
 // @Router /api/user/updateCompanyUserByStatus [PUT]
 // @Security bearerToken
-func (h *CompanyUserHandler) UpdateCompanyUserByStatus(c *gin.Context) {
-	var req domain.UpdateUserByStatusReq
-	if err := c.ShouldBind(&req); err != nil {
-		helper.SendApiResponseV1(c, exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.BadRequestErrorCode, "please provide all the required fields"), nil)
-		return
-	}
+// func (h *CompanyUserHandler) UpdateCompanyUserByStatus(c *gin.Context) {
+// 	var req domain.UpdateUserByStatusReq
+// 	if err := c.ShouldBind(&req); err != nil {
+// 		helper.SendApiResponseV1(c, exceptions.GetExceptionByErrorCodeWithCustomMessage(exceptions.BadRequestErrorCode, "please provide all the required fields"), nil)
+// 		return
+// 	}
 
-	err := h.userUseCase.UpdateCompanyUserByStatus(c, req)
-	if err != nil {
-		helper.SendApiResponseV1(c, err, nil)
-		return
-	}
+// 	err := h.userUseCase.UpdateCompanyUserByStatus(c, req)
+// 	if err != nil {
+// 		helper.SendApiResponseV1(c, err, nil)
+// 		return
+// 	}
 
-	helper.SendApiResponseV1(c, nil, "updated successfully!")
-}
+// 	helper.SendApiResponseV1(c, nil, "updated successfully!")
+// }
 
 // UpdateCompanyUser godoc
 // @Summary Update company user

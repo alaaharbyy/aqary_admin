@@ -23,7 +23,7 @@ type CompanyUserUseCase interface {
 	// updates
 	GetCountCompanyUsers(ctx *gin.Context) (*response.UserCountOutput, *exceptions.Exception)
 	ResetCompanyUserPassword(ctx *gin.Context, req domain.ResetReq) *exceptions.Exception
-	UpdateCompanyUserByStatus(ctx *gin.Context, req domain.UpdateUserByStatusReq) *exceptions.Exception
+	// UpdateCompanyUserByStatus(ctx *gin.Context, req domain.UpdateUserByStatusReq) *exceptions.Exception
 
 	UpdateCompanyUser(ctx *gin.Context, req domain.UpdateCompanyUserRequest) (any, *exceptions.Exception)
 

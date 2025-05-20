@@ -1816,20 +1816,8 @@ func (mr *MockUserCompositeRepoMockRecorder) GetCountryByName(arg0, arg1 any) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCountryByName", reflect.TypeOf((*MockUserCompositeRepo)(nil).GetCountryByName), arg0, arg1)
 }
 
-// GetCurrentSubscriptionQuota mocks base method.
-func (m *MockUserCompositeRepo) GetCurrentSubscriptionQuota(arg0 *gin.Context, arg1 int64) ([]sqlc.GetRemainingCompanyQuotaRow, *exceptions.Exception) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCurrentSubscriptionQuota", arg0, arg1)
-	ret0, _ := ret[0].([]sqlc.GetRemainingCompanyQuotaRow)
-	ret1, _ := ret[1].(*exceptions.Exception)
-	return ret0, ret1
-}
 
-// GetCurrentSubscriptionQuota indicates an expected call of GetCurrentSubscriptionQuota.
-func (mr *MockUserCompositeRepoMockRecorder) GetCurrentSubscriptionQuota(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentSubscriptionQuota", reflect.TypeOf((*MockUserCompositeRepo)(nil).GetCurrentSubscriptionQuota), arg0, arg1)
-}
+
 
 // GetDepartment mocks base method.
 func (m *MockUserCompositeRepo) GetDepartment(arg0 *gin.Context, arg1 sqlc.GetDepartmentParams) (sqlc.Department, *exceptions.Exception) {
@@ -2416,20 +2404,7 @@ func (mr *MockUserCompositeRepoMockRecorder) GetUserIDFromCompanies(arg0, arg1 a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDFromCompanies", reflect.TypeOf((*MockUserCompositeRepo)(nil).GetUserIDFromCompanies), arg0, arg1)
 }
 
-// GetUserLicenses mocks base method.
-func (m *MockUserCompositeRepo) GetUserLicenses(arg0 *gin.Context, arg1 sqlc.GetLicensesByEntityAndEntityTypeIDWithoutStateParams) ([]sqlc.License, *exceptions.Exception) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserLicenses", arg0, arg1)
-	ret0, _ := ret[0].([]sqlc.License)
-	ret1, _ := ret[1].(*exceptions.Exception)
-	return ret0, ret1
-}
 
-// GetUserLicenses indicates an expected call of GetUserLicenses.
-func (mr *MockUserCompositeRepoMockRecorder) GetUserLicenses(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserLicenses", reflect.TypeOf((*MockUserCompositeRepo)(nil).GetUserLicenses), arg0, arg1)
-}
 
 // GetUserPermissionByID mocks base method.
 func (m *MockUserCompositeRepo) GetUserPermissionByID(arg0 *gin.Context, arg1 sqlc.GetUserPermissionsByIDParams) (sqlc.UserCompanyPermission, *exceptions.Exception) {
@@ -2860,20 +2835,9 @@ func (mr *MockUserCompositeRepoMockRecorder) UpdateUserType(arg0, arg1 any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserType", reflect.TypeOf((*MockUserCompositeRepo)(nil).UpdateUserType), arg0, arg1)
 }
 
-// UpdateUserVerification mocks base method.
-func (m *MockUserCompositeRepo) UpdateUserVerification(arg0 *gin.Context, arg1 sqlc.VerifyCompanyUserParams) (*sqlc.User, *exceptions.Exception) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUserVerification", arg0, arg1)
-	ret0, _ := ret[0].(*sqlc.User)
-	ret1, _ := ret[1].(*exceptions.Exception)
-	return ret0, ret1
-}
 
-// UpdateUserVerification indicates an expected call of UpdateUserVerification.
-func (mr *MockUserCompositeRepoMockRecorder) UpdateUserVerification(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserVerification", reflect.TypeOf((*MockUserCompositeRepo)(nil).UpdateUserVerification), arg0, arg1)
-}
+
+
 
 // VerifyAndAvailableUser mocks base method.
 func (m *MockUserCompositeRepo) VerifyAndAvailableUser(arg0 context.Context, arg1 int64, arg2 sqlc.Querier) (*sqlc.User, *exceptions.Exception) {
