@@ -81,9 +81,6 @@ type Querier interface {
 	CheckIfCategoryIsExist(ctx context.Context, id int64) (bool, error)
 	CheckIfFacilitiesAmenitiesHasCategoryID(ctx context.Context, categories int64) (pgtype.Int8, error)
 	CheckIfFacilityAmenityIsInUse(ctx context.Context, facilityAmenityID int64) (bool, error)
-	CheckIfFileURLAlreadyExists(ctx context.Context, arg CheckIfFileURLAlreadyExistsParams) (pgtype.Bool, error)
-	//---- used for xml
-	CheckIfPropertyExistsByRefNo(ctx context.Context, refNo string) (bool, error)
 	CheckIfPropertyTypeExists(ctx context.Context, dollar_1 int64) (pgtype.Bool, error)
 	CheckIfSubscriptionOrderExistBySubscriberId(ctx context.Context, arg CheckIfSubscriptionOrderExistBySubscriberIdParams) (SubscriptionOrder, error)
 	CheckIfUnitBelongToProject(ctx context.Context, arg CheckIfUnitBelongToProjectParams) (CheckIfUnitBelongToProjectRow, error)
@@ -305,48 +302,6 @@ type Querier interface {
 	CreateFieldOfStudy(ctx context.Context, arg CreateFieldOfStudyParams) (FieldOfStudy, error)
 	CreateFinancialProviders(ctx context.Context, arg CreateFinancialProvidersParams) (FinancialProvider, error)
 	CreateFollower(ctx context.Context, arg CreateFollowerParams) (Follower, error)
-	CreateFreelancer(ctx context.Context, arg CreateFreelancerParams) (Freelancer, error)
-	CreateFreelancerCompanies(ctx context.Context, arg CreateFreelancerCompaniesParams) (FreelancersCompany, error)
-	CreateFreelancerProperty(ctx context.Context, arg CreateFreelancerPropertyParams) (FreelancersProperty, error)
-	CreateFreelancerPropertyDoc(ctx context.Context, arg CreateFreelancerPropertyDocParams) (FreelancersPropertiesDocument, error)
-	CreateFreelancerPropertyMedia(ctx context.Context, arg CreateFreelancerPropertyMediaParams) (FreelancersPropertiesMedium, error)
-	CreateFreelancersBankAccountDetail(ctx context.Context, arg CreateFreelancersBankAccountDetailParams) (FreelancersBankAccountDetail, error)
-	CreateGlobalDocument(ctx context.Context, arg CreateGlobalDocumentParams) (GlobalDocument, error)
-	CreateGlobalMedia(ctx context.Context, arg CreateGlobalMediaParams) (GlobalMedium, error)
-	CreateGlobalPlan(ctx context.Context, arg CreateGlobalPlanParams) (Plan, error)
-	CreateHolidayHomeBooking(ctx context.Context, arg CreateHolidayHomeBookingParams) (HolidayHomeBooking, error)
-	CreateHolidayHomeCategory(ctx context.Context, arg CreateHolidayHomeCategoryParams) (HolidayHomeCategory, error)
-	CreateHolidayHomeComments(ctx context.Context, arg CreateHolidayHomeCommentsParams) (HolidayHomeComment, error)
-	CreateHolidayHomePortals(ctx context.Context, arg CreateHolidayHomePortalsParams) (HolidayHomePortal, error)
-	CreateHolidayHomePromo(ctx context.Context, arg CreateHolidayHomePromoParams) (HolidayHomePromo, error)
-	CreateHolidayHomeStayReview(ctx context.Context, arg CreateHolidayHomeStayReviewParams) (HolidayStayReview, error)
-	CreateHolidayMedia(ctx context.Context, arg CreateHolidayMediaParams) (HolidayMedium, error)
-	CreateHolidayPackInclusion(ctx context.Context, arg CreateHolidayPackInclusionParams) (HolidayPackageInclusion, error)
-	CreateHolidaySchedule(ctx context.Context, arg CreateHolidayScheduleParams) (HolidayExperienceSchedule, error)
-	CreateHotelBooking(ctx context.Context, arg CreateHotelBookingParams) (HotelBooking, error)
-	CreateHotelBookingCategory(ctx context.Context, arg CreateHotelBookingCategoryParams) (HotelBookingCategory, error)
-	CreateHotelBookingPortal(ctx context.Context, arg CreateHotelBookingPortalParams) (HotelBookingPortal, error)
-	CreateHotelBookingPromo(ctx context.Context, arg CreateHotelBookingPromoParams) (HotelBookingPromo, error)
-	CreateHotelBookingReview(ctx context.Context, arg CreateHotelBookingReviewParams) (HotelBookingReview, error)
-	CreateHotelRoom(ctx context.Context, arg CreateHotelRoomParams) (HotelRoom, error)
-	CreateHotelRoomMedia(ctx context.Context, arg CreateHotelRoomMediaParams) (HotelRoomsMedium, error)
-	CreateIndustrailBrokerAgentPropertyMedia(ctx context.Context, arg CreateIndustrailBrokerAgentPropertyMediaParams) (IndustrialBrokerAgentPropertiesMedium, error)
-	CreateIndustrailFreelancerPropertyMedia(ctx context.Context, arg CreateIndustrailFreelancerPropertyMediaParams) (IndustrialFreelancerPropertiesMedium, error)
-	CreateIndustrailPropertyPlan(ctx context.Context, arg CreateIndustrailPropertyPlanParams) (IndustrialPropertiesPlan, error)
-	CreateIndustrailPropertyPlanBranch(ctx context.Context, arg CreateIndustrailPropertyPlanBranchParams) (IndustrialPropertiesPlansBranch, error)
-	CreateIndustrialBrokerAgentProperty(ctx context.Context, arg CreateIndustrialBrokerAgentPropertyParams) (IndustrialBrokerAgentProperty, error)
-	CreateIndustrialBrokerAgentPropertyBranch(ctx context.Context, arg CreateIndustrialBrokerAgentPropertyBranchParams) (IndustrialBrokerAgentPropertiesBranch, error)
-	CreateIndustrialBrokerAgentPropertyBranchDoc(ctx context.Context, arg CreateIndustrialBrokerAgentPropertyBranchDocParams) (IndustrialBrokerAgentPropertiesBranchDocument, error)
-	CreateIndustrialBrokerAgentPropertyBranchMedia(ctx context.Context, arg CreateIndustrialBrokerAgentPropertyBranchMediaParams) (IndustrialBrokerAgentPropertiesBranchMedium, error)
-	CreateIndustrialBrokerAgentPropertyDoc(ctx context.Context, arg CreateIndustrialBrokerAgentPropertyDocParams) (IndustrialBrokerAgentPropertiesDocument, error)
-	CreateIndustrialFreelancerProperty(ctx context.Context, arg CreateIndustrialFreelancerPropertyParams) (IndustrialFreelancerProperty, error)
-	CreateIndustrialFreelancerPropertyDoc(ctx context.Context, arg CreateIndustrialFreelancerPropertyDocParams) (IndustrialFreelancerPropertiesDocument, error)
-	CreateIndustrialOwnerProperty(ctx context.Context, arg CreateIndustrialOwnerPropertyParams) (IndustrialOwnerProperty, error)
-	CreateIndustrialOwnerPropertyDoc(ctx context.Context, arg CreateIndustrialOwnerPropertyDocParams) (IndustrialOwnerPropertiesDocument, error)
-	CreateIndustrialOwnerPropertyMedia(ctx context.Context, arg CreateIndustrialOwnerPropertyMediaParams) (IndustrialOwnerPropertiesMedium, error)
-	CreateIndustrialPropertyFacts(ctx context.Context, arg CreateIndustrialPropertyFactsParams) (IndustrialPropertiesFact, error)
-	CreateIndustrialUnitTypes(ctx context.Context, arg CreateIndustrialUnitTypesParams) (IndustrialUnitType, error)
-	CreateIndustrialUnitTypesBranch(ctx context.Context, arg CreateIndustrialUnitTypesBranchParams) (IndustrialUnitTypesBranch, error)
 	CreateIndustry(ctx context.Context, arg CreateIndustryParams) (Industry, error)
 	CreateInitialOrderPaymentBulk(ctx context.Context, arg CreateInitialOrderPaymentBulkParams) error
 	CreateInternalSharing(ctx context.Context, arg CreateInternalSharingParams) (InternalSharing, error)
@@ -368,9 +323,7 @@ type Querier interface {
 	CreateMapSearch(ctx context.Context, arg CreateMapSearchParams) (MapSearch, error)
 	CreateNewCareer(ctx context.Context, arg CreateNewCareerParams) (Career, error)
 	CreateNewFaq(ctx context.Context, arg CreateNewFaqParams) (Faq, error)
-	CreateNewHolidayHome(ctx context.Context, arg CreateNewHolidayHomeParams) (HolidayHome, error)
 	CreateNewLeadGeneralRequest(ctx context.Context, arg CreateNewLeadGeneralRequestParams) (LeadGeneralRequest, error)
-	CreateNewProperty(ctx context.Context, arg CreateNewPropertyParams) (Property, error)
 	CreateNewsLetterSubscribers(ctx context.Context, arg CreateNewsLetterSubscribersParams) error
 	CreateOpenHouse(ctx context.Context, arg CreateOpenHouseParams) (Openhouse, error)
 	CreateOpenhouseAppointment(ctx context.Context, arg CreateOpenhouseAppointmentParams) (Appointment, error)
@@ -419,7 +372,6 @@ type Querier interface {
 	CreatePropertiesFact(ctx context.Context, arg CreatePropertiesFactParams) (AuctionsPropertiesFact, error)
 	CreatePropertiesMedia(ctx context.Context, arg CreatePropertiesMediaParams) (PropertiesMedium, error)
 	CreateProperty(ctx context.Context, arg CreatePropertyParams) (AuctionsProperty, error)
-	CreatePropertyAgents(ctx context.Context, arg CreatePropertyAgentsParams) (PropertyAgent, error)
 	CreatePropertyBranchPlan(ctx context.Context, arg CreatePropertyBranchPlanParams) (PropertiesPlansBranch, error)
 	CreatePropertyFact(ctx context.Context, arg CreatePropertyFactParams) (PropertiesFact, error)
 	CreatePropertyHubActivity(ctx context.Context, arg CreatePropertyHubActivityParams) (PropertyHubActivity, error)
@@ -433,7 +385,6 @@ type Querier interface {
 	CreatePropertyUnitComment(ctx context.Context, arg CreatePropertyUnitCommentParams) (PropertyUnitComment, error)
 	CreatePropertyUnitLike(ctx context.Context, arg CreatePropertyUnitLikeParams) (PropertyUnitLike, error)
 	CreatePropertyUnitSaved(ctx context.Context, arg CreatePropertyUnitSavedParams) (PropertyUnitSaved, error)
-	CreatePropertyVersion(ctx context.Context, arg CreatePropertyVersionParams) (PropertyVersion, error)
 	CreatePropertyVideo(ctx context.Context, arg CreatePropertyVideoParams) (PropertiesVideo, error)
 	CreatePublish(ctx context.Context, arg CreatePublishParams) (PublishListing, error)
 	CreatePublishGallery(ctx context.Context, arg CreatePublishGalleryParams) (PublishGallery, error)
@@ -519,7 +470,6 @@ type Querier interface {
 	CreateUnitMedia(ctx context.Context, arg CreateUnitMediaParams) (UnitMedium, error)
 	CreateUnitPlans(ctx context.Context, arg CreateUnitPlansParams) (UnitPlan, error)
 	CreateUnitType(ctx context.Context, arg CreateUnitTypeParams) (UnitTypeDetail, error)
-	CreateUnitTypeVariation(ctx context.Context, arg CreateUnitTypeVariationParams) (UnitTypeVariation, error)
 	CreateUnitVersion(ctx context.Context, arg CreateUnitVersionParams) (UnitVersion, error)
 	CreateUnits(ctx context.Context, arg CreateUnitsParams) (Unit, error)
 	CreateUnitsDocuments(ctx context.Context, arg CreateUnitsDocumentsParams) (UnitsDocument, error)
@@ -649,15 +599,6 @@ type Querier interface {
 	DeleteDocumentsSubCategory(ctx context.Context, id int64) error
 	DeleteDropDownCategories(ctx context.Context) (DropdownCategory, error)
 	DeleteDropDownItems(ctx context.Context, id int64) (DropdownItem, error)
-	DeleteEntityGlobalDocument(ctx context.Context, id int64) error
-	DeleteEntityGlobalDocumentByDocumentId(ctx context.Context, id int64) ([]string, error)
-	DeleteEntityGlobalDocumentByURL(ctx context.Context, arg DeleteEntityGlobalDocumentByURLParams) (GlobalDocument, error)
-	DeleteEntityGlobalMedia(ctx context.Context, id int64) error
-	DeleteEntityGlobalMediaByMediaId(ctx context.Context, id int64) ([]string, error)
-	DeleteEntityGlobalMediaByURL(ctx context.Context, arg DeleteEntityGlobalMediaByURLParams) (GlobalMedium, error)
-	DeleteEntityGlobalPlan(ctx context.Context, id int64) error
-	DeleteEntityGlobalPlanByPlanId(ctx context.Context, id int64) ([]string, error)
-	DeleteEntityGlobalPlanByURL(ctx context.Context, arg DeleteEntityGlobalPlanByURLParams) (Plan, error)
 	DeleteEntityServiceLocation(ctx context.Context, id int64) error
 	DeleteExchangeOfferCategory(ctx context.Context, id int64) error
 	DeleteExhibitionBooth(ctx context.Context, id int64) error
@@ -716,51 +657,6 @@ type Querier interface {
 	DeleteFollowerByUserAndFollowersID(ctx context.Context, arg DeleteFollowerByUserAndFollowersIDParams) error
 	DeleteFollowersByUserId(ctx context.Context, userID int64) error
 	DeleteFollowingByFollowersId(ctx context.Context, followersID int64) error
-	DeleteFreelancer(ctx context.Context, id int64) error
-	DeleteFreelancerCompanies(ctx context.Context, id int64) error
-	DeleteFreelancerProperty(ctx context.Context, id int64) error
-	DeleteFreelancerPropertyDoc(ctx context.Context, id int64) error
-	DeleteFreelancerPropertyMedia(ctx context.Context, id int64) error
-	DeleteFreelancersBankAccountDetail(ctx context.Context, id int64) error
-	// -- name: UpdateHolidayHomeBookings :one
-	// UPDATE holiday_home_bookings
-	// SET  booking_ref_no = $2,
-	//      book_date = $3,
-	//      holiday_room_id = $4,
-	//      check_in = $5,
-	//      check_out = $6,
-	//      holiday_portals_id = $7,
-	//      status = $8
-	// WHERE id = $1
-	// RETURNING *;
-	DeleteHolidayHomeBookings(ctx context.Context, id int64) error
-	DeleteHolidayHomeCategory(ctx context.Context, id int64) error
-	DeleteHolidayHomeComments(ctx context.Context, id int64) error
-	DeleteHolidayHomePortals(ctx context.Context, id int64) error
-	DeleteHolidayHomePortalsByHolidayId(ctx context.Context, holidayHomeID int64) error
-	DeleteHolidayHomePromo(ctx context.Context, id int64) error
-	DeleteHolidayMedia(ctx context.Context, id int64) error
-	DeleteHolidayMediaByHolidayID(ctx context.Context, holidayHomeID int64) error
-	DeleteHolidayScheduleByHolidayId(ctx context.Context, holidayHomeID int64) (HolidayExperienceSchedule, error)
-	DeleteHolidayScheduleById(ctx context.Context, id int64) error
-	DeleteHotelRoomMediaById(ctx context.Context, id int64) error
-	DeleteIndustrailBrokerAgentPropertyMedia(ctx context.Context, id int64) error
-	DeleteIndustrailFreelancerPropertyMedia(ctx context.Context, id int64) error
-	DeleteIndustrailPropertyPlan(ctx context.Context, id int64) error
-	DeleteIndustrailPropertyPlanBranch(ctx context.Context, id int64) error
-	DeleteIndustrialBrokerAgentProperty(ctx context.Context, id int64) error
-	DeleteIndustrialBrokerAgentPropertyBranch(ctx context.Context, id int64) error
-	DeleteIndustrialBrokerAgentPropertyBranchDoc(ctx context.Context, id int64) error
-	DeleteIndustrialBrokerAgentPropertyBranchMedia(ctx context.Context, id int64) error
-	DeleteIndustrialBrokerAgentPropertyDoc(ctx context.Context, id int64) error
-	DeleteIndustrialFreelancerProperty(ctx context.Context, id int64) error
-	DeleteIndustrialFreelancerPropertyDoc(ctx context.Context, id int64) error
-	DeleteIndustrialOwnerProperty(ctx context.Context, id int64) error
-	DeleteIndustrialOwnerPropertyDoc(ctx context.Context, id int64) error
-	DeleteIndustrialOwnerPropertyMedia(ctx context.Context, id int64) error
-	DeleteIndustrialPropertyFacts(ctx context.Context, id int64) error
-	DeleteIndustrialUnitTypes(ctx context.Context, id int64) error
-	DeleteIndustrialUnitTypesBranch(ctx context.Context, id int64) error
 	DeleteInternalSharing(ctx context.Context, arg DeleteInternalSharingParams) error
 	DeleteInternationalContent(ctx context.Context, id int64) error
 	DeleteJobCategory(ctx context.Context, id int64) (JobCategory, error)
@@ -773,10 +669,6 @@ type Querier interface {
 	DeleteLuxuryBrand(ctx context.Context, id int64) error
 	DeleteMangementActivities(ctx context.Context, id int64) error
 	DeleteMapSearch(ctx context.Context, id int64) (MapSearch, error)
-	DeleteOneFreelancerPropertyMediaImage360ByIdAndFile(ctx context.Context, arg DeleteOneFreelancerPropertyMediaImage360ByIdAndFileParams) (FreelancersPropertiesMedium, error)
-	DeleteOneFreelancerPropertyMediaImagesByIdAndFile(ctx context.Context, arg DeleteOneFreelancerPropertyMediaImagesByIdAndFileParams) (FreelancersPropertiesMedium, error)
-	DeleteOneFreelancerPropertyMediaParanomaByIdAndFile(ctx context.Context, arg DeleteOneFreelancerPropertyMediaParanomaByIdAndFileParams) (FreelancersPropertiesMedium, error)
-	DeleteOneFreelancerPropertyMediaVideoByIdAndFile(ctx context.Context, arg DeleteOneFreelancerPropertyMediaVideoByIdAndFileParams) (FreelancersPropertiesMedium, error)
 	DeleteOnePermissionInRole(ctx context.Context, arg DeleteOnePermissionInRoleParams) (RolesPermission, error)
 	DeleteOneRentPropertyMediaBranchImages360ByIdAndFile(ctx context.Context, arg DeleteOneRentPropertyMediaBranchImages360ByIdAndFileParams) (RentPropertyMediaBranch, error)
 	DeleteOneRentPropertyMediaBranchImagesByIdAndFile(ctx context.Context, arg DeleteOneRentPropertyMediaBranchImagesByIdAndFileParams) (RentPropertyMediaBranch, error)
@@ -795,7 +687,6 @@ type Querier interface {
 	DeleteOwnerProperties(ctx context.Context, id int64) error
 	DeleteOwnerPropertyDocument(ctx context.Context, id int64) error
 	DeleteOwnerPropertyMedia(ctx context.Context, id int64) error
-	DeletePackInclusion(ctx context.Context, id int64) error
 	DeletePaymentPlanByID(ctx context.Context, id int64) error
 	DeletePaymentPlanPackagesByID(ctx context.Context, id int64) error
 	DeletePermission(ctx context.Context, id int64) error
@@ -1009,7 +900,6 @@ type Querier interface {
 	DeleteUnitPlans(ctx context.Context, id int64) error
 	DeleteUnitPlansSingleFile(ctx context.Context, arg DeleteUnitPlansSingleFileParams) (UnitPlan, error)
 	DeleteUnitType(ctx context.Context, id int64) error
-	DeleteUnitTypeVariationsById(ctx context.Context, id int64) error
 	DeleteUnitTypesByPropertyTypeId(ctx context.Context, propertyTypeID int64) error
 	DeleteUnitTypesByPropertyTypeUnitTypeId(ctx context.Context, ids []int64) error
 	DeleteUnitsDocuments(ctx context.Context, id int64) error
@@ -1024,8 +914,6 @@ type Querier interface {
 	DeleteXMLBulkCompanyProfilePhases(ctx context.Context, ids []int64) error
 	DeleteXMLBulkLocation(ctx context.Context, idsToDelete []int64) error
 	DeleteXMLFacilityAmenityForEntity(ctx context.Context, arg DeleteXMLFacilityAmenityForEntityParams) error
-	DeleteXMLGlobalMedia(ctx context.Context, arg DeleteXMLGlobalMediaParams) error
-	DeleteXMLGlobalPlan(ctx context.Context, arg DeleteXMLGlobalPlanParams) error
 	DeleteXMLPlansByEntity(ctx context.Context, arg DeleteXMLPlansByEntityParams) error
 	DeleteXMLProperties(ctx context.Context, idsToDelete []int64) error
 	DeleteXMLPropertyVersions(ctx context.Context, idsToDelete []int64) error
@@ -1050,7 +938,6 @@ type Querier interface {
 	FilterCountCommercialLuxuryProperties(ctx context.Context, arg FilterCountCommercialLuxuryPropertiesParams) ([]int64, error)
 	FilterCountCommercialProperties(ctx context.Context, arg FilterCountCommercialPropertiesParams) (int64, error)
 	FilterCountCompanies(ctx context.Context, arg FilterCountCompaniesParams) (int64, error)
-	FilterCountIndustrialProperties(ctx context.Context, arg FilterCountIndustrialPropertiesParams) (int64, error)
 	FilterCountLuxuryProperty(ctx context.Context, arg FilterCountLuxuryPropertyParams) ([]int64, error)
 	// LEFT JOIN
 	//     companies ON projects.developer_companies_id = companies.id
@@ -1155,8 +1042,6 @@ type Querier interface {
 	// ORDER BY
 	//     jc.id DESC;
 	FilterExhibition(ctx context.Context, arg FilterExhibitionParams) ([]FilterExhibitionRow, error)
-	FilterHolidayHome(ctx context.Context, arg FilterHolidayHomeParams) ([]FilterHolidayHomeRow, error)
-	FilterIndustrialProperties(ctx context.Context, arg FilterIndustrialPropertiesParams) ([]FilterIndustrialPropertiesRow, error)
 	FilterIndustrialPropertiesForLead(ctx context.Context, arg FilterIndustrialPropertiesForLeadParams) ([]FilterIndustrialPropertiesForLeadRow, error)
 	FilterLuxuryProperties(ctx context.Context, arg FilterLuxuryPropertiesParams) ([]FilterLuxuryPropertiesRow, error)
 	FilterProjectPropertiesForLead(ctx context.Context, arg FilterProjectPropertiesForLeadParams) ([]FilterProjectPropertiesForLeadRow, error)
@@ -1262,7 +1147,6 @@ type Querier interface {
 	GetActivityViewForPropertyHubActivitiesFileView(ctx context.Context, arg GetActivityViewForPropertyHubActivitiesFileViewParams) ([]GetActivityViewForPropertyHubActivitiesFileViewRow, error)
 	GetActivityViewForPropertyHubActivitiesTransactions(ctx context.Context, arg GetActivityViewForPropertyHubActivitiesTransactionsParams) ([]GetActivityViewForPropertyHubActivitiesTransactionsRow, error)
 	GetAddCompanyPermission(ctx context.Context) (Permission, error)
-	GetAddToForPropertyVersion(ctx context.Context, id int64) (interface{}, error)
 	GetAddress(ctx context.Context, limit int32) (Address, error)
 	GetAddressAllDetailsByID(ctx context.Context, id int64) (GetAddressAllDetailsByIDRow, error)
 	GetAddressByCountryId(ctx context.Context, arg GetAddressByCountryIdParams) (Address, error)
@@ -1377,22 +1261,6 @@ type Querier interface {
 	GetAllAgentRoutes(ctx context.Context, arg GetAllAgentRoutesParams) ([]GetAllAgentRoutesRow, error)
 	GetAllAgentSubscriptionQuota(ctx context.Context, arg GetAllAgentSubscriptionQuotaParams) ([]AgentSubscriptionQuotum, error)
 	GetAllAgentSubscriptionQuotaBranch(ctx context.Context, arg GetAllAgentSubscriptionQuotaBranchParams) ([]AgentSubscriptionQuotaBranch, error)
-	// SELECT u.id, u.username
-	// FROM users u
-	// WHERE
-	//     ($1 = 11 AND u.user_types_id = 2 AND u.username like $2)
-	// OR
-	//     ($1 != 11 AND u.id IN (
-	//         SELECT cu.users_id
-	//         FROM company_users cu
-	//         WHERE cu.company_id = (
-	//             SELECT c.id
-	//             FROM users u
-	//             INNER JOIN companies c ON c.users_id = u.id
-	//             WHERE u.id = $1 AND u.user_types_id = 1 AND u.username like $2
-	//         )
-	//     ));
-	GetAllAgents(ctx context.Context, arg GetAllAgentsParams) ([]GetAllAgentsRow, error)
 	GetAllAgentsReviewsForAdmin(ctx context.Context, arg GetAllAgentsReviewsForAdminParams) ([]GetAllAgentsReviewsForAdminRow, error)
 	// -- name: CreateAmenities :one
 	// INSERT INTO amenities (
@@ -1539,7 +1407,6 @@ type Querier interface {
 	GetAllCompaniesLeadersByCompany(ctx context.Context, arg GetAllCompaniesLeadersByCompanyParams) ([]GetAllCompaniesLeadersByCompanyRow, error)
 	GetAllCompaniesNameByCompanyType(ctx context.Context, companyType int64) ([]GetAllCompaniesNameByCompanyTypeRow, error)
 	GetAllCompanyActivities(ctx context.Context, arg GetAllCompanyActivitiesParams) ([]GetAllCompanyActivitiesRow, error)
-	GetAllCompanyAgents(ctx context.Context, arg GetAllCompanyAgentsParams) ([]GetAllCompanyAgentsRow, error)
 	GetAllCompanyCategories(ctx context.Context, arg GetAllCompanyCategoriesParams) ([]CompanyCategory, error)
 	GetAllCompanyCategoriesCount(ctx context.Context, status int64) (int64, error)
 	GetAllCompanyFromSharing(ctx context.Context, entityID int64) ([]GetAllCompanyFromSharingRow, error)
@@ -1763,24 +1630,11 @@ type Querier interface {
 	GetAllContactsWithoutOffset(ctx context.Context) ([]Contact, error)
 	GetAllContactsWithoutPagination(ctx context.Context) ([]GetAllContactsWithoutPaginationRow, error)
 	GetAllContracts(ctx context.Context, arg GetAllContractsParams) ([]GetAllContractsRow, error)
-	GetAllCountDeletedHolidayHome(ctx context.Context) (int64, error)
-	GetAllCountHolidayHomeBooking(ctx context.Context) (int64, error)
-	GetAllCountHolidayHomeBookingByHolidayId(ctx context.Context, holidayHomeID int64) (int64, error)
-	GetAllCountHolidayHomeCategory(ctx context.Context) (int64, error)
-	GetAllCountHolidayHomeCategoryByHolidayType(ctx context.Context, holidayHomeType int64) (int64, error)
-	GetAllCountHolidayHomeComments(ctx context.Context) (int64, error)
-	GetAllCountHolidayHomePortal(ctx context.Context, holidayHomeID int64) (int64, error)
-	GetAllCountHolidayHomePortals(ctx context.Context) (int64, error)
-	GetAllCountHolidayHomePromo(ctx context.Context) (int64, error)
-	GetAllCountHolidayPromoByHolidayIdandBk(ctx context.Context, arg GetAllCountHolidayPromoByHolidayIdandBkParams) (int64, error)
-	GetAllCountIndustrialUnitTypeByPropertyId(ctx context.Context, arg GetAllCountIndustrialUnitTypeByPropertyIdParams) (int64, error)
 	GetAllCountriesSettings(ctx context.Context, arg GetAllCountriesSettingsParams) ([]GetAllCountriesSettingsRow, error)
 	GetAllCurrency(ctx context.Context, arg GetAllCurrencyParams) ([]Currency, error)
 	GetAllCurrencyNew(ctx context.Context, arg GetAllCurrencyNewParams) ([]Currency, error)
 	GetAllCurrencyNewCount(ctx context.Context) (int64, error)
 	GetAllDeletedBlogs(ctx context.Context, arg GetAllDeletedBlogsParams) ([]GetAllDeletedBlogsRow, error)
-	GetAllDeletedHolidayHome(ctx context.Context) ([]GetAllDeletedHolidayHomeRow, error)
-	GetAllDeletedHolidayHomeWithPagination(ctx context.Context, arg GetAllDeletedHolidayHomeWithPaginationParams) ([]GetAllDeletedHolidayHomeWithPaginationRow, error)
 	GetAllDeletedUnits(ctx context.Context) ([]GetAllDeletedUnitsRow, error)
 	GetAllDepartment(ctx context.Context, arg GetAllDepartmentParams) ([]Department, error)
 	GetAllDepartmentWithoutPagination(ctx context.Context) ([]Department, error)
@@ -1822,7 +1676,6 @@ type Querier interface {
 	GetAllDocumentsSubCategoryByDocId(ctx context.Context, documentsCategoryID int64) ([]DocumentsSubcategory, error)
 	GetAllDropDownCategories(ctx context.Context) ([]DropdownCategory, error)
 	GetAllDropDownItems(ctx context.Context) ([]DropdownItem, error)
-	GetAllEntityTypes(ctx context.Context) ([]EntityType, error)
 	GetAllExchangeOfferCategory(ctx context.Context, arg GetAllExchangeOfferCategoryParams) ([]ExchangeOfferCategory, error)
 	GetAllExhibition(ctx context.Context, arg GetAllExhibitionParams) ([]GetAllExhibitionRow, error)
 	GetAllExhibitionBooths(ctx context.Context, arg GetAllExhibitionBoothsParams) ([]ExhibitionBooth, error)
@@ -1955,107 +1808,18 @@ type Querier interface {
 	// WHERE ($1 != 6 AND u.permission_id IS NOT NULL) OR $1 = 6;
 	GetAllForSuperUserPermissionBySectionPermissionId(ctx context.Context, sectionPermissionID int64) ([]Permission, error)
 	GetAllForSuperUserPermissionBySectionPermissionIdMV(ctx context.Context, arg GetAllForSuperUserPermissionBySectionPermissionIdMVParams) ([]PermissionsMv, error)
-	GetAllFreelanceAgents(ctx context.Context) ([]GetAllFreelanceAgentsRow, error)
-	GetAllFreelanceMediaByUnitId(ctx context.Context, freelancersPropertiesID int64) ([]FreelancersPropertiesMedium, error)
 	GetAllFreelanceUsers(ctx context.Context, arg GetAllFreelanceUsersParams) ([]GetAllFreelanceUsersRow, error)
-	GetAllFreelancer(ctx context.Context, arg GetAllFreelancerParams) ([]Freelancer, error)
-	GetAllFreelancerCompanies(ctx context.Context, arg GetAllFreelancerCompaniesParams) ([]FreelancersCompany, error)
 	GetAllFreelancerNames(ctx context.Context) ([]GetAllFreelancerNamesRow, error)
-	GetAllFreelancerProperty(ctx context.Context, arg GetAllFreelancerPropertyParams) ([]FreelancersProperty, error)
-	GetAllFreelancerPropertyDoc(ctx context.Context, arg GetAllFreelancerPropertyDocParams) ([]FreelancersPropertiesDocument, error)
-	GetAllFreelancerPropertyDocByFreelancerPropertyId(ctx context.Context, arg GetAllFreelancerPropertyDocByFreelancerPropertyIdParams) ([]GetAllFreelancerPropertyDocByFreelancerPropertyIdRow, error)
-	GetAllFreelancerPropertyMedia(ctx context.Context, arg GetAllFreelancerPropertyMediaParams) ([]FreelancersPropertiesMedium, error)
-	GetAllFreelancerPropertyMediaByid(ctx context.Context, freelancersPropertiesID int64) ([]FreelancersPropertiesMedium, error)
-	GetAllFreelancersBankAccountDetail(ctx context.Context, arg GetAllFreelancersBankAccountDetailParams) ([]FreelancersBankAccountDetail, error)
-	GetAllFreelancersPropertiesByMainMediaSectionAndId(ctx context.Context, arg GetAllFreelancersPropertiesByMainMediaSectionAndIdParams) (GetAllFreelancersPropertiesByMainMediaSectionAndIdRow, error)
-	GetAllFreelancersPropertiesMainMediaSectionById(ctx context.Context, freelancersPropertiesID int64) ([]string, error)
 	GetAllGalleryTypesForMediaTypeExhibitionGraph(ctx context.Context, arg GetAllGalleryTypesForMediaTypeExhibitionGraphParams) ([]GetAllGalleryTypesForMediaTypeExhibitionGraphRow, error)
-	GetAllGlobalProperty(ctx context.Context, arg GetAllGlobalPropertyParams) ([]GetAllGlobalPropertyRow, error)
 	GetAllGlobalPropertyByEntity(ctx context.Context, arg GetAllGlobalPropertyByEntityParams) (Property, error)
 	GetAllGlobalPropertyById(ctx context.Context, id int64) (Property, error)
 	GetAllGlobalTags(ctx context.Context) ([]GlobalTagging, error)
 	GetAllGlobalTagsBySection(ctx context.Context, section string) ([]GlobalTagging, error)
-	GetAllHolidayHome(ctx context.Context, arg GetAllHolidayHomeParams) ([]HolidayHome, error)
-	GetAllHolidayHomeBooking(ctx context.Context, arg GetAllHolidayHomeBookingParams) ([]HolidayHomeBooking, error)
-	GetAllHolidayHomeBookingByHolidayId(ctx context.Context, arg GetAllHolidayHomeBookingByHolidayIdParams) ([]HolidayHomeBooking, error)
-	GetAllHolidayHomeBookingWithoutPg(ctx context.Context) ([]HolidayHomeBooking, error)
-	GetAllHolidayHomeBookingWithoutPgByHolidayId(ctx context.Context, holidayHomeID int64) ([]HolidayHomeBooking, error)
-	GetAllHolidayHomeCategory(ctx context.Context) ([]HolidayHomeCategory, error)
-	GetAllHolidayHomeCategoryByTitle(ctx context.Context, title string) (HolidayHomeCategory, error)
-	GetAllHolidayHomeCategoryWithpg(ctx context.Context, arg GetAllHolidayHomeCategoryWithpgParams) ([]HolidayHomeCategory, error)
-	GetAllHolidayHomeComments(ctx context.Context, arg GetAllHolidayHomeCommentsParams) ([]HolidayHomeComment, error)
-	GetAllHolidayHomePortalByHolidayId(ctx context.Context, holidayHomeID int64) ([]HolidayHomePortal, error)
-	GetAllHolidayHomePortals(ctx context.Context, arg GetAllHolidayHomePortalsParams) ([]HolidayHomePortal, error)
-	GetAllHolidayHomePortalsByHolidayId(ctx context.Context, arg GetAllHolidayHomePortalsByHolidayIdParams) ([]HolidayHomePortal, error)
-	GetAllHolidayHomePromo(ctx context.Context, arg GetAllHolidayHomePromoParams) ([]HolidayHomePromo, error)
-	GetAllHolidayHomePromobyHolidayId(ctx context.Context, arg GetAllHolidayHomePromobyHolidayIdParams) ([]HolidayHomePromo, error)
-	GetAllHolidayHomeStayReviewUser(ctx context.Context, holidayHomeID int64) ([]GetAllHolidayHomeStayReviewUserRow, error)
-	GetAllHolidayHomeStayReviews(ctx context.Context, holidayHomeID int64) (GetAllHolidayHomeStayReviewsRow, error)
 	GetAllHolidayHomeStayReviewsWithOverAllAverages(ctx context.Context, holidayHomeID int64) (GetAllHolidayHomeStayReviewsWithOverAllAveragesRow, error)
-	GetAllHolidayMedia(ctx context.Context, arg GetAllHolidayMediaParams) ([]HolidayMedium, error)
-	GetAllHolidayMediaByHolidayHomeId(ctx context.Context, holidayHomeID int64) ([]string, error)
-	GetAllHolidayMediaByHolidayId(ctx context.Context, arg GetAllHolidayMediaByHolidayIdParams) ([]HolidayMedium, error)
-	GetAllHolidayMediaByMainMediaSectionAndId(ctx context.Context, arg GetAllHolidayMediaByMainMediaSectionAndIdParams) (GetAllHolidayMediaByMainMediaSectionAndIdRow, error)
-	GetAllHolidayMedias(ctx context.Context) ([]HolidayMedium, error)
-	GetAllHolidayPromoByBkId(ctx context.Context, arg GetAllHolidayPromoByBkIdParams) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByBookId(ctx context.Context, bookingPortalID int64) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByHolidayBkId(ctx context.Context, arg GetAllHolidayPromoByHolidayBkIdParams) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByHolidayId(ctx context.Context, arg GetAllHolidayPromoByHolidayIdParams) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByHolidayIdandBk(ctx context.Context, arg GetAllHolidayPromoByHolidayIdandBkParams) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByHolidayIdandHolidayBk(ctx context.Context, arg GetAllHolidayPromoByHolidayIdandHolidayBkParams) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByHolidayPortId(ctx context.Context, holidayHomePortalsID int64) ([]HolidayHomePromo, error)
-	GetAllHolidayPromoByHolidaysId(ctx context.Context, holidayHomeID int64) ([]HolidayHomePromo, error)
-	GetAllHolidaySchedule(ctx context.Context, arg GetAllHolidayScheduleParams) ([]HolidayExperienceSchedule, error)
-	GetAllHolidayScheduleById(ctx context.Context, arg GetAllHolidayScheduleByIdParams) ([]HolidayExperienceSchedule, error)
-	GetAllHolidaySchedulebyHolidayId(ctx context.Context, arg GetAllHolidaySchedulebyHolidayIdParams) ([]HolidayExperienceSchedule, error)
-	GetAllHotelBookingPortals(ctx context.Context) ([]HotelBookingPortal, error)
-	GetAllHotelBookingPromos(ctx context.Context) ([]HotelBookingPromo, error)
-	GetAllHotelBookingReviews(ctx context.Context) ([]HotelBookingReview, error)
-	GetAllHotelBookings(ctx context.Context, arg GetAllHotelBookingsParams) ([]HotelBooking, error)
-	GetAllHotelRooms(ctx context.Context, arg GetAllHotelRoomsParams) ([]GetAllHotelRoomsRow, error)
-	GetAllHotelRoomsMedias(ctx context.Context, arg GetAllHotelRoomsMediasParams) ([]HotelRoomsMedium, error)
 	// SELECT * FROM sub_section_mv
 	// WHERE sub_section_button_id = $1;
 	GetAllIDANDPermissionsFromSubSectionPermission(ctx context.Context, arg GetAllIDANDPermissionsFromSubSectionPermissionParams) ([]GetAllIDANDPermissionsFromSubSectionPermissionRow, error)
 	GetAllIDANDPermissionsFromSubSectionPermissionWithoutPagination(ctx context.Context) ([]GetAllIDANDPermissionsFromSubSectionPermissionWithoutPaginationRow, error)
-	GetAllIndustrailBrokerAgentPropertyMedia(ctx context.Context, arg GetAllIndustrailBrokerAgentPropertyMediaParams) ([]IndustrialBrokerAgentPropertiesMedium, error)
-	GetAllIndustrailFreelancerPropertyMedia(ctx context.Context, arg GetAllIndustrailFreelancerPropertyMediaParams) ([]IndustrialFreelancerPropertiesMedium, error)
-	GetAllIndustrailPropertyPlan(ctx context.Context, arg GetAllIndustrailPropertyPlanParams) ([]IndustrialPropertiesPlan, error)
-	GetAllIndustrailPropertyPlanBranch(ctx context.Context, arg GetAllIndustrailPropertyPlanBranchParams) ([]IndustrialPropertiesPlansBranch, error)
-	GetAllIndustrailPropertyPlanBranchWithoutPagination(ctx context.Context) ([]IndustrialPropertiesPlansBranch, error)
-	GetAllIndustrailPropertyPlanWithoutPagination(ctx context.Context) ([]IndustrialPropertiesPlan, error)
-	GetAllIndustrialBrokerAgentProperty(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyParams) ([]IndustrialBrokerAgentProperty, error)
-	GetAllIndustrialBrokerAgentPropertyBranch(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyBranchParams) ([]IndustrialBrokerAgentPropertiesBranch, error)
-	GetAllIndustrialBrokerAgentPropertyBranchDoc(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyBranchDocParams) ([]IndustrialBrokerAgentPropertiesBranchDocument, error)
-	GetAllIndustrialBrokerAgentPropertyBranchDocByPropertyId(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyBranchDocByPropertyIdParams) ([]GetAllIndustrialBrokerAgentPropertyBranchDocByPropertyIdRow, error)
-	GetAllIndustrialBrokerAgentPropertyBranchMedia(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyBranchMediaParams) ([]IndustrialBrokerAgentPropertiesBranchMedium, error)
-	GetAllIndustrialBrokerAgentPropertyBranchMediaByPropertyId(ctx context.Context, industrialBrokerAgentPropertiesBranchID int64) ([]IndustrialBrokerAgentPropertiesBranchMedium, error)
-	GetAllIndustrialBrokerAgentPropertyDoc(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyDocParams) ([]IndustrialBrokerAgentPropertiesDocument, error)
-	GetAllIndustrialBrokerAgentPropertyDocByPropertyId(ctx context.Context, arg GetAllIndustrialBrokerAgentPropertyDocByPropertyIdParams) ([]GetAllIndustrialBrokerAgentPropertyDocByPropertyIdRow, error)
-	GetAllIndustrialBrokerAgentPropertyMediaByPropertyId(ctx context.Context, industrialBrokerAgentPropertiesID int64) ([]IndustrialBrokerAgentPropertiesMedium, error)
-	GetAllIndustrialFreelancerProperty(ctx context.Context, arg GetAllIndustrialFreelancerPropertyParams) ([]IndustrialFreelancerProperty, error)
-	GetAllIndustrialFreelancerPropertyDoc(ctx context.Context, arg GetAllIndustrialFreelancerPropertyDocParams) ([]IndustrialFreelancerPropertiesDocument, error)
-	GetAllIndustrialFreelancerPropertyDocByFreelancerPropertyId(ctx context.Context, arg GetAllIndustrialFreelancerPropertyDocByFreelancerPropertyIdParams) ([]GetAllIndustrialFreelancerPropertyDocByFreelancerPropertyIdRow, error)
-	GetAllIndustrialFreelancerPropertyMediaByPropertyId(ctx context.Context, industrialFreelancerPropertiesID int64) ([]IndustrialFreelancerPropertiesMedium, error)
-	GetAllIndustrialOwnerProperty(ctx context.Context, arg GetAllIndustrialOwnerPropertyParams) ([]IndustrialOwnerProperty, error)
-	GetAllIndustrialOwnerPropertyDoc(ctx context.Context, arg GetAllIndustrialOwnerPropertyDocParams) ([]IndustrialOwnerPropertiesDocument, error)
-	GetAllIndustrialOwnerPropertyDocsByOwnerPropertyId(ctx context.Context, arg GetAllIndustrialOwnerPropertyDocsByOwnerPropertyIdParams) ([]GetAllIndustrialOwnerPropertyDocsByOwnerPropertyIdRow, error)
-	GetAllIndustrialOwnerPropertyMedia(ctx context.Context, arg GetAllIndustrialOwnerPropertyMediaParams) ([]IndustrialOwnerPropertiesMedium, error)
-	GetAllIndustrialOwnerPropertyMediaByPropertyId(ctx context.Context, industrialOwnerPropertiesID int64) ([]IndustrialOwnerPropertiesMedium, error)
-	GetAllIndustrialProperties(ctx context.Context, arg GetAllIndustrialPropertiesParams) ([]GetAllIndustrialPropertiesRow, error)
-	GetAllIndustrialPropertiesByCategory(ctx context.Context, arg GetAllIndustrialPropertiesByCategoryParams) ([]GetAllIndustrialPropertiesByCategoryRow, error)
-	GetAllIndustrialPropertiesByCountry(ctx context.Context, arg GetAllIndustrialPropertiesByCountryParams) ([]GetAllIndustrialPropertiesByCountryRow, error)
-	GetAllIndustrialPropertiesByNotEqualCountry(ctx context.Context, arg GetAllIndustrialPropertiesByNotEqualCountryParams) ([]GetAllIndustrialPropertiesByNotEqualCountryRow, error)
-	GetAllIndustrialPropertiesDetails(ctx context.Context, arg GetAllIndustrialPropertiesDetailsParams) ([]GetAllIndustrialPropertiesDetailsRow, error)
-	GetAllIndustrialPropertyBranchPlanById(ctx context.Context, arg GetAllIndustrialPropertyBranchPlanByIdParams) ([]IndustrialPropertiesPlansBranch, error)
-	GetAllIndustrialPropertyFacts(ctx context.Context, arg GetAllIndustrialPropertyFactsParams) ([]IndustrialPropertiesFact, error)
-	GetAllIndustrialPropertyPlanById(ctx context.Context, arg GetAllIndustrialPropertyPlanByIdParams) ([]IndustrialPropertiesPlan, error)
-	GetAllIndustrialUnitTypeBranchByPropertyId(ctx context.Context, arg GetAllIndustrialUnitTypeBranchByPropertyIdParams) ([]IndustrialUnitTypesBranch, error)
-	GetAllIndustrialUnitTypeByPropertyId(ctx context.Context, arg GetAllIndustrialUnitTypeByPropertyIdParams) ([]IndustrialUnitType, error)
-	GetAllIndustrialUnitTypes(ctx context.Context, arg GetAllIndustrialUnitTypesParams) ([]IndustrialUnitType, error)
-	GetAllIndustrialUnitTypesBranch(ctx context.Context, arg GetAllIndustrialUnitTypesBranchParams) ([]IndustrialUnitTypesBranch, error)
-	GetAllIndustrialUnitTypesBranchWithoutPagination(ctx context.Context) ([]IndustrialUnitTypesBranch, error)
-	GetAllIndustrialUnitTypesWithoutPagination(ctx context.Context) ([]IndustrialUnitType, error)
 	GetAllIndustry(ctx context.Context, arg GetAllIndustryParams) ([]Industry, error)
 	GetAllIndustryWithoutPagination(ctx context.Context) ([]Industry, error)
 	// SELECT * FROM external_sharing
@@ -2068,7 +1832,6 @@ type Querier interface {
 	GetAllInternalSharing(ctx context.Context, arg GetAllInternalSharingParams) ([]GetAllInternalSharingRow, error)
 	GetAllInternationalContent(ctx context.Context) ([]InternationalContent, error)
 	GetAllInternationalExhibitions(ctx context.Context, arg GetAllInternationalExhibitionsParams) ([]GetAllInternationalExhibitionsRow, error)
-	GetAllInternationalHolidayHomeCount(ctx context.Context, arg GetAllInternationalHolidayHomeCountParams) (int64, error)
 	GetAllJobPortals(ctx context.Context, arg GetAllJobPortalsParams) ([]JobPortal, error)
 	GetAllLanguage(ctx context.Context, arg GetAllLanguageParams) ([]AllLanguage, error)
 	GetAllLanguageWithoutPagination(ctx context.Context) ([]AllLanguage, error)
@@ -2083,213 +1846,6 @@ type Querier interface {
 	GetAllLeads(ctx context.Context, arg GetAllLeadsParams) ([]GetAllLeadsRow, error)
 	GetAllListingProblemsReport(ctx context.Context, arg GetAllListingProblemsReportParams) ([]ListingProblemsReport, error)
 	GetAllLocalExhibitions(ctx context.Context, arg GetAllLocalExhibitionsParams) ([]GetAllLocalExhibitionsRow, error)
-	// -- name: CreateHolidayHome :one
-	// INSERT INTO holiday_home (
-	// 	ref_no,
-	// 	company_types_id,
-	// 	is_branch,
-	// 	companies_id,
-	// 	title,
-	// 	title_ar,
-	// 	holiday_home_categories,
-	// 	countries_id,
-	// 	states_id,
-	// 	cities_id,
-	// 	communities_id,
-	// 	subcommunity_id,
-	// 	lat,
-	// 	lng,
-	// 	ranking,
-	// 	price,
-	// 	no_of_hours,
-	// 	no_of_rooms,
-	// 	no_of_bathrooms,
-	// 	views,
-	// 	facilities,
-	// 	holiday_package_inclusions,
-	// 	description,
-	// 	description_ar,
-	// 	posted_by,
-	//     status,
-	// 	holiday_home_type,
-	// 	created_at,
-	// 	updated_at
-	// )
-	// VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29) RETURNING *;
-	// -- name: UpdateHolidayHome :one
-	// UPDATE holiday_home
-	// SET
-	//     ref_no = $1,
-	//     company_types_id = $2,
-	//     is_branch = $3,
-	//     companies_id = $4,
-	//     title = $5,
-	//     title_ar = $6,
-	//     holiday_home_categories = $7,
-	//     countries_id = $8,
-	//     states_id = $9,
-	//     cities_id = $10,
-	//     communities_id = $11,
-	//     subcommunity_id = $12,
-	//     lat = $13,
-	//     lng = $14,
-	//     ranking = $15,
-	//     price = $16,
-	//     no_of_hours = $17,
-	//     no_of_rooms = $18,
-	//     no_of_bathrooms = $19,
-	//     views = $20,
-	//     facilities = $21,
-	//     holiday_package_inclusions = $22,
-	//     description = $23,
-	//     description_ar = $24,
-	//     posted_by = $25,
-	//     updated_at = $26,
-	// 	status = $27,
-	// 	holiday_home_type = $28
-	// WHERE
-	//     id = $29 RETURNING *;
-	GetAllLocalHolidayHome(ctx context.Context, arg GetAllLocalHolidayHomeParams) ([]HolidayHome, error)
-	// -- name: GetAllInternationalHolidayHome :many
-	// WITH HolidayHomeCategories AS (
-	// 	SELECT id as holiday_home_id, UNNEST(holiday_home_categories) as catg_id
-	// 	from holiday_home
-	// 	WHERE status !=6 AND countries_id !=1  AND holiday_home_type = $1
-	// ),
-	// catgsStruct as(
-	// 	SELECT hm.id as holiday_home_id,
-	// 	json_agg(
-	// 		json_build_object(
-	//                 'id', hmc.catg_id,
-	//                 'title', catgs_table.title,
-	//                 'title_ar', catgs_table.title_ar,
-	//                 'status', catgs_table.status
-	//             )
-	// 	) as categories
-	// 	from holiday_home hm
-	// 	join HolidayHomeCategories hmc on hmc.holiday_home_id= hm.id
-	// 	join holiday_home_categories catgs_table on hmc.catg_id= catgs_table.id
-	// 	WHERE hm.status !=6 AND hm.countries_id !=1 AND hm.holiday_home_type = $1
-	// 	group by hm.id
-	// ),
-	// PackageInclusion AS (
-	// 	SELECT id as holiday_home_id, UNNEST(holiday_package_inclusions) as pkg_id
-	// 	from holiday_home
-	// 	WHERE status !=6 AND countries_id !=1 AND holiday_home_type = $1
-	// ),
-	// PackgStrcut as(
-	// 	SELECT hm.id as holiday_home_id,
-	// 	json_agg(
-	// 		json_build_object(
-	//                 'id', pkgInc.pkg_id,
-	//                 'title', pkg_table.title,
-	//                 'title_ar', pkg_table.title_ar,
-	//                 'status', pkg_table.status
-	//             )
-	// 	) as packages
-	// 	from holiday_home hm
-	// 	join PackageInclusion pkgInc on pkgInc.holiday_home_id= hm.id
-	// 	join holiday_package_inclusions pkg_table on pkgInc.pkg_id= pkg_table.id
-	// 	WHERE hm.status !=6 AND hm.countries_id !=1 AND hm.holiday_home_type = $1
-	// 	group by hm.id
-	// ),
-	// ViewsIds AS (
-	// 	SELECT id as holiday_home_id, UNNEST(views) as view_id
-	// 	from holiday_home
-	// 	WHERE status !=6 AND countries_id !=1  AND holiday_home_type = $1
-	// ),
-	// ViewsStruct as(
-	// 	SELECT hm.id as holiday_home_id,
-	// 	json_agg(
-	// 		json_build_object(
-	//                 'id', vss.id,
-	//                 'title', vss.title
-	//             )
-	// 	) as jsonViews
-	// 	from holiday_home hm
-	// 	join ViewsIds vs on vs.holiday_home_id= hm.id
-	// 	join views vss on vss.id=vs.view_id
-	// 	WHERE hm.status !=6 AND hm.countries_id !=1  AND hm.holiday_home_type = $1
-	// 	group by hm.id
-	// ),
-	// FacilitiesCTE AS (
-	// 	select hm.id as holiday_home_id ,UNNEST(facilities) as fac
-	// 	from holiday_home hm
-	// 	WHERE status !=6 AND countries_id !=1  AND holiday_home_type = $1
-	// ),
-	// FacilitiesStruct AS (
-	// 	select hm.id as holiday_home_id,
-	// 	json_agg(
-	// 		json_build_object(
-	// 		'id',facilities.id,
-	// 		'icon_url',facilities.icon_url,
-	// 		'title',facilities.title
-	// 		)
-	// 	) as jsonViews
-	// 	from holiday_home hm
-	// 	join FacilitiesCTE ON hm.id = FacilitiesCTE.holiday_home_id
-	// 	join facilities ON FacilitiesCTE.fac = facilities.id
-	// 	WHERE hm.status !=6 AND hm.countries_id !=1  AND hm.holiday_home_type = $1
-	// 	group by hm.id
-	// ),
-	// AmenitiesCTE AS (
-	// 	select hm.id as holiday_home_id , UNNEST(amenities) as am
-	// 	from holiday_home hm
-	// 	WHERE status !=6 AND countries_id !=1 AND holiday_home_type = $1
-	// ),
-	// AmenitiesStruct AS (
-	// 	select hm.id as holiday_home_id,
-	// 	json_agg(
-	// 		json_build_object(
-	// 		'id',amenities.id,
-	// 		'icon_url',amenities.icon_url,
-	// 		'title',amenities.title
-	// 		)
-	// ) as jsonAmenities
-	// 	from holiday_home hm
-	// 	join AmenitiesCTE on hm.id = AmenitiesCTE.holiday_home_id
-	// 	join amenities on amenities.id = AmenitiesCTE.am
-	// 	WHERE hm.status !=6 AND countries_id !=1 AND holiday_home_type = $1
-	// 	group by hm.id
-	// )
-	// select
-	// 	sqlc.embed(hm),
-	// 	COALESCE(na.categories, '[]'::json) AS categories,
-	// 	COALESCE(pk.packages, '[]'::json) AS packages,
-	// 	COALESCE(va.jsonViews, '[]'::json) AS views,
-	// 	COALESCE(fs.jsonViews, '[]'::json) AS facilities,
-	// 	COALESCE(am.jsonAmenities, '[]'::json) AS amenities,
-	// 	countries.country,
-	// 	cities.city,
-	// 	states."state",
-	// 	communities.community,
-	// 	sub_communities.sub_community
-	// from holiday_home hm
-	// LEFT JOIN
-	//     catgsStruct na ON hm.id = na.holiday_home_id
-	// LEFT JOIN
-	//     PackgStrcut pk ON hm.id = pk.holiday_home_id
-	// LEFT JOIN
-	//     ViewsStruct va ON hm.id = va.holiday_home_id
-	// LEFT JOIN
-	// 		FacilitiesStruct fs ON hm.id = fs.holiday_home_id
-	// INNER JOIN
-	// 		countries ON countries.id = hm.countries_id
-	// INNER JOIN
-	// 	states ON states.id = hm.states_id
-	// INNER JOIN
-	// 	cities ON cities.id = hm.cities_id
-	// INNER JOIN
-	// 	communities ON communities.id = hm.communities_id
-	// INNER JOIN
-	// 	sub_communities ON sub_communities.id = hm.subcommunity_id
-	// LEFT JOIN
-	// 		AmenitiesStruct am ON hm.id = am.holiday_home_id
-	// WHERE hm.status !=6 AND hm.countries_id !=1 AND hm.holiday_home_type = $1
-	// ORDER BY hm.updated_at DESC
-	// LIMIT $2
-	// OFFSET $3;
-	GetAllLocalHolidayHomeCount(ctx context.Context, arg GetAllLocalHolidayHomeCountParams) (int64, error)
 	GetAllLocation(ctx context.Context, arg GetAllLocationParams) ([]Location, error)
 	GetAllLuxuryPropertiesByCountry(ctx context.Context, arg GetAllLuxuryPropertiesByCountryParams) ([]GetAllLuxuryPropertiesByCountryRow, error)
 	GetAllLuxuryPropertiesByNotEqualCountry(ctx context.Context, arg GetAllLuxuryPropertiesByNotEqualCountryParams) ([]GetAllLuxuryPropertiesByNotEqualCountryRow, error)
@@ -2334,12 +1890,6 @@ type Querier interface {
 	GetAllOwnerPropertyMedia(ctx context.Context, arg GetAllOwnerPropertyMediaParams) ([]OwnerPropertiesMedium, error)
 	GetAllOwnerPropertyMediaByid(ctx context.Context, ownerPropertiesID int64) ([]OwnerPropertiesMedium, error)
 	GetAllOwnerUsers(ctx context.Context, arg GetAllOwnerUsersParams) ([]GetAllOwnerUsersRow, error)
-	GetAllPackInclusion(ctx context.Context) ([]HolidayPackageInclusion, error)
-	GetAllPackInclusionByType(ctx context.Context, holidayHomeType int64) ([]HolidayPackageInclusion, error)
-	GetAllPackInclusionWithpag(ctx context.Context, arg GetAllPackInclusionWithpagParams) ([]HolidayPackageInclusion, error)
-	GetAllPackInclusionWithpagByType(ctx context.Context, arg GetAllPackInclusionWithpagByTypeParams) ([]HolidayPackageInclusion, error)
-	GetAllPackInclusionbyId(ctx context.Context, id int64) (HolidayPackageInclusion, error)
-	GetAllPackInclusionbyTitle(ctx context.Context, title string) ([]HolidayPackageInclusion, error)
 	GetAllPageContents(ctx context.Context, arg GetAllPageContentsParams) ([]PageContent, error)
 	// -- name: UpdatePage :one
 	// UPDATE pages
@@ -2352,10 +1902,6 @@ type Querier interface {
 	// RETURNING *;
 	GetAllPages(ctx context.Context, arg GetAllPagesParams) ([]Page, error)
 	GetAllPaginatedFieldsOfStudy(ctx context.Context, arg GetAllPaginatedFieldsOfStudyParams) ([]GetAllPaginatedFieldsOfStudyRow, error)
-	GetAllParentCategoryFroImport(ctx context.Context, arg GetAllParentCategoryFroImportParams) ([]GetAllParentCategoryFroImportRow, error)
-	GetAllParentDocCategory(ctx context.Context, arg GetAllParentDocCategoryParams) ([]GetAllParentDocCategoryRow, error)
-	GetAllParentDocSubCategory(ctx context.Context, arg GetAllParentDocSubCategoryParams) ([]GetAllParentDocSubCategoryRow, error)
-	GetAllParentMediaTypeForImport(ctx context.Context, arg GetAllParentMediaTypeForImportParams) ([]GetAllParentMediaTypeForImportRow, error)
 	GetAllPaymentPlanPackages(ctx context.Context) ([]PaymentPlansPackage, error)
 	// ba.bank_name AS bank
 	// LEFT JOIN bank_account_details ba ON p.bank != null
@@ -2486,7 +2032,6 @@ type Querier interface {
 	GetAllPromotionType(ctx context.Context, arg GetAllPromotionTypeParams) ([]PromotionType, error)
 	GetAllPromotionTypeByIds(ctx context.Context, dollar_1 []int64) ([]PromotionType, error)
 	GetAllPromotionTypeWithoutPagination(ctx context.Context) ([]PromotionType, error)
-	GetAllPropertiesByUsageandName(ctx context.Context, arg GetAllPropertiesByUsageandNameParams) ([]GetAllPropertiesByUsageandNameRow, error)
 	GetAllPropertiesDetails(ctx context.Context, arg GetAllPropertiesDetailsParams) ([]GetAllPropertiesDetailsRow, error)
 	//PROPERTIES
 	// AGRICULTURAL
@@ -2494,8 +2039,6 @@ type Querier interface {
 	GetAllPropertiesReferences(ctx context.Context) ([]GetAllPropertiesReferencesRow, error)
 	GetAllPropertiesTypesByProjectsIds(ctx context.Context, arg GetAllPropertiesTypesByProjectsIdsParams) ([]int64, error)
 	GetAllPropertiesTypesByProjectsIdsAndPhaseId(ctx context.Context, entityID int64) ([]int64, error)
-	GetAllPropertiesVersionByCountry(ctx context.Context, arg GetAllPropertiesVersionByCountryParams) ([]GetAllPropertiesVersionByCountryRow, error)
-	GetAllPropertiesVersionByStatus(ctx context.Context, arg GetAllPropertiesVersionByStatusParams) ([]GetAllPropertiesVersionByStatusRow, error)
 	GetAllPropertyAds(ctx context.Context, arg GetAllPropertyAdsParams) ([]GetAllPropertyAdsRow, error)
 	GetAllPropertyAdsByPostedBy(ctx context.Context, arg GetAllPropertyAdsByPostedByParams) ([]GetAllPropertyAdsByPostedByRow, error)
 	GetAllPropertyBranchPlan(ctx context.Context, arg GetAllPropertyBranchPlanParams) ([]PropertiesPlansBranch, error)
@@ -2548,7 +2091,6 @@ type Querier interface {
 	GetAllPropertyUnitSaved(ctx context.Context, arg GetAllPropertyUnitSavedParams) ([]PropertyUnitSaved, error)
 	GetAllPropertyUnitSavedByPropertyIdAndIdAndWhichProperty(ctx context.Context, arg GetAllPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyParams) ([]int64, error)
 	GetAllPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyAndWhichPropertyHubKey(ctx context.Context, arg GetAllPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyAndWhichPropertyHubKeyParams) ([]int64, error)
-	GetAllPropertyVersionsIdS(ctx context.Context) ([]int64, error)
 	GetAllPropertyVideos(ctx context.Context, arg GetAllPropertyVideosParams) ([]PropertiesVideo, error)
 	// WITH x AS (
 	// 	SELECT
@@ -4097,7 +3639,6 @@ type Querier interface {
 	GetAllUnitTypeByPropertyIdAndBedroomForAgriculture(ctx context.Context, arg GetAllUnitTypeByPropertyIdAndBedroomForAgricultureParams) ([]GetAllUnitTypeByPropertyIdAndBedroomForAgricultureRow, error)
 	GetAllUnitTypeByPropertyIdByUnitTypeAndBedroom(ctx context.Context, arg GetAllUnitTypeByPropertyIdByUnitTypeAndBedroomParams) ([]UnitTypeDetail, error)
 	GetAllUnitTypeByPropertyIdWithPagination(ctx context.Context, arg GetAllUnitTypeByPropertyIdWithPaginationParams) ([]GetAllUnitTypeByPropertyIdWithPaginationRow, error)
-	GetAllUnitTypes(ctx context.Context, id int64) (UnitType, error)
 	// -- name: GetAllUnitTypesByPropertyType :many
 	// SELECT property_types.*
 	// FROM property_types
@@ -4671,7 +4212,6 @@ type Querier interface {
 	GetCompanyUserByCompanyUserId(ctx context.Context, companyUserID int64) (CompanyUser, error)
 	GetCompanyUserById(ctx context.Context, companyID int64) (GetCompanyUserByIdRow, error)
 	GetCompanyUserByUserId(ctx context.Context, arg GetCompanyUserByUserIdParams) (CompanyUser, error)
-	GetCompanyUserCountByUserAndCompany(ctx context.Context, arg GetCompanyUserCountByUserAndCompanyParams) (int64, error)
 	//-------------------
 	// With x AS(
 	// 	SELECT broker_companies.id AS company_id, users_id, 1 AS company_type, false AS is_branch  FROM broker_companies
@@ -17260,12 +16800,6 @@ type Querier interface {
 	// LIMIT $2
 	// OFFSET $3;
 	GetCountAllGeneralRequests(ctx context.Context, requestType int64) (int64, error)
-	GetCountAllHolidayMediaByHolidayId(ctx context.Context, holidayHomeID int64) (int64, error)
-	GetCountAllIndustrialProperties(ctx context.Context) (int64, error)
-	GetCountAllIndustrialPropertiesByCategory(ctx context.Context, lower string) (int64, error)
-	GetCountAllIndustrialPropertiesByCountry(ctx context.Context, countriesID int64) (int64, error)
-	GetCountAllIndustrialPropertiesByNotEqualCountry(ctx context.Context, countriesID int64) (int64, error)
-	GetCountAllIndustrialUnitTypeBranchByPropertyId(ctx context.Context, arg GetCountAllIndustrialUnitTypeBranchByPropertyIdParams) (int64, error)
 	GetCountAllInternalSharing(ctx context.Context, userID int64) (int64, error)
 	GetCountAllJobPortals(ctx context.Context) (int64, error)
 	GetCountAllLeadersByCompany(ctx context.Context, arg GetCountAllLeadersByCompanyParams) (int64, error)
@@ -17299,7 +16833,6 @@ type Querier interface {
 	GetCountAllProjectsForMobile(ctx context.Context) (int64, error)
 	GetCountAllProjectsForMobileIsVerified(ctx context.Context, isVerified pgtype.Bool) (int64, error)
 	GetCountAllPropertiesReferences(ctx context.Context) (int64, error)
-	GetCountAllPropertiesVersionByCountry(ctx context.Context, arg GetCountAllPropertiesVersionByCountryParams) (int64, error)
 	GetCountAllPropertyHubByFacts(ctx context.Context) (int64, error)
 	GetCountAllPropertyPlanById(ctx context.Context, arg GetCountAllPropertyPlanByIdParams) (int64, error)
 	GetCountAllPropertyPosts(ctx context.Context) (int64, error)
@@ -17583,12 +17116,6 @@ type Querier interface {
 	GetCountEntityServiceLocation(ctx context.Context, arg GetCountEntityServiceLocationParams) (int64, error)
 	GetCountFieldsOfStudy(ctx context.Context) (int64, error)
 	GetCountForAdminCompaniesAndUserCompanies(ctx context.Context, usersID int64) (GetCountForAdminCompaniesAndUserCompaniesRow, error)
-	GetCountFreelancerPropertyDocByFreelancerPropertyId(ctx context.Context, freelancersPropertiesID int64) (int64, error)
-	GetCountHolidayMedia(ctx context.Context) (int64, error)
-	GetCountIndustrialBrokerAgentPropertyBranchDocByPropertyId(ctx context.Context, industrialBrokerAgentPropertiesBranchID int64) (int64, error)
-	GetCountIndustrialBrokerAgentPropertyDocByPropertyId(ctx context.Context, industrialBrokerAgentPropertiesID int64) (int64, error)
-	GetCountIndustrialFreelancerPropertyDocByFreelancerPropertyId(ctx context.Context, industrialFreelancerPropertiesID int64) (int64, error)
-	GetCountIndustrialOwnerPropertyDocsByOwnerPropertyId(ctx context.Context, industrialOwnerPropertiesID int64) (int64, error)
 	GetCountLeadsByContactId(ctx context.Context, contactsID int64) (int64, error)
 	GetCountLeadsBySources(ctx context.Context, leadSource pgtype.Int8) (int64, error)
 	// -- name: GetLeadsForContact :many
@@ -17640,8 +17167,6 @@ type Querier interface {
 	GetCountMapSearch(ctx context.Context) (int64, error)
 	GetCountOfProjectsListForCity(ctx context.Context, citiesID pgtype.Int8) (int64, error)
 	GetCountOwnerPropertyDocumentsByOwnerPropertyId(ctx context.Context, ownerPropertiesID int64) (int64, error)
-	GetCountPackInclusion(ctx context.Context) ([]int64, error)
-	GetCountPackInclusionByType(ctx context.Context, holidayHomeType int64) ([]int64, error)
 	GetCountPageContent(ctx context.Context, contentCategory int64) (int64, error)
 	GetCountPages(ctx context.Context) (int64, error)
 	GetCountPaymentPlanInstallmentByPropertyVersionsID(ctx context.Context, entityID int64) (int64, error)
@@ -17657,8 +17182,6 @@ type Querier interface {
 	// Search criteria
 	GetCountProjectByStatus(ctx context.Context, arg GetCountProjectByStatusParams) (int64, error)
 	GetCountProjectPropertiesByProjectId(ctx context.Context, arg GetCountProjectPropertiesByProjectIdParams) (int64, error)
-	GetCountProjectPropertiesForList(ctx context.Context, id int64) (int64, error)
-	GetCountProjectPropertiesForListPhase(ctx context.Context, id int64) (int64, error)
 	GetCountProjectPropertiesReviews(ctx context.Context, usersID int64) (int64, error)
 	GetCountProjectPropertyDocByProjectPropertyId(ctx context.Context, projectPropertiesID int64) (int64, error)
 	GetCountProjectPropertyDocumentByProjectPropertyId(ctx context.Context, projectPropertiesID int64) (int64, error)
@@ -17669,9 +17192,7 @@ type Querier interface {
 	GetCountPromotionType(ctx context.Context) (int64, error)
 	GetCountPromotionsByProjectFilter(ctx context.Context, arg GetCountPromotionsByProjectFilterParams) (int64, error)
 	GetCountPromotionsByProjects(ctx context.Context) (int64, error)
-	GetCountPropertiesVersionByStatus(ctx context.Context, arg GetCountPropertiesVersionByStatusParams) (int64, error)
 	GetCountPropertyActivitiesByType(ctx context.Context, activityType int64) (int64, error)
-	GetCountPropertyVersionsByPropertyId(ctx context.Context, propertyID int64) (int64, error)
 	GetCountPropertyVideos(ctx context.Context) (int64, error)
 	GetCountRolePermissionRoles(ctx context.Context, arg GetCountRolePermissionRolesParams) (int64, error)
 	GetCountServiceCompanyBranch(ctx context.Context) (int64, error)
@@ -17755,8 +17276,6 @@ type Querier interface {
 	GetCurrentUserIDRaw(ctx context.Context) (string, error)
 	GetCustomerByPhoneVerified(ctx context.Context, arg GetCustomerByPhoneVerifiedParams) (PlatformUser, error)
 	GetCustomerByUsername(ctx context.Context, arg GetCustomerByUsernameParams) (PlatformUser, error)
-	GetDealPropertyVersion(ctx context.Context, id int64) (bool, error)
-	GetDealUnitVersion(ctx context.Context, id int64) (bool, error)
 	GetDefaultSettingsByCountryID(ctx context.Context, id int64) (GetDefaultSettingsByCountryIDRow, error)
 	GetDeletedCities(ctx context.Context, arg GetDeletedCitiesParams) ([]GetDeletedCitiesRow, error)
 	GetDeletedCitiesCount(ctx context.Context) (int64, error)
@@ -17778,7 +17297,6 @@ type Querier interface {
 	GetDeletedCurrencies(ctx context.Context, arg GetDeletedCurrenciesParams) ([]Currency, error)
 	GetDeletedCurrenciesCount(ctx context.Context) (int64, error)
 	GetDeletedFAQs(ctx context.Context, arg GetDeletedFAQsParams) ([]AuctionsFaq, error)
-	GetDeletedHolidayHomeById(ctx context.Context, id int64) (GetDeletedHolidayHomeByIdRow, error)
 	GetDeletedPropertyLocations(ctx context.Context, arg GetDeletedPropertyLocationsParams) ([]GetDeletedPropertyLocationsRow, error)
 	GetDeletedPropertyLocationsCount(ctx context.Context) (int64, error)
 	// LEFT JOIN media ON media.community_guidelines_id = community_guidelines.id
@@ -17819,7 +17337,6 @@ type Querier interface {
 	GetDevelopersCompanyByRank(ctx context.Context, arg GetDevelopersCompanyByRankParams) ([]DeveloperCompany, error)
 	GetDevelopersCompanyByStatus(ctx context.Context, arg GetDevelopersCompanyByStatusParams) ([]DeveloperCompany, error)
 	GetDocumentByDocumentTypeAndAuctionID(ctx context.Context, arg GetDocumentByDocumentTypeAndAuctionIDParams) (AuctionsDocument, error)
-	GetDocumentById(ctx context.Context, id int64) (GlobalDocument, error)
 	GetDocumentCategoryForContact(ctx context.Context, limit int32) (GetDocumentCategoryForContactRow, error)
 	GetDocumentCategry(ctx context.Context, id int64) (GetDocumentCategryRow, error)
 	GetDocumentSubCategoryForContact(ctx context.Context, limit int32) (GetDocumentSubCategoryForContactRow, error)
@@ -17829,9 +17346,6 @@ type Querier interface {
 	GetDocumentsSubCategoryBySubCategory(ctx context.Context, subCategory string) (DocumentsSubcategory, error)
 	GetDropDownCategoriesById(ctx context.Context) (DropdownCategory, error)
 	GetDropDownItemsById(ctx context.Context, id int64) (DropdownItem, error)
-	GetEntityIdGlobalDocuments(ctx context.Context, arg GetEntityIdGlobalDocumentsParams) ([]GetEntityIdGlobalDocumentsRow, error)
-	GetEntityIdGlobalMedia(ctx context.Context, arg GetEntityIdGlobalMediaParams) ([]GetEntityIdGlobalMediaRow, error)
-	GetEntityIdGlobalPlan(ctx context.Context, arg GetEntityIdGlobalPlanParams) ([]GetEntityIdGlobalPlanRow, error)
 	GetEntityServiceLocation(ctx context.Context, id int64) (EntityServiceLocation, error)
 	GetExchangeOfferCategory(ctx context.Context, id int64) (ExchangeOfferCategory, error)
 	GetExhibitionBoothByExhibitionId(ctx context.Context, exhibitionsID int64) ([]ExhibitionBooth, error)
@@ -17856,7 +17370,6 @@ type Querier interface {
 	GetExternalSharingByProjectID(ctx context.Context, projectID pgtype.Int8) (ExternalSharing, error)
 	GetFAQByID(ctx context.Context, id int64) (AuctionsFaq, error)
 	GetFacilitiesAmenities(ctx context.Context, dollar_1 []int64) ([]FacilitiesAmenity, error)
-	GetFacilitiesAmenitiesByEntity(ctx context.Context, arg GetFacilitiesAmenitiesByEntityParams) ([]GetFacilitiesAmenitiesByEntityRow, error)
 	GetFacilitiesAmenitiesByType(ctx context.Context, arg GetFacilitiesAmenitiesByTypeParams) ([]FacilitiesAmenity, error)
 	// -- name: GetFacilitiesByEntityType :many
 	// SELECT
@@ -17869,38 +17382,6 @@ type Querier interface {
 	GetFacilitiesIdByBrokerCompanyAgentPropertyId(ctx context.Context, id int64) ([]int64, error)
 	GetFacilitiesIdByOwnerPropertyId(ctx context.Context, id int64) ([]int64, error)
 	GetFacilityAmenity(ctx context.Context, id int64) (FacilitiesAmenity, error)
-	// -- name: GetFacilityAmenityByPropertyID :many
-	// SELECT
-	// ca.category AS category,
-	//     -- Group type 1 (Facility) into a JSON array
-	//     jsonb_agg(
-	//         jsonb_build_object(
-	//             'id', facilities_amenities.id,
-	//             'label', facilities_amenities.title,
-	//             'icon', facilities_amenities.icon_url,
-	//             'category', ca.category,
-	//             'created_at', facilities_amenities.created_at
-	//         )
-	//         ORDER BY facilities_amenities.created_at
-	//     ) FILTER (WHERE facilities_amenities.type = 1) AS facilities,
-	//     -- Group type 2 (Amenity) into a JSON array
-	//     jsonb_agg(
-	//         jsonb_build_object(
-	//             'id', facilities_amenities.id,
-	//             'label', facilities_amenities.title,
-	//             'icon', facilities_amenities.icon_url,
-	//             'category', ca.category,
-	//             'created_at', facilities_amenities.created_at
-	//         )
-	//         ORDER BY facilities_amenities.created_at
-	//     ) FILTER (WHERE facilities_amenities.type = 2) AS amenities
-	// FROM property p
-	// LEFT JOIN facilities_amenities_entity fe ON fe.entity_type_id = 3 AND fe.entity_id = p.id
-	// LEFT JOIN facilities_amenities ON facilities_amenities.id = fe.facility_amenity_id
-	// LEFT JOIN categories ca ON ca.id = facilities_amenities.categories
-	// WHERE p.id = $1
-	// GROUP BY p.id, facilities_amenities.id,ca.category;
-	GetFacilityAmenityByPropertyID(ctx context.Context, arg GetFacilityAmenityByPropertyIDParams) ([]GetFacilityAmenityByPropertyIDRow, error)
 	GetFaclitiesAmenitiesForEntityIDAndType(ctx context.Context, arg GetFaclitiesAmenitiesForEntityIDAndTypeParams) ([]GetFaclitiesAmenitiesForEntityIDAndTypeRow, error)
 	GetFacts(ctx context.Context, id int64) (Fact, error)
 	// -- name: DeleteAllFaqMedia :one
@@ -17909,39 +17390,11 @@ type Querier interface {
 	GetFaqsByID(ctx context.Context, arg GetFaqsByIDParams) (GetFaqsByIDRow, error)
 	GetFieldsOfStudyByID(ctx context.Context, id int64) (FieldOfStudy, error)
 	GetFieldsOfStudyByTitle(ctx context.Context, title string) (FieldOfStudy, error)
-	GetFileUrlFromGlobalMedia(ctx context.Context, arg GetFileUrlFromGlobalMediaParams) ([]string, error)
-	GetFileUrlFromGlobalMediaMultiple(ctx context.Context, arg GetFileUrlFromGlobalMediaMultipleParams) ([]GetFileUrlFromGlobalMediaMultipleRow, error)
 	GetFilterAgentPerformance(ctx context.Context, arg GetFilterAgentPerformanceParams) ([]GetFilterAgentPerformanceRow, error)
 	GetFinancialProviders(ctx context.Context, id int64) (FinancialProvider, error)
 	GetFinancialProvidersByType(ctx context.Context, providerType int64) ([]FinancialProvider, error)
 	GetFirstUnitVersionWithUnitID(ctx context.Context, unitID int64) (UnitVersion, error)
-	GetFreelancePropertiesByRefrenceNumber(ctx context.Context, refNo string) (FreelancersProperty, error)
-	GetFreelancer(ctx context.Context, limit int32) (Freelancer, error)
-	GetFreelancerCompaniess(ctx context.Context, limit int32) (FreelancersCompany, error)
-	GetFreelancerProperty(ctx context.Context, id int64) (FreelancersProperty, error)
-	GetFreelancerPropertyByName(ctx context.Context, arg GetFreelancerPropertyByNameParams) (FreelancersProperty, error)
-	GetFreelancerPropertyDoc(ctx context.Context, id int64) (FreelancersPropertiesDocument, error)
-	GetFreelancerPropertyDocByFreelancerPropertyDocId(ctx context.Context, id int64) (GetFreelancerPropertyDocByFreelancerPropertyDocIdRow, error)
-	GetFreelancerPropertyDocumentsByFreelancerPropertyIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetFreelancerPropertyDocumentsByFreelancerPropertyIdAndDocCatIdAndSubDocCatIdParams) (FreelancersPropertiesDocument, error)
-	GetFreelancerPropertyDocumentsByRentPropertyUnitIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetFreelancerPropertyDocumentsByRentPropertyUnitIdAndDocCatIdAndSubDocCatIdParams) (FreelancersPropertiesDocument, error)
-	GetFreelancerPropertyMedia(ctx context.Context, limit int32) (FreelancersPropertiesMedium, error)
-	GetFreelancerPropertyMediaByFreelancerPropertyId(ctx context.Context, arg GetFreelancerPropertyMediaByFreelancerPropertyIdParams) ([]FreelancersPropertiesMedium, error)
-	GetFreelancerPropertyMediaByProjectId(ctx context.Context, arg GetFreelancerPropertyMediaByProjectIdParams) ([]FreelancersPropertiesMedium, error)
-	GetFreelancerPropertyMediaByPropertyIdAndMainMediaSection(ctx context.Context, arg GetFreelancerPropertyMediaByPropertyIdAndMainMediaSectionParams) (FreelancersPropertiesMedium, error)
-	GetFreelancerPropertyMediaByUnitIdAndMediaSection(ctx context.Context, arg GetFreelancerPropertyMediaByUnitIdAndMediaSectionParams) (FreelancersPropertiesMedium, error)
-	GetFreelancerPropertyWithValidation(ctx context.Context, arg GetFreelancerPropertyWithValidationParams) (FreelancersProperty, error)
-	GetFreelancersBankAccountDetails(ctx context.Context, limit int32) (FreelancersBankAccountDetail, error)
-	GetFreelancersPropertiesByUsersId(ctx context.Context, usersID int64) ([]GetFreelancersPropertiesByUsersIdRow, error)
-	GetGlobalDocuments(ctx context.Context, arg GetGlobalDocumentsParams) (GetGlobalDocumentsRow, error)
-	GetGlobalMedia(ctx context.Context, arg GetGlobalMediaParams) (GetGlobalMediaRow, error)
-	GetGlobalMediaById(ctx context.Context, id int64) (GlobalMedium, error)
-	GetGlobalMediaWithoutMediaType(ctx context.Context, arg GetGlobalMediaWithoutMediaTypeParams) ([]GetGlobalMediaWithoutMediaTypeRow, error)
-	GetGlobalPlan(ctx context.Context, arg GetGlobalPlanParams) (GetGlobalPlanRow, error)
 	GetGlobalPropertiesByID(ctx context.Context, id int64) (GlobalPropertyType, error)
-	// SEARCH CRITERIA
-	GetGlobalPropertiesByStatusID(ctx context.Context, arg GetGlobalPropertiesByStatusIDParams) ([]GetGlobalPropertiesByStatusIDRow, error)
-	// SEARCH CRITERIA
-	GetGlobalPropertiesCountByStatusID(ctx context.Context, arg GetGlobalPropertiesCountByStatusIDParams) (int64, error)
 	// WITH x AS(
 	// SELECT id,unit_id,'sale' AS category
 	// FROM sale_unit
@@ -18042,80 +17495,9 @@ type Querier interface {
 	// ORDER BY units.created_at DESC
 	// LIMIT $1 OFFSET $2;
 	GetGlobalPropertyByID(ctx context.Context, id int64) (Property, error)
-	GetGlobalPropertyById(ctx context.Context, id int64) (Property, error)
-	GetGlobalPropertyByUsage(ctx context.Context, usage int64) ([]GlobalPropertyType, error)
 	GetGlobalPropertyCompletionStatus(ctx context.Context, id int64) (interface{}, error)
 	GetGlobalPropertyTypeByID(ctx context.Context, id int64) (GlobalPropertyType, error)
-	// SEARCH CRITERIA
-	GetGlobalUnitByStatusID(ctx context.Context, arg GetGlobalUnitByStatusIDParams) ([]GetGlobalUnitByStatusIDRow, error)
-	// SEARCH CRITERIA
-	GetGlobalUnitCountByStatusID(ctx context.Context, arg GetGlobalUnitCountByStatusIDParams) (int64, error)
-	GetHolidayHomeBookings(ctx context.Context, id int64) (HolidayHomeBooking, error)
-	GetHolidayHomeByCategory(ctx context.Context, arg GetHolidayHomeByCategoryParams) ([]HolidayHome, error)
-	GetHolidayHomeById(ctx context.Context, id int64) (HolidayHome, error)
-	GetHolidayHomeCategory(ctx context.Context, id int64) (HolidayHomeCategory, error)
-	GetHolidayHomeCategoryByHolidayType(ctx context.Context, holidayHomeType int64) ([]HolidayHomeCategory, error)
-	GetHolidayHomeComments(ctx context.Context, id int64) (HolidayHomeComment, error)
-	GetHolidayHomePortals(ctx context.Context, id int64) (HolidayHomePortal, error)
-	GetHolidayHomePortalsByHolidayId(ctx context.Context, holidayHomeID int64) (HolidayHomePortal, error)
-	GetHolidayHomePortalsByRefNo(ctx context.Context, refNo string) (HolidayHomePortal, error)
-	GetHolidayHomePortalsbByBkId(ctx context.Context, bookingPortalsID int64) ([]HolidayHomePortal, error)
-	GetHolidayHomePortalsbByBkPorId(ctx context.Context, arg GetHolidayHomePortalsbByBkPorIdParams) (HolidayHomePortal, error)
-	GetHolidayHomePromo(ctx context.Context, id int64) (HolidayHomePromo, error)
-	GetHolidayHomeStayReviews(ctx context.Context, holidayHomeID int64) ([]HolidayStayReview, error)
-	GetHolidayMedia(ctx context.Context, id int64) (HolidayMedium, error)
-	GetHolidayMediaByHolidayId(ctx context.Context, holidayHomeID int64) (HolidayMedium, error)
-	GetHolidayMediaByHolidayIdAndMainMediaSection(ctx context.Context, arg GetHolidayMediaByHolidayIdAndMainMediaSectionParams) (HolidayMedium, error)
-	GetHolidayMediasByHolidayId(ctx context.Context, holidayHomeID int64) ([]HolidayMedium, error)
-	GetHolidayScheduleByDay(ctx context.Context, dayOfWeek string) (HolidayExperienceSchedule, error)
-	GetHolidayScheduleById(ctx context.Context, id int64) (HolidayExperienceSchedule, error)
-	GetHolidaySchedulebyHolidayId(ctx context.Context, holidayHomeID int64) ([]GetHolidaySchedulebyHolidayIdRow, error)
-	GetHotelBookingByID(ctx context.Context, id int64) (HotelBooking, error)
-	GetHotelBookingCategories(ctx context.Context, arg GetHotelBookingCategoriesParams) ([]HotelBookingCategory, error)
-	GetHotelBookingCategory(ctx context.Context, id int64) (HotelBookingCategory, error)
 	GetHotelBookingMediaByPostedHotelId(ctx context.Context, postedHotelID int64) (PostedHotelMedium, error)
-	GetHotelBookingPortal(ctx context.Context, arg GetHotelBookingPortalParams) ([]GetHotelBookingPortalRow, error)
-	GetHotelBookingPortalActionButton(ctx context.Context, arg GetHotelBookingPortalActionButtonParams) ([]GetHotelBookingPortalActionButtonRow, error)
-	GetHotelBookingPortalById(ctx context.Context, id int64) (HotelBookingPortal, error)
-	GetHotelBookingPromoByID(ctx context.Context, id int64) (HotelBookingPromo, error)
-	GetHotelBookingReviews(ctx context.Context, id int64) (HotelBookingReview, error)
-	GetHotelRoomByID(ctx context.Context, id int64) (HotelRoom, error)
-	GetHotelRoomMediaByHotelRoomID(ctx context.Context, hotelRoomsID int64) (HotelRoomsMedium, error)
-	GetHotelRoomMediaByID(ctx context.Context, id int64) (HotelRoomsMedium, error)
-	GetIndustrailBrokerAgentPropertyMedia(ctx context.Context, limit int32) (IndustrialBrokerAgentPropertiesMedium, error)
-	GetIndustrailFreelancerPropertyMedia(ctx context.Context, limit int32) (IndustrialFreelancerPropertiesMedium, error)
-	GetIndustrailPropertyPlan(ctx context.Context, id int64) (IndustrialPropertiesPlan, error)
-	GetIndustrailPropertyPlanBranch(ctx context.Context, id int64) (IndustrialPropertiesPlansBranch, error)
-	GetIndustrialBranchBrokerAgentPropertyDocByBrokerAgentPropertyIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetIndustrialBranchBrokerAgentPropertyDocByBrokerAgentPropertyIdAndDocCatIdAndSubDocCatIdParams) (IndustrialBrokerAgentPropertiesBranchDocument, error)
-	GetIndustrialBrokerAgentProperty(ctx context.Context, limit int32) (IndustrialBrokerAgentProperty, error)
-	GetIndustrialBrokerAgentPropertyBranch(ctx context.Context, limit int32) (IndustrialBrokerAgentPropertiesBranch, error)
-	GetIndustrialBrokerAgentPropertyBranchDoc(ctx context.Context, limit int32) (IndustrialBrokerAgentPropertiesBranchDocument, error)
-	GetIndustrialBrokerAgentPropertyBranchDocById(ctx context.Context, id int64) (GetIndustrialBrokerAgentPropertyBranchDocByIdRow, error)
-	GetIndustrialBrokerAgentPropertyBranchMedia(ctx context.Context, limit int32) (IndustrialBrokerAgentPropertiesBranchMedium, error)
-	GetIndustrialBrokerAgentPropertyBranchMediaByPropertyIdAndMediaSection(ctx context.Context, arg GetIndustrialBrokerAgentPropertyBranchMediaByPropertyIdAndMediaSectionParams) (IndustrialBrokerAgentPropertiesBranchMedium, error)
-	GetIndustrialBrokerAgentPropertyDoc(ctx context.Context, limit int32) (IndustrialBrokerAgentPropertiesDocument, error)
-	GetIndustrialBrokerAgentPropertyDocByBrokerAgentPropertyIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetIndustrialBrokerAgentPropertyDocByBrokerAgentPropertyIdAndDocCatIdAndSubDocCatIdParams) (IndustrialBrokerAgentPropertiesDocument, error)
-	GetIndustrialBrokerAgentPropertyDocById(ctx context.Context, id int64) (GetIndustrialBrokerAgentPropertyDocByIdRow, error)
-	GetIndustrialBrokerAgentPropertyMediaByPropertyIdAndMediaSection(ctx context.Context, arg GetIndustrialBrokerAgentPropertyMediaByPropertyIdAndMediaSectionParams) (IndustrialBrokerAgentPropertiesMedium, error)
-	GetIndustrialFreelancerProperty(ctx context.Context, limit int32) (IndustrialFreelancerProperty, error)
-	GetIndustrialFreelancerPropertyDoc(ctx context.Context, limit int32) (IndustrialFreelancerPropertiesDocument, error)
-	GetIndustrialFreelancerPropertyDocByFreelancerPropertyDocId(ctx context.Context, id int64) (GetIndustrialFreelancerPropertyDocByFreelancerPropertyDocIdRow, error)
-	GetIndustrialFreelancerPropertyDocByFreelancerPropertyIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetIndustrialFreelancerPropertyDocByFreelancerPropertyIdAndDocCatIdAndSubDocCatIdParams) (IndustrialFreelancerPropertiesDocument, error)
-	GetIndustrialFreelancerPropertyMediaByPropertyIdAndMainMediaSection(ctx context.Context, arg GetIndustrialFreelancerPropertyMediaByPropertyIdAndMainMediaSectionParams) (IndustrialFreelancerPropertiesMedium, error)
-	GetIndustrialOwnerProperty(ctx context.Context, limit int32) (IndustrialOwnerProperty, error)
-	GetIndustrialOwnerPropertyDoc(ctx context.Context, limit int32) (IndustrialOwnerPropertiesDocument, error)
-	GetIndustrialOwnerPropertyDocById(ctx context.Context, id int64) (GetIndustrialOwnerPropertyDocByIdRow, error)
-	GetIndustrialOwnerPropertyDocByOwnerPropertyIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetIndustrialOwnerPropertyDocByOwnerPropertyIdAndDocCatIdAndSubDocCatIdParams) (IndustrialOwnerPropertiesDocument, error)
-	GetIndustrialOwnerPropertyMedia(ctx context.Context, limit int32) (IndustrialOwnerPropertiesMedium, error)
-	GetIndustrialOwnerPropertyMediaByPropertyIdAndMediaSection(ctx context.Context, arg GetIndustrialOwnerPropertyMediaByPropertyIdAndMediaSectionParams) (IndustrialOwnerPropertiesMedium, error)
-	GetIndustrialPropertyFacts(ctx context.Context, limit int32) (IndustrialPropertiesFact, error)
-	GetIndustrialPropertyFactsByIndustryProperties(ctx context.Context, arg GetIndustrialPropertyFactsByIndustryPropertiesParams) (IndustrialPropertiesFact, error)
-	GetIndustrialPropertyFactsByProperties(ctx context.Context, arg GetIndustrialPropertyFactsByPropertiesParams) (IndustrialPropertiesFact, error)
-	GetIndustrialPropertyPlanBranchByTitle(ctx context.Context, arg GetIndustrialPropertyPlanBranchByTitleParams) (IndustrialPropertiesPlansBranch, error)
-	GetIndustrialPropertyPlanByTitle(ctx context.Context, arg GetIndustrialPropertyPlanByTitleParams) (IndustrialPropertiesPlan, error)
-	GetIndustrialUnitTypes(ctx context.Context, id int64) (IndustrialUnitType, error)
-	GetIndustrialUnitTypesBranch(ctx context.Context, id int64) (IndustrialUnitTypesBranch, error)
-	GetIndustry(ctx context.Context, id int64) (Industry, error)
 	GetInternalSharing(ctx context.Context, arg GetInternalSharingParams) (GetInternalSharingRow, error)
 	GetInternalSharingByMe(ctx context.Context, arg GetInternalSharingByMeParams) (GetInternalSharingByMeRow, error)
 	GetInternalSharingByProjectID(ctx context.Context, projectID pgtype.Int8) (InternalSharing, error)
@@ -18257,17 +17639,11 @@ type Querier interface {
 	GetNumberOfCommunityGuidesViewActivitiesTransactionView(ctx context.Context, arg GetNumberOfCommunityGuidesViewActivitiesTransactionViewParams) (int64, error)
 	GetNumberOfCountriesSettings(ctx context.Context, status int64) (int64, error)
 	GetNumberOfDeletedBlogs(ctx context.Context) (int64, error)
-	GetNumberOfEntityIdGlobalDocuments(ctx context.Context, arg GetNumberOfEntityIdGlobalDocumentsParams) (int64, error)
-	GetNumberOfEntityIdGlobalMedia(ctx context.Context, arg GetNumberOfEntityIdGlobalMediaParams) (int64, error)
-	GetNumberOfEntityIdGlobalPlan(ctx context.Context, arg GetNumberOfEntityIdGlobalPlanParams) (int64, error)
 	GetNumberOfExhibitionBooths(ctx context.Context) (int64, error)
 	GetNumberOfExhibitionClients(ctx context.Context) (int64, error)
 	GetNumberOfExhibitionCollaborators(ctx context.Context, collaboratorType int64) (int64, error)
 	GetNumberOfExhibitionQueries(ctx context.Context) (int64, error)
 	GetNumberOfExhibitionsAfterFiltration(ctx context.Context, arg GetNumberOfExhibitionsAfterFiltrationParams) (int64, error)
-	GetNumberOfHotelBookingCategories(ctx context.Context) (int64, error)
-	GetNumberOfHotelBookingPortal(ctx context.Context) (int64, error)
-	GetNumberOfHotelRooms(ctx context.Context) (int64, error)
 	GetNumberOfMediaForExhibition(ctx context.Context, exhibitionsID int64) (int64, error)
 	GetNumberOfReviewTerms(ctx context.Context, status int64) (int64, error)
 	GetNumberOfSubCommunitiesSettings(ctx context.Context, status int64) (int64, error)
@@ -18283,8 +17659,6 @@ type Querier interface {
 	GetOtherUser(ctx context.Context, id int64) (User, error)
 	GetOverDuePayments(ctx context.Context, orderID int64) ([]GetOverDuePaymentsRow, error)
 	GetOverallPropertyHubCountByCountryAndSectionId(ctx context.Context, arg GetOverallPropertyHubCountByCountryAndSectionIdParams) (int64, error)
-	GetOwnerByName(ctx context.Context, firstName string) ([]GetOwnerByNameRow, error)
-	GetOwnerByPhone(ctx context.Context, phoneNumber pgtype.Text) ([]GetOwnerByPhoneRow, error)
 	GetOwnerProperties(ctx context.Context, limit int32) (OwnerProperty, error)
 	GetOwnerPropertiesByName(ctx context.Context, arg GetOwnerPropertiesByNameParams) (OwnerProperty, error)
 	GetOwnerPropertiesByRefrenceNumber(ctx context.Context, refNo string) (OwnerProperty, error)
@@ -18356,7 +17730,6 @@ type Querier interface {
 	// Where section_permission_id = $1 ORDER BY id;
 	GetPermissionMV(ctx context.Context, id int64) (PermissionsMv, error)
 	GetPhaseByNameAndProjectId(ctx context.Context, arg GetPhaseByNameAndProjectIdParams) (Phase, error)
-	GetPhaseByProjectId(ctx context.Context, projectsID int64) (Phase, error)
 	GetPhaseByProjectIdAndPhase(ctx context.Context, arg GetPhaseByProjectIdAndPhaseParams) (Phase, error)
 	GetPhaseExceptDeletedAndBlocked(ctx context.Context, id int64) (Phase, error)
 	// -- name: GetCountAllPhasesMediByPhaseId :one
@@ -18372,7 +17745,6 @@ type Querier interface {
 	GetPhaseMedia(ctx context.Context, id int64) (GetPhaseMediaRow, error)
 	GetPhaseMediaByIdAndGalleryAndMediaType(ctx context.Context, arg GetPhaseMediaByIdAndGalleryAndMediaTypeParams) (ProjectMedium, error)
 	GetPhaseName(ctx context.Context, id int64) (string, error)
-	GetPhasePropertyCount(ctx context.Context, entityID int64) (int64, error)
 	GetPhases(ctx context.Context, limit int32) (Phase, error)
 	GetPhasesByProjectID(ctx context.Context, projectID int64) ([]int64, error)
 	GetPhasesDocuments(ctx context.Context, id int64) (GetPhasesDocumentsRow, error)
@@ -18516,14 +17888,11 @@ type Querier interface {
 	GetProjectPropertiesByProjectId(ctx context.Context, projectsID int64) (ProjectProperty, error)
 	GetProjectPropertiesByProjectIdGraph(ctx context.Context, entityID int64) ([]Property, error)
 	GetProjectPropertiesBySameArea(ctx context.Context, arg GetProjectPropertiesBySameAreaParams) ([]GetProjectPropertiesBySameAreaRow, error)
-	GetProjectPropertiesForList(ctx context.Context, arg GetProjectPropertiesForListParams) ([]GetProjectPropertiesForListRow, error)
-	GetProjectPropertiesForListPhase(ctx context.Context, arg GetProjectPropertiesForListPhaseParams) ([]GetProjectPropertiesForListPhaseRow, error)
 	GetProjectPropertiesMedia(ctx context.Context, id int64) (GetProjectPropertiesMediaRow, error)
 	GetProjectPropertiesPublishedCount(ctx context.Context, arg GetProjectPropertiesPublishedCountParams) (int64, error)
 	GetProjectPropertiesPublishedListing(ctx context.Context, arg GetProjectPropertiesPublishedListingParams) ([]GetProjectPropertiesPublishedListingRow, error)
 	GetProjectPropertiesReviews(ctx context.Context, arg GetProjectPropertiesReviewsParams) ([]GetProjectPropertiesReviewsRow, error)
 	GetProjectPropertyByProjectIDAndPropertyId(ctx context.Context, arg GetProjectPropertyByProjectIDAndPropertyIdParams) (ProjectProperty, error)
-	GetProjectPropertyCount(ctx context.Context, entityID int64) (int64, error)
 	GetProjectPropertyDocByProjectPropertyDocId(ctx context.Context, id int64) (GetProjectPropertyDocByProjectPropertyDocIdRow, error)
 	GetProjectPropertyDocument(ctx context.Context, id int64) (GetProjectPropertyDocumentRow, error)
 	GetProjectPropertyDocumentByProjPropertyId(ctx context.Context, arg GetProjectPropertyDocumentByProjPropertyIdParams) (ProjectPropertiesDocument, error)
@@ -18779,31 +18148,22 @@ type Querier interface {
 	GetPromotionType(ctx context.Context, limit int32) (PromotionType, error)
 	GetPromotionTypeIdByType(ctx context.Context, types string) (int64, error)
 	GetPromotionsByProjectFilter(ctx context.Context, arg GetPromotionsByProjectFilterParams) ([]ProjectPromotion, error)
-	GetProperties(ctx context.Context, arg GetPropertiesParams) ([]GetPropertiesRow, error)
 	GetPropertiesBranchPlanByTitle(ctx context.Context, arg GetPropertiesBranchPlanByTitleParams) (PropertiesPlansBranch, error)
 	GetPropertiesByPhasesIDs(ctx context.Context, arg GetPropertiesByPhasesIDsParams) ([]GetPropertiesByPhasesIDsRow, error)
 	GetPropertiesByProjectID(ctx context.Context, arg GetPropertiesByProjectIDParams) ([]int64, error)
 	GetPropertiesByRefNo(ctx context.Context, refNo string) ([]GetPropertiesByRefNoRow, error)
 	GetPropertiesByRefNos(ctx context.Context, dollar_1 []string) ([]GetPropertiesByRefNosRow, error)
-	GetPropertiesCount(ctx context.Context, isLocal bool) (int64, error)
 	GetPropertiesFactByPropertyID(ctx context.Context, propertiesID pgtype.Int8) (AuctionsPropertiesFact, error)
-	GetPropertiesForGeoJson(ctx context.Context, arg GetPropertiesForGeoJsonParams) ([]GetPropertiesForGeoJsonRow, error)
 	GetPropertiesInfoFromRefNo(ctx context.Context, refNo string) ([]GetPropertiesInfoFromRefNoRow, error)
 	GetPropertiesMedia(ctx context.Context, id int64) (PropertiesMedium, error)
 	GetPropertiesPlansByProjectId(ctx context.Context, projectsID pgtype.Int8) ([]PropertiesPlan, error)
 	GetPropertiesTypeSettingsCount(ctx context.Context, status int64) (int64, error)
 	GetPropertiesTypeSittings(ctx context.Context, arg GetPropertiesTypeSittingsParams) ([]GetPropertiesTypeSittingsRow, error)
-	GetPropertiesVersionsCount(ctx context.Context, arg GetPropertiesVersionsCountParams) (int64, error)
-	GetPropertiesVersionsCountInternational(ctx context.Context, arg GetPropertiesVersionsCountInternationalParams) (int64, error)
-	GetPropertiesVersionsCountLocal(ctx context.Context, arg GetPropertiesVersionsCountLocalParams) (int64, error)
 	// Only join phases if entity_type_id = 2
 	GetProperty(ctx context.Context, id int64) (GetPropertyRow, error)
 	GetPropertyAdByID(ctx context.Context, id int64) (GetPropertyAdByIDRow, error)
 	GetPropertyBranchPlan(ctx context.Context, limit int32) (PropertiesPlansBranch, error)
 	GetPropertyById(ctx context.Context, id int64) (AuctionsProperty, error)
-	GetPropertyByPropertyId(ctx context.Context, id int64) (Property, error)
-	//---- used for xml
-	GetPropertyByRefNo(ctx context.Context, refNo string) (GetPropertyByRefNoRow, error)
 	GetPropertyFact(ctx context.Context, id int64) (PropertiesFact, error)
 	GetPropertyFactsByProperties(ctx context.Context, arg GetPropertyFactsByPropertiesParams) (PropertiesFact, error)
 	GetPropertyHubActivities(ctx context.Context, arg GetPropertyHubActivitiesParams) (PropertyHubActivity, error)
@@ -18836,17 +18196,7 @@ type Querier interface {
 	GetPropertyUnitSavedByPropertyIdAndIdAndWhichProperty(ctx context.Context, arg GetPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyParams) (PropertyUnitSaved, error)
 	GetPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyAndCollectionId(ctx context.Context, arg GetPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyAndCollectionIdParams) (PropertyUnitSaved, error)
 	GetPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyAndWhichPropertyHubKey(ctx context.Context, arg GetPropertyUnitSavedByPropertyIdAndIdAndWhichPropertyAndWhichPropertyHubKeyParams) (PropertyUnitSaved, error)
-	GetPropertyVersionByID(ctx context.Context, propertyID int64) (GetPropertyVersionByIDRow, error)
-	GetPropertyVersions(ctx context.Context, arg GetPropertyVersionsParams) ([]GetPropertyVersionsRow, error)
-	// -- name: GetAllGlobalPropertyByEntity :one
-	// select * from property where entity_id = $1 and entity_type_id = $2;
-	GetPropertyVersionsByPropertyId(ctx context.Context, arg GetPropertyVersionsByPropertyIdParams) ([]PropertyVersion, error)
-	GetPropertyVersionsByPropertyIdOld(ctx context.Context, propertyID int64) (PropertyVersion, error)
-	GetPropertyVersionsByVerionId(ctx context.Context, id int64) (GetPropertyVersionsByVerionIdRow, error)
-	GetPropertyVersionsInternational(ctx context.Context, arg GetPropertyVersionsInternationalParams) ([]GetPropertyVersionsInternationalRow, error)
-	GetPropertyVersionsLocal(ctx context.Context, arg GetPropertyVersionsLocalParams) ([]GetPropertyVersionsLocalRow, error)
 	GetPublishByEntity(ctx context.Context, id int64) (PublishListing, error)
-	GetPublishByEntityIDsByEntityType(ctx context.Context, arg GetPublishByEntityIDsByEntityTypeParams) (PublishListing, error)
 	GetPublishByID(ctx context.Context, id int64) (PublishListing, error)
 	//-- name: GetPublishByMe :one
 	// SELECT *,
@@ -19152,7 +18502,6 @@ type Querier interface {
 	GetSingleFollower(ctx context.Context, arg GetSingleFollowerParams) (Follower, error)
 	GetSingleGlobalTag(ctx context.Context, id int64) (GlobalTagging, error)
 	GetSingleGlobalTagBySection(ctx context.Context, arg GetSingleGlobalTagBySectionParams) (GlobalTagging, error)
-	GetSingleHotelRoom(ctx context.Context, id int64) (GetSingleHotelRoomRow, error)
 	GetSingleJobPortalByName(ctx context.Context, portalName string) ([]JobPortal, error)
 	GetSingleJobPortals(ctx context.Context, id int64) (JobPortal, error)
 	GetSingleLead(ctx context.Context, id int64) (Lead, error)
@@ -19165,12 +18514,10 @@ type Querier interface {
 	GetSingleProjectPlanByID(ctx context.Context, id int64) (GetSingleProjectPlanByIDRow, error)
 	GetSingleProjectPropertyReference(ctx context.Context, id int64) (GetSingleProjectPropertyReferenceRow, error)
 	GetSingleProjectVideo(ctx context.Context, id int64) (ProjectVideo, error)
-	GetSinglePropertyById(ctx context.Context, id int64) (GetSinglePropertyByIdRow, error)
 	//PROPERTY HUB
 	// AGRICULTURAL
 	// INDUSTRIAL
 	GetSinglePropertyRefNo(ctx context.Context, arg GetSinglePropertyRefNoParams) (GetSinglePropertyRefNoRow, error)
-	GetSinglePropertyVersionsById(ctx context.Context, id int64) (GetSinglePropertyVersionsByIdRow, error)
 	GetSinglePropertyVideo(ctx context.Context, id int64) (PropertiesVideo, error)
 	GetSingleShareDoc(ctx context.Context, id int64) (SingleShareDoc, error)
 	// SELECT *
@@ -19266,7 +18613,6 @@ type Querier interface {
 	GetSubscriptionPackage(ctx context.Context, id int64) (SubscriptionPackage, error)
 	GetSubscriptionPrice(ctx context.Context, id int64) (SubscriptionsPrice, error)
 	GetSubscriptionPriceByName(ctx context.Context, arg GetSubscriptionPriceByNameParams) (SubscriptionsPrice, error)
-	GetSumOfGlobalMediaByEntity(ctx context.Context, arg GetSumOfGlobalMediaByEntityParams) (int32, error)
 	GetSumOfPhaseMediaById(ctx context.Context, id int64) (int32, error)
 	// -- name: UpdatePhaseMedia :one
 	// UPDATE phases_media
@@ -19712,31 +19058,13 @@ type Querier interface {
 	GetUnitPlansByTitleAndUnitId(ctx context.Context, arg GetUnitPlansByTitleAndUnitIdParams) (UnitPlan, error)
 	GetUnitType(ctx context.Context, id int64) (GetUnitTypeRow, error)
 	GetUnitTypeByID(ctx context.Context, id int64) (UnitType, error)
-	GetUnitTypeById(ctx context.Context, id int64) (string, error)
 	GetUnitTypeByTypeAndUsage(ctx context.Context, arg GetUnitTypeByTypeAndUsageParams) (UnitType, error)
 	GetUnitTypeSettings(ctx context.Context, id int64) (UnitType, error)
 	GetUnitTypeVariation(ctx context.Context, id int64) (UnitTypeVariation, error)
-	GetUnitTypeVariationByID(ctx context.Context, id int64) (GetUnitTypeVariationByIDRow, error)
-	GetUnitTypeVariationById(ctx context.Context, id int64) (UnitTypeVariation, error)
-	// SEARCH CRITERIA
-	GetUnitTypeVariationByStatusID(ctx context.Context, arg GetUnitTypeVariationByStatusIDParams) ([]GetUnitTypeVariationByStatusIDRow, error)
-	// SEARCH CRITERIA
-	GetUnitTypeVariationCountByStatusID(ctx context.Context, arg GetUnitTypeVariationCountByStatusIDParams) (int64, error)
-	GetUnitTypes(ctx context.Context) ([]UnitType, error)
 	// SELECT COUNT(*) FROM unit_type_detail
 	// WHERE property = $1 AND properties_id = $2;
 	GetUnitTypesByPropertiesIdAndProperty(ctx context.Context, arg GetUnitTypesByPropertiesIdAndPropertyParams) ([]GetUnitTypesByPropertiesIdAndPropertyRow, error)
-	// -- name: GetUnitTypesByPropertyType :many
-	// select u.id,u.type from property_type_unit_type ut
-	// inner join global_property_type p on ut.property_type_id = p.id
-	// inner join unit_type u on u.id=ut.unit_type_id
-	// where p.id = $1;
-	GetUnitTypesByPropertyID(ctx context.Context, arg GetUnitTypesByPropertyIDParams) ([]GetUnitTypesByPropertyIDRow, error)
-	GetUnitTypesByPropertyType(ctx context.Context, id int64) ([]UnitType, error)
-	GetUnitTypesByUsage(ctx context.Context, id int64) ([]UnitType, error)
-	GetUnitTypesForUsageByPropertyID(ctx context.Context, id int64) ([]GlobalPropertyType, error)
 	GetUnitTypesNamesByPropertiesIdAndPropertyType(ctx context.Context, arg GetUnitTypesNamesByPropertiesIdAndPropertyTypeParams) ([]GetUnitTypesNamesByPropertiesIdAndPropertyTypeRow, error)
-	GetUnitTypesVariation(ctx context.Context, arg GetUnitTypesVariationParams) ([]UnitTypeVariation, error)
 	GetUnitVersionById(ctx context.Context, id int64) (UnitVersion, error)
 	GetUnitVersionByUnitId(ctx context.Context, unitID int64) (UnitVersion, error)
 	GetUnitVersionByUnitVersionID(ctx context.Context, unitID int64) (GetUnitVersionByUnitVersionIDRow, error)
@@ -19744,7 +19072,6 @@ type Querier interface {
 	GetUnitsByPropertyIDs(ctx context.Context, arg GetUnitsByPropertyIDsParams) ([]GetUnitsByPropertyIDsRow, error)
 	GetUnitsDocuments(ctx context.Context, id int64) (GetUnitsDocumentsRow, error)
 	GetUnitsDocumentsByUnitIdAndDocCatIdAndSubDocCatId(ctx context.Context, arg GetUnitsDocumentsByUnitIdAndDocCatIdAndSubDocCatIdParams) (GetUnitsDocumentsByUnitIdAndDocCatIdAndSubDocCatIdRow, error)
-	GetUnitsForGeoJson(ctx context.Context, arg GetUnitsForGeoJsonParams) ([]GetUnitsForGeoJsonRow, error)
 	GetUnitsProject(ctx context.Context, arg GetUnitsProjectParams) ([]GetUnitsProjectRow, error)
 	GetUnitsTypeSettingsCount(ctx context.Context, status int64) (int64, error)
 	GetUnitsTypeSittings(ctx context.Context, arg GetUnitsTypeSittingsParams) ([]GetUnitsTypeSittingsRow, error)
@@ -19852,7 +19179,6 @@ type Querier interface {
 	GetXMLUnitIDsToDeleteByRefNoAndEntity(ctx context.Context, arg GetXMLUnitIDsToDeleteByRefNoAndEntityParams) (GetXMLUnitIDsToDeleteByRefNoAndEntityRow, error)
 	GetfaqsByStatus(ctx context.Context, arg GetfaqsByStatusParams) ([]GetfaqsByStatusRow, error)
 	GetfaqsByStatusByCompID(ctx context.Context, arg GetfaqsByStatusByCompIDParams) ([]GetfaqsByStatusByCompIDRow, error)
-	HolidayHomeCategoryWithCount(ctx context.Context) ([]HolidayHomeCategoryWithCountRow, error)
 	// only draft subscription order
 	InActiveSubscriptionOrder(ctx context.Context, orderNo string) (SubscriptionOrder, error)
 	InsertContactsCompanyDetails(ctx context.Context, arg InsertContactsCompanyDetailsParams) (ContactsCompanyDetail, error)
@@ -20001,8 +19327,6 @@ type Querier interface {
 	RestoreAuctionPartner(ctx context.Context, id int64) error
 	RestoreBlogCategoryByID(ctx context.Context, id int64) (BlogCategory, error)
 	RestoreFAQ(ctx context.Context, id int64) error
-	RestorePropertyByID(ctx context.Context, id int64) (Property, error)
-	RestoreUnitTypeVariationsById(ctx context.Context, id int64) error
 	RetrieveApprovedExclusiveWithData(ctx context.Context, arg RetrieveApprovedExclusiveWithDataParams) (RetrieveApprovedExclusiveWithDataRow, error)
 	SearchAllAgent(ctx context.Context, username string) ([]SearchAllAgentRow, error)
 	SearchAllCities(ctx context.Context, lower string) ([]SearchAllCitiesRow, error)
@@ -20371,8 +19695,6 @@ type Querier interface {
 	UpdateCurrency(ctx context.Context, arg UpdateCurrencyParams) (Currency, error)
 	UpdateCurrencyRateByCode(ctx context.Context, arg UpdateCurrencyRateByCodeParams) error
 	UpdateCurrencyStatus(ctx context.Context, arg UpdateCurrencyStatusParams) (Currency, error)
-	UpdateDealPropertyVersion(ctx context.Context, arg UpdateDealPropertyVersionParams) error
-	UpdateDealUnitVersion(ctx context.Context, arg UpdateDealUnitVersionParams) error
 	// SELECT COUNT(*) FROM department;
 	UpdateDepartment(ctx context.Context, arg UpdateDepartmentParams) (Department, error)
 	UpdateDesignation(ctx context.Context, arg UpdateDesignationParams) (Designation, error)
@@ -20433,75 +19755,7 @@ type Querier interface {
 	UpdateFaqMedia(ctx context.Context, arg UpdateFaqMediaParams) (Faq, error)
 	UpdateFaqReactionCounts(ctx context.Context, arg UpdateFaqReactionCountsParams) (Faq, error)
 	UpdateFaqStatus(ctx context.Context, arg UpdateFaqStatusParams) (Faq, error)
-	UpdateFreelancer(ctx context.Context, arg UpdateFreelancerParams) (Freelancer, error)
-	UpdateFreelancerCompanies(ctx context.Context, arg UpdateFreelancerCompaniesParams) (FreelancersCompany, error)
-	UpdateFreelancerProperty(ctx context.Context, arg UpdateFreelancerPropertyParams) (FreelancersProperty, error)
-	UpdateFreelancerPropertyDoc(ctx context.Context, arg UpdateFreelancerPropertyDocParams) (FreelancersPropertiesDocument, error)
-	UpdateFreelancerPropertyDocStatusById(ctx context.Context, arg UpdateFreelancerPropertyDocStatusByIdParams) (FreelancersPropertiesDocument, error)
-	UpdateFreelancerPropertyMedia(ctx context.Context, arg UpdateFreelancerPropertyMediaParams) (FreelancersPropertiesMedium, error)
-	UpdateFreelancerPropertyRankById(ctx context.Context, arg UpdateFreelancerPropertyRankByIdParams) (FreelancersProperty, error)
-	UpdateFreelancerPropertyVerificationById(ctx context.Context, arg UpdateFreelancerPropertyVerificationByIdParams) (FreelancersProperty, error)
-	UpdateFreelancerPropertyhubStatus(ctx context.Context, arg UpdateFreelancerPropertyhubStatusParams) (FreelancersProperty, error)
-	UpdateFreelancersBankAccountDetail(ctx context.Context, arg UpdateFreelancersBankAccountDetailParams) (FreelancersBankAccountDetail, error)
-	UpdateGlobalDocument(ctx context.Context, arg UpdateGlobalDocumentParams) (GlobalDocument, error)
-	UpdateGlobalMedia(ctx context.Context, arg UpdateGlobalMediaParams) (GlobalMedium, error)
-	UpdateGlobalPlan(ctx context.Context, arg UpdateGlobalPlanParams) (Plan, error)
-	UpdateGlobalProperty(ctx context.Context, arg UpdateGlobalPropertyParams) (Property, error)
-	UpdateGlobalPropertyStatus(ctx context.Context, arg UpdateGlobalPropertyStatusParams) (Property, error)
-	UpdateHolidayHomeCategory(ctx context.Context, arg UpdateHolidayHomeCategoryParams) (HolidayHomeCategory, error)
-	UpdateHolidayHomeComments(ctx context.Context, arg UpdateHolidayHomeCommentsParams) (HolidayHomeComment, error)
-	UpdateHolidayHomePortals(ctx context.Context, arg UpdateHolidayHomePortalsParams) (HolidayHomePortal, error)
-	UpdateHolidayHomePortalsStaus(ctx context.Context, arg UpdateHolidayHomePortalsStausParams) (HolidayHomePortal, error)
-	UpdateHolidayHomePromo(ctx context.Context, arg UpdateHolidayHomePromoParams) (HolidayHomePromo, error)
-	UpdateHolidayHomePromoStatus(ctx context.Context, arg UpdateHolidayHomePromoStatusParams) (HolidayHomePromo, error)
 	UpdateHolidayHomeRanking(ctx context.Context, arg UpdateHolidayHomeRankingParams) (HolidayHome, error)
-	UpdateHolidayHomeStatus(ctx context.Context, arg UpdateHolidayHomeStatusParams) (HolidayHome, error)
-	UpdateHolidayHomeStayReview(ctx context.Context, arg UpdateHolidayHomeStayReviewParams) (HolidayStayReview, error)
-	UpdateHolidayMedia(ctx context.Context, arg UpdateHolidayMediaParams) (HolidayMedium, error)
-	UpdateHolidayPackInclusion(ctx context.Context, arg UpdateHolidayPackInclusionParams) (HolidayPackageInclusion, error)
-	UpdateHolidaySchedule(ctx context.Context, arg UpdateHolidayScheduleParams) (HolidayExperienceSchedule, error)
-	UpdateHotelBooking(ctx context.Context, arg UpdateHotelBookingParams) (HotelBooking, error)
-	UpdateHotelBookingCategory(ctx context.Context, arg UpdateHotelBookingCategoryParams) (HotelBookingCategory, error)
-	UpdateHotelBookingCategoryStatus(ctx context.Context, arg UpdateHotelBookingCategoryStatusParams) (HotelBookingCategory, error)
-	UpdateHotelBookingPortal(ctx context.Context, arg UpdateHotelBookingPortalParams) (HotelBookingPortal, error)
-	UpdateHotelBookingPortalPriceNight(ctx context.Context, arg UpdateHotelBookingPortalPriceNightParams) (HotelBookingPortal, error)
-	UpdateHotelBookingPortalStatus(ctx context.Context, arg UpdateHotelBookingPortalStatusParams) (HotelBookingPortal, error)
-	UpdateHotelBookingPromo(ctx context.Context, arg UpdateHotelBookingPromoParams) (HotelBookingPromo, error)
-	UpdateHotelBookingPromoStatus(ctx context.Context, arg UpdateHotelBookingPromoStatusParams) (HotelBookingPromo, error)
-	UpdateHotelBookingReview(ctx context.Context, arg UpdateHotelBookingReviewParams) (HotelBookingReview, error)
-	UpdateHotelBookingStatus(ctx context.Context, arg UpdateHotelBookingStatusParams) (HotelBooking, error)
-	UpdateHotelRoom(ctx context.Context, arg UpdateHotelRoomParams) (HotelRoom, error)
-	UpdateHotelRoomMedia(ctx context.Context, arg UpdateHotelRoomMediaParams) (HotelRoomsMedium, error)
-	UpdateHotelRoomStatus(ctx context.Context, arg UpdateHotelRoomStatusParams) (HotelRoom, error)
-	UpdateIndustrailBrokerAgentPropertyMedia(ctx context.Context, arg UpdateIndustrailBrokerAgentPropertyMediaParams) (IndustrialBrokerAgentPropertiesMedium, error)
-	UpdateIndustrailFreelancerPropertyMedia(ctx context.Context, arg UpdateIndustrailFreelancerPropertyMediaParams) (IndustrialFreelancerPropertiesMedium, error)
-	UpdateIndustrailPropertyPlan(ctx context.Context, arg UpdateIndustrailPropertyPlanParams) (IndustrialPropertiesPlan, error)
-	UpdateIndustrailPropertyPlanBranch(ctx context.Context, arg UpdateIndustrailPropertyPlanBranchParams) (IndustrialPropertiesPlansBranch, error)
-	UpdateIndustrialBrokerAgentProperty(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyParams) (IndustrialBrokerAgentProperty, error)
-	UpdateIndustrialBrokerAgentPropertyBranch(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyBranchParams) (IndustrialBrokerAgentPropertiesBranch, error)
-	UpdateIndustrialBrokerAgentPropertyBranchDoc(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyBranchDocParams) (IndustrialBrokerAgentPropertiesBranchDocument, error)
-	UpdateIndustrialBrokerAgentPropertyBranchMedia(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyBranchMediaParams) (IndustrialBrokerAgentPropertiesBranchMedium, error)
-	UpdateIndustrialBrokerAgentPropertyBranchRank(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyBranchRankParams) (IndustrialBrokerAgentPropertiesBranch, error)
-	UpdateIndustrialBrokerAgentPropertyBranchStatus(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyBranchStatusParams) (IndustrialBrokerAgentPropertiesBranch, error)
-	UpdateIndustrialBrokerAgentPropertyBranchVerifyStatus(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyBranchVerifyStatusParams) (IndustrialBrokerAgentPropertiesBranch, error)
-	UpdateIndustrialBrokerAgentPropertyDoc(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyDocParams) (IndustrialBrokerAgentPropertiesDocument, error)
-	UpdateIndustrialBrokerAgentPropertyRank(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyRankParams) (IndustrialBrokerAgentProperty, error)
-	UpdateIndustrialBrokerAgentPropertyStatus(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyStatusParams) (IndustrialBrokerAgentProperty, error)
-	UpdateIndustrialBrokerAgentPropertyVerifyStatus(ctx context.Context, arg UpdateIndustrialBrokerAgentPropertyVerifyStatusParams) (IndustrialBrokerAgentProperty, error)
-	UpdateIndustrialFreelancerProperty(ctx context.Context, arg UpdateIndustrialFreelancerPropertyParams) (IndustrialFreelancerProperty, error)
-	UpdateIndustrialFreelancerPropertyDoc(ctx context.Context, arg UpdateIndustrialFreelancerPropertyDocParams) (IndustrialFreelancerPropertiesDocument, error)
-	UpdateIndustrialFreelancerPropertyRank(ctx context.Context, arg UpdateIndustrialFreelancerPropertyRankParams) (IndustrialFreelancerProperty, error)
-	UpdateIndustrialFreelancerPropertyStatus(ctx context.Context, arg UpdateIndustrialFreelancerPropertyStatusParams) (IndustrialFreelancerProperty, error)
-	UpdateIndustrialFreelancerPropertyVerifyStatus(ctx context.Context, arg UpdateIndustrialFreelancerPropertyVerifyStatusParams) (IndustrialFreelancerProperty, error)
-	UpdateIndustrialOwnerProperty(ctx context.Context, arg UpdateIndustrialOwnerPropertyParams) (IndustrialOwnerProperty, error)
-	UpdateIndustrialOwnerPropertyDoc(ctx context.Context, arg UpdateIndustrialOwnerPropertyDocParams) (IndustrialOwnerPropertiesDocument, error)
-	UpdateIndustrialOwnerPropertyMedia(ctx context.Context, arg UpdateIndustrialOwnerPropertyMediaParams) (IndustrialOwnerPropertiesMedium, error)
-	UpdateIndustrialOwnerPropertyRank(ctx context.Context, arg UpdateIndustrialOwnerPropertyRankParams) (IndustrialOwnerProperty, error)
-	UpdateIndustrialOwnerPropertyStatus(ctx context.Context, arg UpdateIndustrialOwnerPropertyStatusParams) (IndustrialOwnerProperty, error)
-	UpdateIndustrialOwnerPropertyVerifyStatus(ctx context.Context, arg UpdateIndustrialOwnerPropertyVerifyStatusParams) (IndustrialOwnerProperty, error)
-	UpdateIndustrialPropertyFacts(ctx context.Context, arg UpdateIndustrialPropertyFactsParams) (IndustrialPropertiesFact, error)
-	UpdateIndustrialUnitTypes(ctx context.Context, arg UpdateIndustrialUnitTypesParams) (IndustrialUnitType, error)
-	UpdateIndustrialUnitTypesBranch(ctx context.Context, arg UpdateIndustrialUnitTypesBranchParams) (IndustrialUnitTypesBranch, error)
 	UpdateInternalIsEnableCheck(ctx context.Context, arg UpdateInternalIsEnableCheckParams) (InternalSharing, error)
 	UpdateInternalShare(ctx context.Context, arg UpdateInternalShareParams) (InternalSharing, error)
 	UpdateInternationalContent(ctx context.Context, arg UpdateInternationalContentParams) (InternationalContent, error)
@@ -20565,7 +19819,6 @@ type Querier interface {
 	UpdateMultipleContactsTransactionID(ctx context.Context, arg UpdateMultipleContactsTransactionIDParams) (ContactsTransaction, error)
 	UpdateMultipleLeadDocumentLeadID(ctx context.Context, arg UpdateMultipleLeadDocumentLeadIDParams) (LeadsDocument, error)
 	UpdateMultipleLeadPropertiesLeadID(ctx context.Context, arg UpdateMultipleLeadPropertiesLeadIDParams) (LeadsProperty, error)
-	UpdateNewHolidayHome(ctx context.Context, arg UpdateNewHolidayHomeParams) (HolidayHome, error)
 	UpdateOpenhouseAppointmentStatus(ctx context.Context, arg UpdateOpenhouseAppointmentStatusParams) (Appointment, error)
 	UpdateOpenhouseAppointmentStatusAndRemarks(ctx context.Context, arg UpdateOpenhouseAppointmentStatusAndRemarksParams) (Appointment, error)
 	UpdateOrderPayment(ctx context.Context, arg UpdateOrderPaymentParams) (Payment, error)
@@ -20650,18 +19903,13 @@ type Querier interface {
 	UpdatePropertyLocation(ctx context.Context, arg UpdatePropertyLocationParams) (PropertiesMapLocation, error)
 	UpdatePropertyLocationStatus(ctx context.Context, arg UpdatePropertyLocationStatusParams) (PropertiesMapLocation, error)
 	UpdatePropertyPlan(ctx context.Context, arg UpdatePropertyPlanParams) (PropertiesPlan, error)
-	UpdatePropertyRank(ctx context.Context, arg UpdatePropertyRankParams) (PropertyVersion, error)
 	UpdatePropertyType(ctx context.Context, arg UpdatePropertyTypeParams) (PropertyType, error)
 	UpdatePropertyTypeFacts(ctx context.Context, arg UpdatePropertyTypeFactsParams) (PropertyTypeFact, error)
 	UpdatePropertyTypeSettings(ctx context.Context, arg UpdatePropertyTypeSettingsParams) error
 	UpdatePropertyUnitComment(ctx context.Context, arg UpdatePropertyUnitCommentParams) (PropertyUnitComment, error)
 	UpdatePropertyUnitLike(ctx context.Context, arg UpdatePropertyUnitLikeParams) (PropertyUnitLike, error)
 	UpdatePropertyUnitSaved(ctx context.Context, arg UpdatePropertyUnitSavedParams) (PropertyUnitSaved, error)
-	UpdatePropertyVersion(ctx context.Context, arg UpdatePropertyVersionParams) (PropertyVersion, error)
-	UpdatePropertyVersionCounterView(ctx context.Context, arg UpdatePropertyVersionCounterViewParams) error
 	UpdatePropertyVersionGalleryAndPlanStatus(ctx context.Context, arg UpdatePropertyVersionGalleryAndPlanStatusParams) error
-	UpdatePropertyVersionStatus(ctx context.Context, arg UpdatePropertyVersionStatusParams) (PropertyVersion, error)
-	UpdatePropertyVersionsStatusForAgent(ctx context.Context, arg UpdatePropertyVersionsStatusForAgentParams) error
 	UpdatePublichInfoIsEnableCheck(ctx context.Context, arg UpdatePublichInfoIsEnableCheckParams) (PublishInfo, error)
 	UpdatePublichInfoWebPortals(ctx context.Context, arg UpdatePublichInfoWebPortalsParams) (PublishInfo, error)
 	//! -------------------------  FROM HERE PROJECT PUBLISH QUERIES --------------------------------------------- !--
@@ -21123,7 +20371,6 @@ type Querier interface {
 	UpdateUnitType(ctx context.Context, arg UpdateUnitTypeParams) (UnitTypeDetail, error)
 	UpdateUnitTypeByStatus(ctx context.Context, arg UpdateUnitTypeByStatusParams) (UnitTypeDetail, error)
 	UpdateUnitTypeSettings(ctx context.Context, arg UpdateUnitTypeSettingsParams) error
-	UpdateUnitTypeVariation(ctx context.Context, arg UpdateUnitTypeVariationParams) (UnitTypeVariation, error)
 	UpdateUnitVersion(ctx context.Context, arg UpdateUnitVersionParams) (UnitVersion, error)
 	UpdateUnitVersionCounterView(ctx context.Context, arg UpdateUnitVersionCounterViewParams) error
 	UpdateUnitVersionGalleryAndPlanStatus(ctx context.Context, arg UpdateUnitVersionGalleryAndPlanStatusParams) error
@@ -21180,8 +20427,6 @@ type Querier interface {
 	UpdateWebportal(ctx context.Context, arg UpdateWebportalParams) (Webportal, error)
 	UpdateWorkflow(ctx context.Context, arg UpdateWorkflowParams) (UpdateWorkflowRow, error)
 	UpdateXMLAddress(ctx context.Context, arg UpdateXMLAddressParams) error
-	UpdateXMLGlobalProperty(ctx context.Context, arg UpdateXMLGlobalPropertyParams) (Property, error)
-	UpdateXMLPropertyVersion(ctx context.Context, arg UpdateXMLPropertyVersionParams) (PropertyVersion, error)
 	UpdateXMLURL(ctx context.Context, arg UpdateXMLURLParams) (XmlUrl, error)
 	UpdateXMLUrlLastReport(ctx context.Context, arg UpdateXMLUrlLastReportParams) (XmlUrl, error)
 	ValidateUserForPropertyHub(ctx context.Context, arg ValidateUserForPropertyHubParams) ([]int64, error)

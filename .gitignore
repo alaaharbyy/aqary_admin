@@ -2,7 +2,6 @@ Makefile
 /tmp
 /data/*
 /.vscode/*
-main
 .env
 config/.env
 upload/*
